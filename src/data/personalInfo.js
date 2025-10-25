@@ -10,9 +10,7 @@ export const personalInfo = {
     'Unity Engine',
     'Maya',
     'C#',
-    'Javascript',
-    'Perforce',
-    'Git'
+    'Javascript'
   ],
   social: {
     github: {
@@ -23,9 +21,9 @@ export const personalInfo = {
       url: "https://www.linkedin.com/in/ariel-cohen-116804191/",
       label: "LinkedIn"
     },
-    twitter: {
+    x: {
       url: "https://twitter.com/arielcohen",
-      label: "Twitter"
+      label: "X (formerly Twitter)"
     }
   },
   resume: "/resume.pdf"

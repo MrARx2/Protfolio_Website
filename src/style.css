@@ -16,6 +16,22 @@
    ================================= */
 
 /* ===== 1. GLOBAL STYLES & LAYOUT ===== */
+
+/* Prevent automatic hyphenation globally */
+* {
+  hyphens: none;
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  -moz-hyphens: none;
+}
+
+/* Better word breaking for text content */
+p, li, span, div, h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: normal; /* Don't break words unless absolutely necessary */
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -819,6 +835,62 @@ h1#projects::after {
   margin-bottom: 24px;
   font-weight: 500;
   line-height: 1.6;
+}
+
+/* Game Project Meta Info - Matching Modeling Style */
+.detail-header .modeling-meta-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.detail-header .modeling-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 32px;
+  background: rgba(0, 234, 255, 0.08);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  min-width: 150px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 234, 255, 0.1);
+}
+
+.detail-header .modeling-meta-item:hover {
+  background: rgba(0, 234, 255, 0.14);
+  border-color: rgba(0, 234, 255, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 234, 255, 0.2);
+}
+
+.detail-header .modeling-meta-item .meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-header .modeling-meta-item .meta-icon {
+  font-size: 1.5rem;
+  filter: grayscale(0.2) brightness(1.1);
+}
+
+.detail-header .modeling-meta-item .meta-label {
+  font-size: 0.75rem;
+  color: #00eaff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.detail-header .modeling-meta-item .meta-value {
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
 }
 
 .detail-header h2 {
@@ -2099,6 +2171,30 @@ html {
     min-width: 140px;
   }
 
+  /* Game project metadata on mobile */
+  .detail-header .modeling-meta-info {
+    gap: 12px;
+  }
+
+  .detail-header .modeling-meta-item {
+    padding: 14px 20px;
+    min-width: 130px;
+    flex: 1 1 calc(50% - 12px);
+    max-width: calc(50% - 6px);
+  }
+
+  .detail-header .modeling-meta-item .meta-label {
+    font-size: 0.7rem;
+  }
+
+  .detail-header .modeling-meta-item .meta-value {
+    font-size: 1rem;
+  }
+
+  .detail-header .modeling-meta-item .meta-icon {
+    font-size: 1.3rem;
+  }
+
   .renders-gallery,
   .paintwork-gallery,
   .progression-gallery,
@@ -2140,6 +2236,18 @@ html {
 
   .modeling-meta-item {
     width: 100%;
+  }
+
+  /* Game project metadata on very small screens */
+  .detail-header .modeling-meta-info {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .detail-header .modeling-meta-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 12px 16px;
   }
 }
 
@@ -2820,6 +2928,59 @@ html {
     height: auto;
     min-height: 250px;
     object-fit: cover;
+  }
+  
+  /* 6. Mobile Optimization for Metadata Display */
+  .modeling-meta-info {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .modeling-meta-item {
+    min-width: 140px;
+    flex: 1 1 auto;
+  }
+  
+  .meta-value {
+    font-size: 0.9rem;
+  }
+  
+  /* 7. Mobile Optimization for Team Credits */
+  @media (max-width: 768px) {
+    /* Ensure team credits section is readable on mobile */
+    .project-detail h3 {
+      font-size: 1.1rem;
+    }
+    
+    /* Better spacing for inline links on mobile */
+    a[href*="linkedin"] {
+      display: flex !important;
+      width: 100%;
+      justify-content: center;
+      margin-top: 1em;
+    }
+  }
+  
+  /* 8. Prevent Text Overflow in Cards on Mobile */
+  @media (max-width: 768px) {
+    .game-detail-title,
+    .modeling-detail-title,
+    .scene-detail-title {
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      hyphens: none;
+    }
+    
+    .game-detail-summary,
+    .modeling-detail-summary,
+    .detail-body,
+    .mechanic-desc {
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      hyphens: none;
+      text-align: left;
+    }
   }
   
   .photo-grid {

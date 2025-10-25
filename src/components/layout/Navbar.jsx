@@ -92,23 +92,23 @@ function Navbar({ onHomeClick }) {
           <span className="nav-link-text">LinkedIn</span>
         </a>
         <a
-          href={personalInfo.social.twitter.url}
+          href={personalInfo.social.x.url}
           className="nav-icon-link frosted-icon"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={personalInfo.social.twitter.label}
+          aria-label={personalInfo.social.x.label}
           onClick={() => setMobileMenuOpen(false)}
         >
           <div className="icon-frosted-wrapper">
-            {/* Twitter SVG */}
+            {/* X (formerly Twitter) SVG */}
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
-                d="M24 4.56c-.89.39-1.85.65-2.86.77a4.93 4.93 0 0 0 2.16-2.72c-.95.56-2.01.97-3.13 1.19a4.92 4.92 0 0 0-8.39 4.48C7.69 8.09 4.07 6.13 1.64 3.16c-.35.6-.55 1.29-.55 2.03 0 1.4.71 2.64 1.8 3.36-.66-.02-1.28-.2-1.82-.5v.05c0 1.96 1.39 3.6 3.24 3.97-.34.09-.7.14-1.07.14-.26 0-.51-.03-.76-.07.51 1.6 2 2.77 3.76 2.8A9.87 9.87 0 0 1 0 19.54a13.94 13.94 0 0 0 7.56 2.22c9.05 0 14-7.5 14-14v-.64c.96-.7 1.8-1.56 2.46-2.54z"
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
               />
             </svg>
           </div>
-          <span className="nav-link-text">Twitter</span>
+          <span className="nav-link-text">X</span>
         </a>
         <a
           href={personalInfo.resume}

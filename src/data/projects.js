@@ -14,12 +14,12 @@ export const gameProjects = [
     title: "Slingshot",
     summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
     images: [
-      "https://i.ibb.co/xKrhbTdt/Slingshot-checkpoint-captured.jpg",
-      "https://i.ibb.co/HfHQcdgN/Slingshot-Intro.jpg",
-      "https://i.ibb.co/jkCZFTZm/Slingshot-Launch.jpg",
-      "https://i.ibb.co/cK5XvhD2/Slingshot-midrace-red-planet.jpg",
-      "https://i.ibb.co/PsGNsLQT/Menu.jpg",
-      "https://i.ibb.co/FkqtFRH8/End-of-round-Menu.jpg"
+      "https://i.ibb.co/HfHQcdgN/Slingshot-Intro.jpg", // Logo/Title screen first
+      "https://i.ibb.co/xKrhbTdt/Slingshot-checkpoint-captured.jpg", // Gameplay
+      "https://i.ibb.co/jkCZFTZm/Slingshot-Launch.jpg", // Gameplay
+      "https://i.ibb.co/cK5XvhD2/Slingshot-midrace-red-planet.jpg", // Gameplay
+      "https://i.ibb.co/PsGNsLQT/Menu.jpg", // UI
+      "https://i.ibb.co/FkqtFRH8/End-of-round-Menu.jpg" // UI
     ],
     tags: ["Space", "Racer", "Procedural Tracks"],
     youtube: "https://www.youtube.com/watch?v=4CMdh4ahHq4",
@@ -34,18 +34,18 @@ export const gameProjects = [
     title: "Ricochet",
     summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
     images: [
-      "https://i.ibb.co/DPgH7Th1/Start-Of-Match.jpg",
-      "https://i.ibb.co/LzxsL5FQ/Intro.jpg",
-      "https://i.ibb.co/XxcsvTzx/Play-Match-Settings-Quickplay.jpg",
-      "https://i.ibb.co/FbSSbN70/Mid-Match.jpg",
-      "https://i.ibb.co/zTt19H4j/Mid-Match-Start-Of-Round.jpg",
-      "https://i.ibb.co/rWdFtM9/Pause-Menu.jpg",
-      "https://i.ibb.co/NdTWhSZv/Winner-Screen.jpg"
+      "https://i.ibb.co/LzxsL5FQ/Intro.jpg", // Logo/Title screen first
+      "https://i.ibb.co/DPgH7Th1/Start-Of-Match.jpg", // Gameplay
+      "https://i.ibb.co/FbSSbN70/Mid-Match.jpg", // Gameplay
+      "https://i.ibb.co/zTt19H4j/Mid-Match-Start-Of-Round.jpg", // Gameplay
+      "https://i.ibb.co/XxcsvTzx/Play-Match-Settings-Quickplay.jpg", // UI
+      "https://i.ibb.co/rWdFtM9/Pause-Menu.jpg", // UI
+      "https://i.ibb.co/NdTWhSZv/Winner-Screen.jpg" // UI
     ],
     tags: ["Arcade", "Physics-Based", "Sports", "Neon", "Air Hockey", "Pinball"],
     youtube: "https://youtu.be/pj1mnLXYDjI",
     details: "Ricochet is a high-energy arcade physics game where players take turns as either the striker or the goalie. In striker rounds, you control a puck-like player aiming to score in the rival's goal while bouncing shots off speed-boosting bumpers that add unpredictability and challenge. In goalie rounds, you defend your goal along a vertical line—just like Pong—blocking fast, chaotic rebounds. One role is always controlled by AI, keeping matches dynamic. The game's neon-emissive visuals, colorful ball reactions, and punchy VFX/SFX create a vibrant, arcade-like atmosphere that keeps the action intense and unpredictable.",
-    role: "Lead Programmer",
+    role: "Programmer",
     team: "2",
     time: "2 months",
     engine: "Unreal Engine 5.5.4"
@@ -55,12 +55,12 @@ export const gameProjects = [
     title: "Fox's Tale",
     summary: "A charming 2D platformer where you jump on enemies to defeat them and use interactive objects to survive traps and reach the goal.",
     images: [
-      "https://i.ibb.co/XfHhC5jb/Using-Interactables-to-take-down-enemies.jpg",
-      "https://i.ibb.co/VYK06PH9/Intro.jpg",
-      "https://i.ibb.co/Q7Qm428N/Boss-Fight.jpg",
-      "https://i.ibb.co/p64wLc7h/Menu.jpg",
-      "https://i.ibb.co/Nnd0Jzh3/Parkour.jpg",
-      "https://i.ibb.co/6MG5ZLx/End-Screen.jpg"
+      "https://i.ibb.co/VYK06PH9/Intro.jpg", // Logo/Title screen first
+      "https://i.ibb.co/XfHhC5jb/Using-Interactables-to-take-down-enemies.jpg", // Gameplay
+      "https://i.ibb.co/Q7Qm428N/Boss-Fight.jpg", // Gameplay
+      "https://i.ibb.co/Nnd0Jzh3/Parkour.jpg", // Gameplay
+      "https://i.ibb.co/p64wLc7h/Menu.jpg", // UI
+      "https://i.ibb.co/6MG5ZLx/End-Screen.jpg" // UI
     ],
     tags: ["Platformer", "Pixel Art", "2D", "Adventure"],
     youtube: "https://www.youtube.com/watch?v=fxfBp4WnvdY",

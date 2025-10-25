@@ -37,13 +37,11 @@ function ProjectDetail({ project, onBack, onImageClick }) {
     mechanicPairs.push(mechanics.slice(i, i + 2));
   }
 
-  // Info for game projects
-  const info = [
-    { icon: '👤', label: 'Role', value: project.role || 'Programmer' },
-    { icon: '👥', label: 'Team', value: project.team || '—' },
-    { icon: '⏳', label: 'Time', value: project.time || '—' },
-    { icon: '🛠️', label: 'Engine', value: project.engine || '—' }
-  ];
+  // Check if this is an academic project (all game projects except specific ones)
+  const isAcademicProject = project.id !== 'star-wars-scene';
+  
+  // Team credit info
+  const hasTeamCredit = project.team === '2' && isAcademicProject;
 
   return (
     <div className="project-detail-backdrop" onClick={handleBackdropClick}>
@@ -60,6 +58,57 @@ function ProjectDetail({ project, onBack, onImageClick }) {
         <p className="game-detail-summary">
           {project.summary}
         </p>
+
+        {/* Meta Info - matching modeling project style */}
+        <div className="modeling-meta-info" style={{ marginTop: '1.5em', marginBottom: '1em' }}>
+          <div className="modeling-meta-item">
+            <div className="meta-row">
+              <span className="meta-icon" aria-hidden="true">👤</span>
+              <span className="meta-label">Role:</span>
+            </div>
+            <span className="meta-value">{project.role || 'Programmer'}</span>
+          </div>
+          <div className="modeling-meta-item">
+            <div className="meta-row">
+              <span className="meta-icon" aria-hidden="true">👥</span>
+              <span className="meta-label">Team:</span>
+            </div>
+            <span className="meta-value">{project.team || '—'}</span>
+          </div>
+          <div className="modeling-meta-item">
+            <div className="meta-row">
+              <span className="meta-icon" aria-hidden="true">⏳</span>
+              <span className="meta-label">Time:</span>
+            </div>
+            <span className="meta-value">{project.time || '—'}</span>
+          </div>
+          <div className="modeling-meta-item">
+            <div className="meta-row">
+              <span className="meta-icon" aria-hidden="true">🛠️</span>
+              <span className="meta-label">Engine:</span>
+            </div>
+            <span className="meta-value">{project.engine || '—'}</span>
+          </div>
+        </div>
+
+        {/* Academic Project Label */}
+        {isAcademicProject && (
+          <div style={{ 
+            display: 'inline-block',
+            padding: '8px 16px',
+            background: 'rgba(0, 234, 255, 0.1)',
+            border: '1px solid rgba(0, 234, 255, 0.3)',
+            borderRadius: '8px',
+            marginBottom: '1.5em',
+            fontSize: '0.9rem',
+            color: '#00eaff'
+          }}>
+            <span style={{ marginRight: '6px' }}>🎓</span>
+            Academic Project
+          </div>
+        )}
+
+        {/* Tags */}
         <div className="card-footer" style={{ justifyContent: 'center', marginBottom: '2em' }}>
           {project.tags && project.tags.map((tag, i) => (
             <span className="tag" key={i}>{tag}</span>
@@ -157,6 +206,69 @@ function ProjectDetail({ project, onBack, onImageClick }) {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Team Credits Section */}
+        {hasTeamCredit && (
+          <div style={{
+            marginTop: '3em',
+            padding: '1.5em',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            textAlign: 'left'
+          }}>
+            <h3 style={{
+              color: '#00eaff',
+              fontSize: '1.2rem',
+              marginBottom: '0.8em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5em'
+            }}>
+              <span>🤝</span>
+              Team Collaboration
+            </h3>
+            <p style={{
+              color: '#b6b6d6',
+              lineHeight: '1.6',
+              marginBottom: '0.8em'
+            }}>
+              This project was created in collaboration with my talented colleague <strong style={{ color: '#00eaff' }}>Jack Lavy</strong>, 
+              who brought the game to life through his exceptional work in art design, sound design, and visual effects. 
+              Jack crafted the game's visual identity, audio atmosphere, and polished UI elements including menus, transitions, 
+              and effects that enhance the overall player experience.
+            </p>
+            <a 
+              href="https://www.linkedin.com/in/jack-lavy-144bb812b/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5em',
+                color: '#00bfff',
+                textDecoration: 'none',
+                fontSize: '0.95rem',
+                padding: '0.5em 1em',
+                background: 'rgba(0, 191, 255, 0.1)',
+                borderRadius: '6px',
+                border: '1px solid rgba(0, 191, 255, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 191, 255, 0.2)';
+                e.currentTarget.style.borderColor = 'rgba(0, 191, 255, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 191, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(0, 191, 255, 0.3)';
+              }}
+            >
+              <span>🔗</span>
+              Connect with Jack on LinkedIn
+            </a>
           </div>
         )}
       </div>
