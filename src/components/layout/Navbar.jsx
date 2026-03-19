@@ -122,7 +122,7 @@ function Navbar({ onHomeClick }) {
           }}
         >
           <img 
-            src="/images/icons/icons8-document-100.png" 
+            src="/Images/Icons/icons8-document-100.png" 
             alt="Document Icon" 
             style={{ width: '22px', height: '22px' }} 
           />
