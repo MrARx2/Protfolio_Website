@@ -46,7 +46,10 @@ function FrostedCard({ project, onClick }) {
           src={imageSrc}
           alt={project.title}
           onLoad={() => setImageLoaded(true)}
-          style={{ opacity: imageLoaded ? 1 : 0 }}
+          style={{ 
+            opacity: imageLoaded ? 1 : 0,
+            ...(project.id === 'path-of-embers' ? { objectFit: 'cover', objectPosition: 'center 41%' } : {})
+          }}
           loading="lazy"
         />
       </div>

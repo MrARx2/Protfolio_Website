@@ -146,10 +146,10 @@
   text-align: left;
 }
 
-.scene-back-btn {
-  position: relative;
-  left: 0;
-  top: 0;
+.scene-detail .scene-back-btn {
+  position: relative !important;
+  left: 0 !important;
+  top: 0 !important;
   margin-bottom: 32px;
   margin-left: 0;
   display: block;
@@ -245,7 +245,7 @@
 
 .scene-detail-header .scene-meta-item .meta-value {
   font-size: 1.1rem;
-  color: #e0d0ff;
+  color: #ffffff;
   font-weight: 800;
 }
 

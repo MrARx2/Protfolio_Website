@@ -10,16 +10,59 @@
 /* ===== GAME PROJECTS ===== */
 export const gameProjects = [
   {
+    id: "path-of-embers",
+    title: "Path of Embers",
+    summary: "Path of Embers is a fast-paced roguelike action mobile game where you battle through unique, procedurally generated arenas. Master combat and movement, adapt to new hazards in every run, and experience fluid 60 FPS gameplay built entirely from scratch.",
+    images: [
+      "/images/Path Of Embers/MainMenu.jpg",
+      "/images/Path Of Embers/Gameplay1.jpg",
+      "/images/Path Of Embers/Gameplay2.jpg",
+      "/images/Path Of Embers/Gameplay3.jpg",
+      "/images/Path Of Embers/Gameplay4.jpg",
+      "/images/Path Of Embers/Gameplay5.jpg",
+      "/images/Path Of Embers/Gameplay6.jpg",
+      "/images/Path Of Embers/Gameplay7.jpg",
+      "/images/Path Of Embers/Gameplay8.jpg",
+      "/images/Path Of Embers/Gameplay9.jpg",
+      "/images/Path Of Embers/Shop.jpg",
+      "/images/Path Of Embers/TalentWheel.jpg",
+      "/images/Path Of Embers/InGameMenu.jpg",
+      "/images/Path Of Embers/SoundSettings.jpg"
+    ],
+    tags: ["Roguelike", "Fantasy", "Action", "Mobile"],
+    youtube: "https://www.youtube.com/watch?v=dq5IcuCCCZE",
+    details: "Path of Embers is a fast-paced roguelike action mobile game where players battle through procedurally generated arenas, mastering combat, movement, and strategic decision-making. Each run introduces a new layout filled with enemies, hazards, and opportunities, encouraging players to adapt and refine their approach with every attempt. Designed for a smooth and responsive 60 FPS experience, the game emphasizes performance, precision, and fluid gameplay on mobile devices.\n\nAll assets were created from scratch, including 3D models, visual effects, audio, and gameplay systems, resulting in a cohesive and fully original experience. Built with scalability in mind, Path of Embers supports expanding content, more complex encounters, and deeper mechanics, offering strong potential for future development and replayability.",
+    role: "Programmer / Technical Artist",
+    team: "3",
+    time: "4 months",
+    engine: "Unity 6",
+    teamCredits: {
+      intro: "This project was developed in collaboration with my talented teammates Tamir Goldman and Ido Korliker, each contributing key elements that shaped the final experience.",
+      members: [
+        {
+          name: "Tamir Goldman",
+          description: "Tamir Goldman played a central role across multiple disciplines, leading both the creative and implementation aspects of the game. He was responsible for 3D modeling, including key characters and assets, as well as the full UI/UX design, ensuring a cohesive and intuitive player experience. Tamir also designed and implemented the boss encounter, handling both its visual creation and combat behavior. In addition, he contributed extensively to map design and asset creation, while producing the game's complete audio layer—covering sound effects, background music, and overall sound design—resulting in a polished and immersive experience.",
+          linkedin: "https://www.linkedin.com/in/tamir-goldman-4a3b25313/"
+        },
+        {
+          name: "Ido Korliker",
+          description: "Ido Korliker focused on visual effects and 3D asset creation. He developed the VFX that enhance gameplay clarity and impact, and was responsible for modeling the main character, miniboss, and various map assets, contributing significantly to the game's visual depth and overall presentation.",
+          linkedin: "https://www.linkedin.com/in/ido-korliker/"
+        }
+      ]
+    }
+  },
+  {
     id: "slingshot",
     title: "Slingshot",
     summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
     images: [
-      "https://i.ibb.co/HfHQcdgN/Slingshot-Intro.jpg", // Logo/Title screen first
-      "https://i.ibb.co/xKrhbTdt/Slingshot-checkpoint-captured.jpg", // Gameplay
-      "https://i.ibb.co/jkCZFTZm/Slingshot-Launch.jpg", // Gameplay
-      "https://i.ibb.co/cK5XvhD2/Slingshot-midrace-red-planet.jpg", // Gameplay
-      "https://i.ibb.co/PsGNsLQT/Menu.jpg", // UI
-      "https://i.ibb.co/FkqtFRH8/End-of-round-Menu.jpg" // UI
+      "/images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
+      "/images/Slingshot/Slingshot - checkpoint captured.jpg", // Gameplay
+      "/images/Slingshot/Slingshot - Launch.jpg", // Gameplay
+      "/images/Slingshot/Slingshot -midrace-red-planet.jpg", // Gameplay
+      "/images/Slingshot/Menu.jpg", // UI
+      "/images/Slingshot/End of round - Menu.jpg" // UI
     ],
     tags: ["Space", "Racer", "Procedural Tracks"],
     youtube: "https://www.youtube.com/watch?v=4CMdh4ahHq4",
@@ -34,13 +77,13 @@ export const gameProjects = [
     title: "Ricochet",
     summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
     images: [
-      "https://i.ibb.co/LzxsL5FQ/Intro.jpg", // Logo/Title screen first
-      "https://i.ibb.co/DPgH7Th1/Start-Of-Match.jpg", // Gameplay
-      "https://i.ibb.co/FbSSbN70/Mid-Match.jpg", // Gameplay
-      "https://i.ibb.co/zTt19H4j/Mid-Match-Start-Of-Round.jpg", // Gameplay
-      "https://i.ibb.co/XxcsvTzx/Play-Match-Settings-Quickplay.jpg", // UI
-      "https://i.ibb.co/rWdFtM9/Pause-Menu.jpg", // UI
-      "https://i.ibb.co/NdTWhSZv/Winner-Screen.jpg" // UI
+      "/images/Ricochet/Intro.jpg", // Logo/Title screen first
+      "/images/Ricochet/StartOfMatch.jpg", // Gameplay
+      "/images/Ricochet/Mid-Match.jpg", // Gameplay
+      "/images/Ricochet/Mid-Match-StartOfRound.jpg", // Gameplay
+      "/images/Ricochet/Play Match Settings - Quickplay.jpg", // UI
+      "/images/Ricochet/PauseMenu.jpg", // UI
+      "/images/Ricochet/Winner Screen.jpg" // UI
     ],
     tags: ["Arcade", "Physics-Based", "Sports", "Neon", "Air Hockey", "Pinball"],
     youtube: "https://youtu.be/pj1mnLXYDjI",
@@ -55,12 +98,12 @@ export const gameProjects = [
     title: "Fox's Tale",
     summary: "A charming 2D platformer where you jump on enemies to defeat them and use interactive objects to survive traps and reach the goal.",
     images: [
-      "https://i.ibb.co/VYK06PH9/Intro.jpg", // Logo/Title screen first
-      "https://i.ibb.co/XfHhC5jb/Using-Interactables-to-take-down-enemies.jpg", // Gameplay
-      "https://i.ibb.co/Q7Qm428N/Boss-Fight.jpg", // Gameplay
-      "https://i.ibb.co/Nnd0Jzh3/Parkour.jpg", // Gameplay
-      "https://i.ibb.co/p64wLc7h/Menu.jpg", // UI
-      "https://i.ibb.co/6MG5ZLx/End-Screen.jpg" // UI
+      "/images/Fox's Tale/Intro.jpg", // Logo/Title screen first
+      "/images/Fox's Tale/Using Interactables to take down enemies.jpg", // Gameplay
+      "/images/Fox's Tale/Boss Fight.jpg", // Gameplay
+      "/images/Fox's Tale/Parkour.jpg", // Gameplay
+      "/images/Fox's Tale/Menu.jpg", // UI
+      "/images/Fox's Tale/EndScreen.jpg" // UI
     ],
     tags: ["Platformer", "Pixel Art", "2D", "Adventure"],
     youtube: "https://www.youtube.com/watch?v=fxfBp4WnvdY",
@@ -79,26 +122,26 @@ export const modelingProjects = [
     title: 'Cozmo Robot',
     summary: 'Portfolio project: stylized Cozmo robot modeled, textured and rendered.',
     renders: [
-      'https://i.ibb.co/cXD74x9N/Highres-Screenshot00004.png',
-      'https://i.ibb.co/sJVxRx2P/Highres-Screenshot00011.png',
-      'https://i.ibb.co/qMCjDhRS/Highres-Screenshot00012.png',
-      'https://i.ibb.co/chBFms9C/Highres-Screenshot00010.png',
-      'https://i.ibb.co/dwRgYkYX/Highres-Screenshot00013.png'
+      '/images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
+      '/images/Renders and Modeling/Cozmo/Highres-Screenshot00011.png',
+      '/images/Renders and Modeling/Cozmo/Highres-Screenshot00012.png',
+      '/images/Renders and Modeling/Cozmo/Highres-Screenshot00010.png',
+      '/images/Renders and Modeling/Cozmo/Highres-Screenshot00013.png'
     ],
     paintwork: [
-      'https://i.ibb.co/6J0gNwk1/Paintwork.jpg',
-      'https://i.ibb.co/ZygpSKN/Vertex-Color-ID.jpg'
+      '/images/Renders and Modeling/Cozmo/Paintwork.jpg',
+      '/images/Renders and Modeling/Cozmo/Vertex Color ID.jpg'
     ],
     progression: [
-      'https://i.ibb.co/Kx949GMq/COZMO-ALMOST-DONE.jpg',
-      'https://i.ibb.co/vxSXJckx/COZMO-ALMOST-DONE2.jpg',
-      'https://i.ibb.co/N2V3RvS7/COZMO-ALMOST-DONE3.jpg'
+      '/images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE.jpg',
+      '/images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE2.jpg',
+      '/images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE3.jpg'
     ],
     references: [
-      'https://i.ibb.co/KcSLQtTH/412ro2-Z5u-GL-AC-SY300-SX300-QL70-ML2.jpg',
-      'https://i.ibb.co/jvGxVKbf/cozmo-anki-front.jpg',
-      'https://i.ibb.co/wkHqRnm/Cozmo-Anki-Side.jpg',
-      'https://i.ibb.co/Y74R7SSg/Cozmo-Anki-Top.jpg'
+      '/images/Renders and Modeling/Cozmo/412ro2-Z5u-GL-AC-SY300-SX300-QL70-ML2.jpg',
+      '/images/Renders and Modeling/Cozmo/cozmo-anki-front.jpg',
+      '/images/Renders and Modeling/Cozmo/Cozmo-Anki-Side.jpg',
+      '/images/Renders and Modeling/Cozmo/Cozmo-Anki-Top.jpg'
     ],
     tags: ['3D Character', 'Robot', 'Half-Rigged', 'Maya', 'Adobe Substance', 'Unreal Engine 5'],
     time: '1 month',
@@ -112,20 +155,20 @@ export const modelingProjects = [
     title: 'Rainbow Dagger',
     summary: 'Realistic dagger with detailed materials and PBR texturing, designed for a more grounded aesthetic.',
     renders: [
-      'https://i.ibb.co/62R0kxp/Highres-Screenshot00006.png',
-      'https://i.ibb.co/v4tf2x0G/Highres-Screenshot00007.png',
-      'https://i.ibb.co/1DP8qgV/Highres-Screenshot00008.png'
+      '/images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png',
+      '/images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00007.png',
+      '/images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00008.png'
     ],
     paintwork: [
-      'https://i.ibb.co/Hf65Y3y3/Paintwork-in-adobe-substance.jpg',
-      'https://i.ibb.co/7J92R8Q7/Roughness.jpg'
+      '/images/Renders and Modeling/Rainbow_Dagger/Paintwork-in-adobe-substance.jpg',
+      '/images/Renders and Modeling/Rainbow_Dagger/Roughness.jpg'
     ],
     progression: [
-      'https://i.ibb.co/F4KGKQLh/Low-Poly-High-Poly.jpg',
-      'https://i.ibb.co/9kZjbvpW/Low-Poly-High-Poly-prespective-view.jpg'
+      '/images/Renders and Modeling/Rainbow_Dagger/LowPoly - HighPoly.jpg',
+      '/images/Renders and Modeling/Rainbow_Dagger/LowPoly - HighPoly - prespective view.jpg'
     ],
     references: [
-      'https://i.ibb.co/m53szjQ2/7151ea987de342d95d0c3ed6ff3a4a92.jpg'
+      '/images/Renders and Modeling/Rainbow_Dagger/7151ea987de342d95d0c3ed6ff3a4a92.jpg'
     ],
     tags: ['Hard Surface', 'Weapon', 'Maya', 'Adobe Substance', 'Unreal Engine 5'],
     time: '1 week',
@@ -139,21 +182,21 @@ export const modelingProjects = [
     title: 'Stormbird LowPoly',
     summary: 'A stylized low-poly reimagining of Horizon Zero Dawn\'s iconic Stormbird, featuring clean topology and a unique artistic interpretation of the mechanical creature.',
     renders: [
-      'https://i.ibb.co/pCtvfqK/Prespective-View.jpg',
-      'https://i.ibb.co/Jwkxg16q/Prespective-Top.jpg',
-      'https://i.ibb.co/HL21JM2H/Front-View.jpg',
-      'https://i.ibb.co/tpH65Xwn/Face-View.jpg',
-      'https://i.ibb.co/gLz381mW/Render1.jpg'
+      '/images/Renders and Modeling/Stormbird_LowPoly/Prespective-View.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Prespective-Top.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Front-View.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Face-View.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Render1.jpg'
     ],
     progression: [
-      'https://i.ibb.co/zWcdXFx6/Wireframe-on-shaded-Top.jpg',
-      'https://i.ibb.co/q3VNLSHR/Wireframe-on-Shaded-Prespective.jpg',
-      'https://i.ibb.co/KcGx0vk4/Wireframe-on-Shaded-Tail.jpg'
+      '/images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-shaded-Top.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-Shaded-Prespective.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-Shaded-Tail.jpg'
     ],
     references: [
-      'https://i.ibb.co/cSt3Zkr3/Right-Front-Orthographic.png',
-      'https://i.ibb.co/fzkMGc16/Top-Prespective-with-references-on-screen.jpg',
-      'https://i.ibb.co/M5M51Yj9/Wings.jpg'
+      '/images/Renders and Modeling/Stormbird_LowPoly/Right-Front-Orthographic.png',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Top-Prespective-with-references-on-screen.jpg',
+      '/images/Renders and Modeling/Stormbird_LowPoly/Wings.jpg'
     ],
     tags: ['Low Poly', 'Robot', 'Creature', 'Game-Ready', 'Maya', 'Arnold Renderer'],
     time: '1.5 weeks',
@@ -171,17 +214,17 @@ export const sceneProjects = [
     title: 'Star Wars Scene',
     summary: 'Cinematic environment recreation featuring advanced Unreal Engine 5 technologies including Nanite virtualized geometry.',
     images: [
-      'https://i.ibb.co/5Qxth4H/Highres-Screenshot00000.png',
-      'https://i.ibb.co/BHR8XSpc/Highres-Screenshot00001.png',
-      'https://i.ibb.co/LDV1h7TD/Highres-Screenshot00003.png',
-      'https://i.ibb.co/G4Qv2Gkt/Highres-Screenshot00004.png',
-      'https://i.ibb.co/kVjBMkQZ/Highres-Screenshot00006.png'
+      '/images/Scenes/Starwars Scene/Highres-Screenshot00000.png',
+      '/images/Scenes/Starwars Scene/Highres-Screenshot00001.png',
+      '/images/Scenes/Starwars Scene/Highres-Screenshot00003.png',
+      '/images/Scenes/Starwars Scene/Highres-Screenshot00004.png',
+      '/images/Scenes/Starwars Scene/Highres-Screenshot00006.png'
     ],
     coolFeatures: [
       {
         title: 'Nanite Virtualized Geometry',
         description: 'This scene leverages Unreal Engine 5\'s revolutionary Nanite technology, enabling film-quality assets with millions of polygons to be rendered in real-time. The visualization below shows the Nanite mesh complexity, demonstrating how the engine dynamically streams and renders only the geometry detail you can see.',
-        image: 'https://i.ibb.co/KQ5rrt4/Highres-Screenshot00002.png',
+        image: '/images/Scenes/Starwars Scene/Highres-Screenshot00002.png',
         icon: '🔷'
       }
     ],
@@ -199,6 +242,14 @@ export const sceneProjects = [
  * Each mechanic has: icon, label, and description
  */
 export const mechanicsData = {
+  'path-of-embers': [
+    { icon: '⚔️', label: 'Procedural Arena Generation', desc: 'Each run features dynamically generated arenas, ensuring unique combat scenarios every playthrough.' },
+    { icon: '🔥', label: 'Action Combat System', desc: 'Fast-paced, responsive combat focused on movement, timing, and positioning against multiple enemies.' },
+    { icon: '🧠', label: 'Dynamic AI Behavior', desc: 'Enemies react and adapt to the player, creating unpredictable and engaging encounters.' },
+    { icon: '📈', label: 'Run-Based Progression', desc: 'Progress through each run by overcoming encounters, improving skill, and adapting strategies on the fly.' },
+    { icon: '🎮', label: 'Mobile-Optimized Controls', desc: 'Designed for smooth and intuitive input, delivering a consistent and responsive 60 FPS gameplay experience.' },
+    { icon: '🛠️', label: 'Fully Original Assets Pipeline', desc: 'All visuals, audio, and systems were built from scratch, ensuring a cohesive and scalable foundation for future expansion.' }
+  ],
   'slingshot': [
     { icon: '⚡', label: 'Procedural Generation', desc: 'Levels and content are generated uniquely each playthrough.' },
     { icon: '🪐', label: 'Planetary Gravity Boosts', desc: 'Gain speed by slingshotting around planets.' },

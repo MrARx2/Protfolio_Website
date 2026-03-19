@@ -26,5 +26,5 @@ export const personalInfo = {
       label: "X (formerly Twitter)"
     }
   },
-  resume: "/resume.pdf"
+  resume: "/Resume/Ariel Cohen Resume.pdf"
 };

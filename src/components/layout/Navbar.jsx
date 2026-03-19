@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { personalInfo } from '../../data/personalInfo';
+import ResumeModal from './ResumeModal';
 
 function Navbar({ onHomeClick }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showResume, setShowResume] = useState(false);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -113,16 +115,27 @@ function Navbar({ onHomeClick }) {
         <a
           href={personalInfo.resume}
           className="nav-link nav-resume-btn"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={(e) => {
+            e.preventDefault();
+            setShowResume(true);
+            setMobileMenuOpen(false);
+          }}
         >
-          <span role="img" aria-label="Download" style={{ filter: 'grayscale(1)', fontSize: '1.1em', marginRight: '0.5em' }}>
-            🡇
-          </span>
+          <img 
+            src="/images/icons/icons8-document-100.png" 
+            alt="Document Icon" 
+            style={{ width: '22px', height: '22px' }} 
+          />
           Resume
         </a>
       </div>
+      
+      {showResume && (
+        <ResumeModal 
+          resumeUrl={personalInfo.resume} 
+          onClose={() => setShowResume(false)} 
+        />
+      )}
     </nav>
   );
 }

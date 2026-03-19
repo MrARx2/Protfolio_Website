@@ -209,8 +209,81 @@ function ProjectDetail({ project, onBack, onImageClick }) {
           </div>
         )}
 
-        {/* Team Credits Section */}
-        {hasTeamCredit && (
+        {/* Team Credits Section - Data-driven */}
+        {project.teamCredits && (
+          <div style={{
+            marginTop: '3em',
+            padding: '1.5em',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            textAlign: 'left'
+          }}>
+            <h3 style={{
+              color: '#00eaff',
+              fontSize: '1.2rem',
+              marginBottom: '0.8em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5em'
+            }}>
+              <span>🤝</span>
+              Team Collaboration
+            </h3>
+            <p style={{
+              color: '#b6b6d6',
+              lineHeight: '1.6',
+              marginBottom: '1.2em'
+            }}>
+              {project.teamCredits.intro}
+            </p>
+            {project.teamCredits.members.map((member, idx) => (
+              <div key={idx} style={{ marginBottom: idx < project.teamCredits.members.length - 1 ? '1.2em' : '0.8em' }}>
+                <p style={{
+                  color: '#b6b6d6',
+                  lineHeight: '1.6',
+                  marginBottom: '0.6em'
+                }}>
+                  <strong style={{ color: '#00eaff' }}>{member.name}</strong> — {member.description}
+                </p>
+                {member.linkedin && (
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5em',
+                      color: '#00bfff',
+                      textDecoration: 'none',
+                      fontSize: '0.95rem',
+                      padding: '0.5em 1em',
+                      background: 'rgba(0, 191, 255, 0.1)',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(0, 191, 255, 0.3)',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(0, 191, 255, 0.2)';
+                      e.currentTarget.style.borderColor = 'rgba(0, 191, 255, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(0, 191, 255, 0.1)';
+                      e.currentTarget.style.borderColor = 'rgba(0, 191, 255, 0.3)';
+                    }}
+                  >
+                    <span>🔗</span>
+                    Connect with {member.name.split(' ')[0]} on LinkedIn
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Legacy Team Credits Section - Jack Lavy (for team=2 projects) */}
+        {hasTeamCredit && !project.teamCredits && (
           <div style={{
             marginTop: '3em',
             padding: '1.5em',
