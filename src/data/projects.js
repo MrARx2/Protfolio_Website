@@ -46,8 +46,7 @@ export const gameProjects = [
         },
         {
           name: "Ido Korliker",
-          description: "Ido Korliker focused on visual effects and 3D asset creation. He developed the VFX that enhance gameplay clarity and impact, and was responsible for modeling the main character, miniboss, and various map assets, contributing significantly to the game's visual depth and overall presentation.",
-          linkedin: "https://www.linkedin.com/in/ido-korliker/"
+          description: "Ido Korliker focused on visual effects and 3D asset creation. He developed the VFX that enhance gameplay clarity and impact, and was responsible for modeling the main character, miniboss, and various map assets, contributing significantly to the game's visual depth and overall presentation."
         }
       ]
     }
