@@ -114,8 +114,8 @@ function App() {
       <Suspense fallback={<LoadingSpinner />}>
         <AnimatedDotsBg />
         <Navbar onHomeClick={goHome} />
+        {!selected && <AboutSection />}
         <div className="container">
-          {!selected && <AboutSection />}
           {!selected && <h1 id="projects">Creative Technology Showcase</h1>}
           {!selected && (
             <>
@@ -145,8 +145,8 @@ function App() {
                   aria-selected={tab === "scenes"}
                   aria-controls="projects-panel"
                 >
-                  <span className="tab-text-full">Scenes & Environments</span>
-                  <span className="tab-text-mobile">Environments</span>
+                  <span className="tab-text-full">Scenes</span>
+                  <span className="tab-text-mobile">Scenes</span>
                 </button>
               </div>
               <div id="projects-panel" role="tabpanel">

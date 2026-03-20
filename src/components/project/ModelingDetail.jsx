@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function ModelingDetail({ project, onBack, onImageClick }) {
+function ModelingDetail({ project, onImageClick }) {
   const [imagesLoaded, setImagesLoaded] = useState({});
 
   const handleImageLoad = (key) => {
@@ -15,15 +15,6 @@ function ModelingDetail({ project, onBack, onImageClick }) {
 
   return (
     <div className="modeling-detail">
-      {/* Back Button */}
-      <button
-        className="back-btn modeling-back-btn"
-        onClick={onBack}
-        aria-label="Go back to modeling projects"
-      >
-        &larr; Back
-      </button>
-
       {/* Header Section */}
       <div className="modeling-detail-header">
         <h1 className="modeling-detail-title">{project.title}</h1>

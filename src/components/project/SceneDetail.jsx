@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toEmbedUrl } from '../../utils/youtubeHelpers';
 
-function SceneDetail({ project, onBack, onImageClick }) {
+function SceneDetail({ project, onImageClick }) {
   const [imagesLoaded, setImagesLoaded] = useState({});
 
   const handleImageLoad = (key) => {
@@ -13,15 +13,6 @@ function SceneDetail({ project, onBack, onImageClick }) {
 
   return (
     <div className="scene-detail">
-      {/* Back Button */}
-      <button
-        className="back-btn scene-back-btn"
-        onClick={onBack}
-        aria-label="Go back to scenes"
-      >
-        &larr; Back
-      </button>
-
       {/* Header */}
       <div className="scene-detail-header">
         <h1 className="scene-detail-title">{project.title}</h1>
@@ -62,7 +53,7 @@ function SceneDetail({ project, onBack, onImageClick }) {
             <h2 className="section-title">Environment Showcase</h2>
             <div className="section-divider"></div>
             <p className="section-description">
-              High-resolution screenshots capturing the atmosphere and detail of this environment
+              Capturing the atmosphere and detail of this environment
             </p>
           </div>
           <div className="scene-gallery">
@@ -112,9 +103,6 @@ function SceneDetail({ project, onBack, onImageClick }) {
               <span className="cool-badge">✨ Cool Features</span>
             </h2>
             <div className="section-divider section-divider-special"></div>
-            <p className="section-description">
-              Advanced technologies and techniques that bring this environment to life
-            </p>
           </div>
           {coolFeatures.map((feature, idx) => (
             <div key={`feature-${idx}`} className="cool-feature-card">
@@ -135,7 +123,6 @@ function SceneDetail({ project, onBack, onImageClick }) {
                       onImageClick([feature.image], 0);
                     }
                   }}
-                  aria-label={`View ${feature.title} visualization`}
                 >
                   {!imagesLoaded[`feature-${idx}`] && (
                     <div className="skeleton-loader" aria-label="Loading image"></div>
@@ -146,12 +133,7 @@ function SceneDetail({ project, onBack, onImageClick }) {
                     className="cool-feature-image"
                     onLoad={() => handleImageLoad(`feature-${idx}`)}
                     style={{ opacity: imagesLoaded[`feature-${idx}`] ? 1 : 0 }}
-                    loading="lazy"
                   />
-                  <div className="photo-overlay">
-                    <span className="zoom-icon">🔍</span>
-                    <span className="photo-label">Click to enlarge</span>
-                  </div>
                 </div>
               )}
             </div>
@@ -165,15 +147,11 @@ function SceneDetail({ project, onBack, onImageClick }) {
           <div className="section-header">
             <h2 className="section-title">Video Showcase</h2>
             <div className="section-divider"></div>
-            <p className="section-description">
-              Watch the environment come to life in this cinematic walkthrough
-            </p>
           </div>
           <div className="video-wrapper">
             <iframe
               src={toEmbedUrl(project.videoUrl)}
               title={`${project.title} video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           </div>

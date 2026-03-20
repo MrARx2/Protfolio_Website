@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { personalInfo } from '../../data/personalInfo';
 import ResumeModal from './ResumeModal';
 
 function Navbar({ onHomeClick }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
-    <nav className="navbar navbar-glass" role="navigation" aria-label="Main navigation">
-      <div className="navbar-left">
+    <nav className={`navbar ${isScrolled ? 'navbar-glass' : 'navbar-transparent'}`} role="navigation" aria-label="Main navigation">
+      <div className={`navbar-left ${isScrolled ? 'fade-in' : 'fade-out'}`}>
         <span
           className="navbar-title"
           role="button"

@@ -152,17 +152,8 @@
   top: 0 !important;
   margin-bottom: 32px;
   margin-left: 0;
-  display: block;
-  width: fit-content;
-  background: linear-gradient(270deg, #7f5cff, #00eaff, #7f5cff);
-  background-size: 400% 400%;
   z-index: 100;
   pointer-events: auto;
-}
-
-.scene-back-btn:hover {
-  background-position: 100% 50%;
-  box-shadow: 0 4px 16px rgba(127, 92, 255, 0.5);
 }
 
 /* Scene Header */

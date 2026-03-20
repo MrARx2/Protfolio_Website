@@ -52,26 +52,6 @@ export const gameProjects = [
     }
   },
   {
-    id: "slingshot",
-    title: "Slingshot",
-    summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
-    images: [
-      "/Images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
-      "/Images/Slingshot/Slingshot - checkpoint captured.jpg", // Gameplay
-      "/Images/Slingshot/Slingshot - Launch.jpg", // Gameplay
-      "/Images/Slingshot/Slingshot -midrace-red-planet.jpg", // Gameplay
-      "/Images/Slingshot/Menu.jpg", // UI
-      "/Images/Slingshot/End of round - Menu.jpg" // UI
-    ],
-    tags: ["Space", "Racer", "Procedural Tracks"],
-    youtube: "https://www.youtube.com/watch?v=4CMdh4ahHq4",
-    details: "Slingshot is a fast-paced space racing demo where players use planetary gravity to boost around procedurally generated tracks. Each race features 10 planets acting as checkpoints, color-coded to show your progress. With full 6-axis controls, you must hit checkpoints in order and master close flybys to gain momentum. Designed for expansion, the system supports unique curved tracks and an unlimited number of planets, offering huge potential for more complex and varied races.",
-    role: "Programmer",
-    team: "2",
-    time: "2 weeks",
-    engine: "Unity 6"
-  },
-  {
     id: "Ricochet",
     title: "Ricochet",
     summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
@@ -91,6 +71,26 @@ export const gameProjects = [
     team: "2",
     time: "2 months",
     engine: "Unreal Engine 5.5.4"
+  },
+  {
+    id: "slingshot",
+    title: "Slingshot",
+    summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
+    images: [
+      "/Images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
+      "/Images/Slingshot/Slingshot - checkpoint captured.jpg", // Gameplay
+      "/Images/Slingshot/Slingshot - Launch.jpg", // Gameplay
+      "/Images/Slingshot/Slingshot -midrace-red-planet.jpg", // Gameplay
+      "/Images/Slingshot/Menu.jpg", // UI
+      "/Images/Slingshot/End of round - Menu.jpg" // UI
+    ],
+    tags: ["Space", "Racer", "Procedural Tracks"],
+    youtube: "https://www.youtube.com/watch?v=4CMdh4ahHq4",
+    details: "Slingshot is a fast-paced space racing demo where players use planetary gravity to boost around procedurally generated tracks. Each race features 10 planets acting as checkpoints, color-coded to show your progress. With full 6-axis controls, you must hit checkpoints in order and master close flybys to gain momentum. Designed for expansion, the system supports unique curved tracks and an unlimited number of planets, offering huge potential for more complex and varied races.",
+    role: "Programmer",
+    team: "2",
+    time: "2 weeks",
+    engine: "Unity 6"
   },
   {
     id: "foxs-tale",
