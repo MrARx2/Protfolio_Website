@@ -67,53 +67,10 @@ export function useProjectSectionScroll(containerRef, isWindowScroll = false, on
       }
     };
 
-    let touchStartY = 0;
-    const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
-    const handleTouchEnd = (e) => { 
-      const deltaText = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(deltaText) > 40) handleScrollSnap(deltaText);
-    };
-
-    let isPointerDown = false;
-    let pointerStartY = 0;
-    const handlePointerDown = (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      // Don't hijack if user is clicking inside an interactive element
-      if (['A', 'BUTTON', 'INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-      isPointerDown = true;
-      pointerStartY = e.clientY;
-      // Prevent text selection start while dragging
-      document.body.style.userSelect = 'none';
-      document.body.style.cursor = 'grabbing';
-    };
-
-    const handlePointerUp = (e) => {
-      if (!isPointerDown) return;
-      isPointerDown = false;
-      document.body.style.userSelect = '';
-      document.body.style.cursor = '';
-      const deltaText = pointerStartY - e.clientY;
-      if (Math.abs(deltaText) > 40) handleScrollSnap(deltaText);
-    };
-
-    const handleDragStart = (e) => {
-      if (isPointerDown) e.preventDefault();
-    };
-
     container.addEventListener('wheel', handleWheel, { passive: true });
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
-    container.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointerup', handlePointerUp);
-    container.addEventListener('dragstart', handleDragStart);
     
     return () => {
       container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchend', handleTouchEnd);
-      container.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointerup', handlePointerUp);
-      container.removeEventListener('dragstart', handleDragStart);
       // Ensure styles are cleaned up
       document.body.style.userSelect = '';
       document.body.style.cursor = '';

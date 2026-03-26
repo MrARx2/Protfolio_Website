@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { mechanicsData } from '../../data/projects';
 import { toEmbedUrl } from '../../utils/youtubeHelpers';
 import ModelingDetail from './ModelingDetail';
@@ -11,6 +11,14 @@ function ProjectDetail({ project, onBack, onImageClick }) {
 
   // Unified scroll hook for all project types (snapping ON, wheel OFF, swipe-down-to-close OFF)
   useProjectSectionScroll(backdropRef, false, null, true, false);
+
+  useEffect(() => {
+    // Hide scrollbar on body when project detail is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   const handleBackdropClick = (e) => {
     // Only close if clicking the backdrop itself, not its children
@@ -45,7 +53,9 @@ function ProjectDetail({ project, onBack, onImageClick }) {
           onClick={onBack}
           aria-label="Go back to projects"
         >
-          &larr; Back
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
 
         {project.type === 'modeling' ? (

@@ -44,71 +44,10 @@ function AboutSection() {
       }
     };
 
-    const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e) => {
-      handleSwipe(touchStartY.current, e.changedTouches[0].clientY);
-    };
-
-    const handlePointerDown = (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      isMouseDownRef.current = true;
-      mouseStartY.current = e.clientY;
-      document.body.style.userSelect = 'none';
-      document.body.style.cursor = 'grabbing';
-    };
-
-    const handlePointerUp = (e) => {
-      if (!isMouseDownRef.current) return;
-      isMouseDownRef.current = false;
-      document.body.style.userSelect = '';
-      document.body.style.cursor = '';
-      handleSwipe(mouseStartY.current, e.clientY);
-    };
-
-    const handleDragStart = (e) => {
-      if (isMouseDownRef.current) e.preventDefault();
-    };
-
-    const handleSwipe = (startY, endY) => {
-      if (isScrollingRef.current) return;
-      const projectsSection = document.getElementById('projects');
-      if (!projectsSection) return;
-
-      const yOffset = -90; 
-      const projectsY = projectsSection.getBoundingClientRect().top + window.scrollY + yOffset;
-      const swipeDistance = startY - endY;
-
-      // Swipe Up (Scroll Down)
-      if (window.scrollY < 50 && swipeDistance > 40) {
-        isScrollingRef.current = true;
-        window.scrollTo({ top: projectsY, behavior: 'smooth' });
-        setTimeout(() => { isScrollingRef.current = false; }, 800);
-      }
-      // Swipe Down (Scroll Up)
-      else if (window.scrollY > 0 && window.scrollY <= projectsY + 50 && swipeDistance < -40) {
-        isScrollingRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => { isScrollingRef.current = false; }, 800);
-      }
-    };
-
     window.addEventListener('wheel', handleGlobalWheel, { passive: true });
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointerup', handlePointerUp);
-    window.addEventListener('dragstart', handleDragStart);
     
     return () => {
       window.removeEventListener('wheel', handleGlobalWheel);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('dragstart', handleDragStart);
       document.body.style.userSelect = '';
       document.body.style.cursor = '';
     };
@@ -126,11 +65,12 @@ function AboutSection() {
           <h1 className="hero-name">{personalInfo.name}</h1>
           <h2 className="hero-role">{personalInfo.role}</h2>
         </div>
-        <p className="hero-value-prop">{personalInfo.bio}</p>
-      </div>
-      
-      <div className="hero-scroll-indicator" onClick={scrollToProjects} style={{ cursor: 'pointer' }}>
-        <div className="hero-mouse"></div>
+        <div className="hero-bottom-group">
+          <p className="hero-value-prop">{personalInfo.bio}</p>
+          <div className="hero-scroll-indicator" onClick={scrollToProjects} style={{ cursor: 'pointer' }}>
+            <div className="hero-mouse"></div>
+          </div>
+        </div>
       </div>
     </section>
   );
