@@ -136,7 +136,7 @@ function App() {
                   aria-selected={tab === "modeling"}
                   aria-controls="projects-panel"
                 >
-                  Modeling
+                  3D Modeling
                 </button>
                 <button
                   className={`tab-scenes ${tab === "scenes" ? "active" : ""}`}
