@@ -92,6 +92,7 @@ export const gameProjects = [
     time: "2 weeks",
     engine: "Unity 6"
   },
+  /*
   {
     id: "foxs-tale",
     title: "Fox's Tale",
@@ -112,6 +113,7 @@ export const gameProjects = [
     time: "1 week",
     engine: "Unity 6"
   }
+  */
 ];
 
 /* ===== 3D MODELING PROJECTS ===== */
@@ -176,6 +178,7 @@ export const modelingProjects = [
     type: 'modeling',
     details: 'Realistic dagger model with focus on material accuracy and detailed surface work. Modeled in Maya and rendered in Unreal Engine 5.'
   },
+  /*
   {
     id: 'stormbird-lowpoly',
     title: 'Stormbird LowPoly',
@@ -204,6 +207,7 @@ export const modelingProjects = [
     type: 'modeling',
     details: 'Inspired by the majestic Stormbird from Horizon Zero Dawn, this low-poly interpretation captures the essence of the mechanical creature while embracing a stylized, minimalist aesthetic. The project showcases clean topology optimized for game engines, with careful attention to silhouette and form. By reducing detail and focusing on bold shapes, this freestyle take brings a fresh perspective to the iconic design, balancing recognizable elements with creative reinterpretation. The model demonstrates efficient polygon usage while maintaining visual impact, making it ideal for real-time applications.'
   }
+  */
 ];
 
 /* ===== SCENES & ENVIRONMENTS PROJECTS ===== */
@@ -265,6 +269,7 @@ export const mechanicsData = {
     { icon: '🌈', label: 'Arcade Neon Visuals', desc: 'Emissive environments and players for a high-energy feel.' },
     { icon: '🔊', label: 'Immersive Feedback', desc: 'Dynamic VFX and SFX for every hit and goal.' }
   ],
+  /*
   'foxs-tale': [
     { icon: '🕹️', label: 'Jump-to-Eliminate Combat', desc: 'Defeat enemies by landing on them, classic platformer style.' },
     { icon: '🛠️', label: 'Environmental Interactables', desc: 'Use levers, moving platforms, or traps to eliminate enemies or clear obstacles.' },
@@ -272,4 +277,5 @@ export const mechanicsData = {
     { icon: '🎯', label: 'Precision Platforming', desc: 'Responsive jump and movement physics for fluid control.' },
     { icon: '🔔', label: 'Visual Feedback', desc: 'Clear cues for lives, enemy states, and interactable objects.' }
   ]
+  */
 };
