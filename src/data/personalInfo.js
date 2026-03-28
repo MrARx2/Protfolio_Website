@@ -22,7 +22,7 @@ export const personalInfo = {
       label: "LinkedIn"
     },
     x: {
-      url: "https://twitter.com/arielcohen",
+      url: "https://x.com/GamingMrar",
       label: "X (formerly Twitter)"
     }
   },
