@@ -2,7 +2,7 @@
  * Main Application Component
  * 
  * This is the root component that manages:
- * - Tab navigation (Games, Modeling, Scenes)
+ * - Filter navigation (All, Games, Modeling, Scenes)
  * - Project selection and detail views
  * - Image modal/lightbox
  * - Browser history integration
@@ -41,21 +41,36 @@ function LoadingSpinner() {
 }
 
 /**
+ * Category Section Component
+ * Renders a section header + card grid for a project category
+ */
+function CategorySection({ id, icon, title, children, accentClass }) {
+  return (
+    <section className={`category-section ${accentClass || ''}`} id={id}>
+      <div className="category-header">
+        <span className="category-icon">{icon}</span>
+        <h2 className="category-title">{title}</h2>
+        <div className="category-divider"></div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/**
  * Main App Component
  * Handles all application state and routing
  */
 function App() {
   // State Management
-  const [tab, setTab] = useState("games"); // Current active tab
+  const [filter, setFilter] = useState("all"); // Current active filter
   const [selected, setSelected] = useState(null); // Currently selected project
   const [modal, setModal] = useState(null); // Image modal state
-  
-  // Get projects based on active tab
-  const projects = tab === "games" 
-    ? gameProjects 
-    : tab === "modeling" 
-    ? modelingProjects 
-    : sceneProjects;
+
+  // Determine which sections to show
+  const showGames = filter === "all" || filter === "games";
+  const showModeling = filter === "all" || filter === "modeling";
+  const showScenes = filter === "all" || filter === "scenes";
 
   /**
    * Browser Back Button Support
@@ -103,7 +118,7 @@ function App() {
    * Called when clicking logo or home button
    */
   function goHome() {
-    setTab('games');
+    setFilter('all');
     setSelected(null);
     setModal(null);
     window.history.pushState({}, '', '#projects');
@@ -119,55 +134,73 @@ function App() {
           {!selected && <h1 id="projects">Creative Technology Showcase</h1>}
           {!selected && (
             <>
-              <div className="tabs" role="tablist" aria-label="Project categories">
+              <div className="tabs" role="tablist" aria-label="Project filters">
                 <button
-                  className={`tab-games ${tab === "games" ? "active" : ""}`}
-                  onClick={() => setTab("games")}
+                  className={`tab-all ${filter === "all" ? "active" : ""}`}
+                  onClick={() => setFilter("all")}
                   role="tab"
-                  aria-selected={tab === "games"}
-                  aria-controls="projects-panel"
+                  aria-selected={filter === "all"}
+                >
+                  All
+                </button>
+                <button
+                  className={`tab-games ${filter === "games" ? "active" : ""}`}
+                  onClick={() => setFilter("games")}
+                  role="tab"
+                  aria-selected={filter === "games"}
                 >
                   Games
                 </button>
                 <button
-                  className={`tab-modeling ${tab === "modeling" ? "active" : ""}`}
-                  onClick={() => setTab("modeling")}
+                  className={`tab-modeling ${filter === "modeling" ? "active" : ""}`}
+                  onClick={() => setFilter("modeling")}
                   role="tab"
-                  aria-selected={tab === "modeling"}
-                  aria-controls="projects-panel"
+                  aria-selected={filter === "modeling"}
                 >
                   3D Modeling
                 </button>
                 <button
-                  className={`tab-scenes ${tab === "scenes" ? "active" : ""}`}
-                  onClick={() => setTab("scenes")}
+                  className={`tab-scenes ${filter === "scenes" ? "active" : ""}`}
+                  onClick={() => setFilter("scenes")}
                   role="tab"
-                  aria-selected={tab === "scenes"}
-                  aria-controls="projects-panel"
+                  aria-selected={filter === "scenes"}
                 >
-                  <span className="tab-text-full">Scenes</span>
-                  <span className="tab-text-mobile">Scenes</span>
+                  Scenes
                 </button>
               </div>
+
               <div id="projects-panel" role="tabpanel">
-                {tab === 'games' ? (
-                  <div className="card-grid">
-                    {projects.map((project, idx) => (
-                      <FrostedCard project={project} key={project.id || idx} onClick={setSelected} />
-                    ))}
-                  </div>
-                ) : tab === 'modeling' ? (
-                  <div className="modeling-grid">
-                    {projects.map((project, idx) => (
-                      <ModelingCard project={project} key={project.id || idx} onClick={setSelected} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="scene-grid">
-                    {projects.map((project, idx) => (
-                      <SceneCard project={project} key={project.id || idx} onClick={setSelected} />
-                    ))}
-                  </div>
+                {/* Games Section */}
+                {showGames && (
+                  <CategorySection id="games-section" icon="🎮" title="Games" accentClass="accent-games">
+                    <div className="card-grid">
+                      {gameProjects.map((project, idx) => (
+                        <FrostedCard project={project} key={project.id || idx} onClick={setSelected} />
+                      ))}
+                    </div>
+                  </CategorySection>
+                )}
+
+                {/* 3D Modeling Section */}
+                {showModeling && (
+                  <CategorySection id="modeling-section" icon="🧊" title="3D Modeling" accentClass="accent-modeling">
+                    <div className="modeling-grid">
+                      {modelingProjects.map((project, idx) => (
+                        <ModelingCard project={project} key={project.id || idx} onClick={setSelected} />
+                      ))}
+                    </div>
+                  </CategorySection>
+                )}
+
+                {/* Scenes Section */}
+                {showScenes && (
+                  <CategorySection id="scenes-section" icon="🌌" title="Scenes & Environments" accentClass="accent-scenes">
+                    <div className="scene-grid">
+                      {sceneProjects.map((project, idx) => (
+                        <SceneCard project={project} key={project.id || idx} onClick={setSelected} />
+                      ))}
+                    </div>
+                  </CategorySection>
                 )}
               </div>
             </>
