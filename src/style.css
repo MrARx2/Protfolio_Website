@@ -473,19 +473,19 @@ h1#projects::after {
 
 /* Accent colors per category */
 .accent-games .category-title {
-  background: linear-gradient(135deg, #00eaff, #00d4aa);
+  background: linear-gradient(135deg, #00eaff, #008fb3);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
 .accent-modeling .category-title {
-  background: linear-gradient(135deg, #a78bfa, #7f5cff);
+  background: linear-gradient(135deg, #48d486, #269e50);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
 .accent-scenes .category-title {
-  background: linear-gradient(135deg, #00eaff, #6366f1);
+  background: linear-gradient(135deg, #7f5cff, #4a2f8a);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -498,15 +498,15 @@ h1#projects::after {
 }
 
 .accent-games .category-divider {
-  background: linear-gradient(90deg, rgba(0, 234, 255, 0.3), rgba(0, 212, 170, 0.05));
+  background: linear-gradient(90deg, rgba(0, 234, 255, 0.3), rgba(0, 143, 179, 0.05));
 }
 
 .accent-modeling .category-divider {
-  background: linear-gradient(90deg, rgba(167, 139, 250, 0.3), rgba(127, 92, 255, 0.05));
+  background: linear-gradient(90deg, rgba(72, 212, 134, 0.3), rgba(38, 158, 80, 0.05));
 }
 
 .accent-scenes .category-divider {
-  background: linear-gradient(90deg, rgba(0, 234, 255, 0.3), rgba(99, 102, 241, 0.05));
+  background: linear-gradient(90deg, rgba(127, 92, 255, 0.3), rgba(74, 47, 138, 0.05));
 }
 
 .tabs {
