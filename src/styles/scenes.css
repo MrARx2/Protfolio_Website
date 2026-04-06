@@ -192,8 +192,8 @@
 .scene-meta-info {
   display: flex;
   justify-content: center;
-  gap: 32px;
-  margin: 28px 0;
+  gap: 12px;
+  margin: 20px 0;
   flex-wrap: wrap;
 }
 
@@ -201,13 +201,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 18px 32px;
+  gap: 6px;
+  padding: 10px 20px;
   background: rgba(127, 92, 255, 0.1);
-  border-radius: 16px;
-  border: 2px solid rgba(127, 92, 255, 0.2);
-  min-width: 160px;
+  border-radius: 12px;
+  border: 1px solid rgba(127, 92, 255, 0.2);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(127, 92, 255, 0.08);
 }
 
 .scene-detail-header .scene-meta-item:hover {
@@ -219,23 +219,23 @@
 .scene-detail-header .scene-meta-item .meta-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .scene-detail-header .scene-meta-item .meta-icon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .scene-detail-header .scene-meta-item .meta-label {
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   color: #b8a8ff;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   font-weight: 700;
 }
 
 .scene-detail-header .scene-meta-item .meta-value {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #ffffff;
   font-weight: 800;
 }
@@ -479,7 +479,12 @@
   }
 
   .scene-meta-info {
-    gap: 18px;
+    gap: 12px;
+  }
+
+  .scene-detail-header .scene-meta-item {
+    padding: 8px 16px;
+    min-width: 0;
   }
 
   .cool-feature-card {
@@ -505,12 +510,15 @@
   }
 
   .scene-meta-info {
-    flex-direction: column;
-    gap: 14px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .scene-detail-header .scene-meta-item {
-    width: 100%;
+    width: auto;
+    flex: 1 1 calc(50% - 8px);
+    padding: 8px 12px;
   }
 }
 
@@ -556,22 +564,23 @@
   }
   
   .scene-meta-info {
-    gap: 16px;
-    flex-direction: column;
+    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
     max-width: 100%;
-    padding: 0 8px;
+    padding: 0 4px;
   }
   
   .scene-detail-header .scene-meta-item {
     min-width: 0;
     max-width: 100%;
     width: 100%;
-    padding: 14px 16px;
+    padding: 10px 14px;
     box-sizing: border-box;
   }
   
   .scene-detail-header .scene-meta-item .meta-value {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
@@ -580,7 +589,7 @@
   }
   
   .scene-detail-header .scene-meta-item .meta-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 }
 
