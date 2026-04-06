@@ -465,29 +465,22 @@ h1#projects::after {
   letter-spacing: 0.5px;
   margin: 0;
   white-space: nowrap;
-  background: linear-gradient(135deg, #00eaff, #7ecbff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Accent colors per category */
 .accent-games .category-title {
-  background: linear-gradient(135deg, #00eaff, #008fb3);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #00eaff;
+  text-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
 }
 
 .accent-modeling .category-title {
-  background: linear-gradient(135deg, #48d486, #269e50);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #48d486;
+  text-shadow: 0 0 15px rgba(72, 212, 134, 0.4);
 }
 
 .accent-scenes .category-title {
-  background: linear-gradient(135deg, #7f5cff, #4a2f8a);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #a58dfc;
+  text-shadow: 0 0 15px rgba(127, 92, 255, 0.4);
 }
 
 .category-divider {
