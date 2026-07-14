@@ -12,6 +12,7 @@ export const gameProjects = [
   {
     id: "path-of-embers",
     title: "Path of Embers",
+    thumbnail: "/Images/Path Of Embers/Gameplay4.jpg",
     summary: "Path of Embers is a fast-paced roguelike action mobile game where you battle through unique, procedurally generated arenas. Master combat and movement, adapt to new hazards in every run, and experience fluid 60 FPS gameplay built entirely from scratch.",
     images: [
       "/Images/Path Of Embers/MainMenu.jpg",
@@ -29,8 +30,16 @@ export const gameProjects = [
       "/Images/Path Of Embers/InGameMenu.jpg",
       "/Images/Path Of Embers/SoundSettings.jpg"
     ],
+    galleryPresentation: "phone-showcase",
+    galleryGroups: [
+      { label: "Gameplay & game flow", indexes: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] },
+      { label: "Menus & progression", indexes: [10, 11, 12, 13] }
+    ],
     tags: ["Roguelike", "Fantasy", "Action", "Mobile"],
-    youtube: "https://www.youtube.com/watch?v=dq5IcuCCCZE",
+    youtube: "https://youtube.com/shorts/dq5IcuCCCZE?si=XXSu6e6ErcHqHsTS",
+    videoAspectRatio: "6 / 13",
+    videoAspectLabel: "9:19.5",
+    videoCaptureLabel: "Galaxy S24+ · 1440 × 3120",
     details: "Path of Embers is a fast-paced roguelike action mobile game where players battle through procedurally generated arenas, mastering combat, movement, and strategic decision-making. Each run introduces a new layout filled with enemies, hazards, and opportunities, encouraging players to adapt and refine their approach with every attempt. Designed for a smooth and responsive 60 FPS experience, the game emphasizes performance, precision, and fluid gameplay on mobile devices.\n\nAll assets were created from scratch, including 3D models, visual effects, audio, and gameplay systems, resulting in a cohesive and fully original experience. Built with scalability in mind, Path of Embers supports expanding content, more complex encounters, and deeper mechanics, offering strong potential for future development and replayability.",
     role: "Programmer / Technical Artist",
     team: "3",
@@ -54,6 +63,7 @@ export const gameProjects = [
   {
     id: "Ricochet",
     title: "Ricochet",
+    thumbnail: "/Images/Ricochet/Mid-Match.jpg",
     summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
     images: [
       "/Images/Ricochet/Intro.jpg", // Logo/Title screen first
@@ -75,6 +85,7 @@ export const gameProjects = [
   {
     id: "slingshot",
     title: "Slingshot",
+    thumbnail: "/Images/Slingshot/Slingshot -midrace-red-planet.jpg",
     summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
     images: [
       "/Images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
@@ -121,6 +132,7 @@ export const modelingProjects = [
   {
     id: 'cozmo-robot',
     title: 'Cozmo Robot',
+    thumbnail: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
     summary: 'Portfolio project: stylized Cozmo robot modeled, textured and rendered.',
     renders: [
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
@@ -154,6 +166,7 @@ export const modelingProjects = [
   {
     id: 'rainbow-dagger',
     title: 'Rainbow Dagger',
+    thumbnail: '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png',
     summary: 'Realistic dagger with detailed materials and PBR texturing, designed for a more grounded aesthetic.',
     renders: [
       '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png',
@@ -215,6 +228,7 @@ export const sceneProjects = [
   {
     id: 'star-wars-scene',
     title: 'Star Wars Scene',
+    thumbnail: '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png',
     summary: 'Cinematic environment recreation featuring advanced Unreal Engine 5 technologies including Nanite virtualized geometry.',
     images: [
       '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png',
@@ -246,12 +260,12 @@ export const sceneProjects = [
  */
 export const mechanicsData = {
   'path-of-embers': [
-    { icon: '⚔️', label: 'Procedural Arena Generation', desc: 'Each run features dynamically generated arenas, ensuring unique combat scenarios every playthrough.' },
-    { icon: '🔥', label: 'Action Combat System', desc: 'Fast-paced, responsive combat focused on movement, timing, and positioning against multiple enemies.' },
-    { icon: '🧠', label: 'Dynamic AI Behavior', desc: 'Enemies react and adapt to the player, creating unpredictable and engaging encounters.' },
-    { icon: '📈', label: 'Run-Based Progression', desc: 'Progress through each run by overcoming encounters, improving skill, and adapting strategies on the fly.' },
-    { icon: '🎮', label: 'Mobile-Optimized Controls', desc: 'Designed for smooth and intuitive input, delivering a consistent and responsive 60 FPS gameplay experience.' },
-    { icon: '🛠️', label: 'Fully Original Assets Pipeline', desc: 'All visuals, audio, and systems were built from scratch, ensuring a cohesive and scalable foundation for future expansion.' }
+    { icon: '🎲', label: 'Roguelike Talent System', desc: 'Each run is shaped by stackable Common, Rare, and Legendary talents, enabling focused synergies and increasingly powerful builds.' },
+    { icon: '🗺️', label: 'Performance-Aware Map System', desc: 'Maintains only the two or three map segments nearest the player and suspends distant enemy AI. This preserves seamless progression through a 16 segment map while keeping mobile performance stable.' },
+    { icon: '🛒', label: 'Strategic Talent Economy', desc: 'Players balance targeted shop purchases against overflowing the coin bar. An overflow grants a talent of a random tier from the Talent Wheel, making even enemy engagement a strategic choice.' },
+    { icon: '👾', label: 'Distinct Enemy Archetypes', desc: 'Five specialized enemies include the Chaser, Sniper, Bomber, Miniboss, and Final Boss. Each creates different threats and combat priorities throughout the run.' },
+    { icon: '👑', label: 'Distinct Boss Encounters', desc: 'The miniboss fires a fireball from its staff when the player is visible and summons meteors when line of sight is blocked. The final boss has three health bars and serves as the run’s ultimate challenge.' },
+    { icon: '🎨', label: 'Fully Original Art Pipeline', desc: 'Every environment uses original models, textures, and shaders created in Maya and Blender, giving the game a cohesive, handcrafted visual identity.' }
   ],
   'slingshot': [
     { icon: '⚡', label: 'Procedural Generation', desc: 'Levels and content are generated uniquely each playthrough.' },

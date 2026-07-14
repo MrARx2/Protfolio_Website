@@ -2,7 +2,7 @@
 export const personalInfo = {
   name: "Ariel Cohen",
   role: "Game Developer",
-  bio: "Game programmer specializing in systems and gameplay, with a focus on clean, efficient code and interactive experiences that blend technology and creativity.",
+  bio: "Game programmer building clean systems and memorable interactive experiences.",
   avatar: "https://i.ibb.co/v67zkd7L/20190419-175428.jpg",
   skills: [
     'Game Dev',

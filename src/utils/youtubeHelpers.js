@@ -1,17 +1,42 @@
-// Convert YouTube watch URL (or short URL) to embed URL
-export function toEmbedUrl(url) {
-  if (!url) return '';
+function getYouTubeVideoId(url) {
+  if (!url) return "";
+
   try {
     const u = new URL(url);
-    let id = '';
-    if (u.hostname.includes('youtube.com')) {
-      id = u.searchParams.get('v');
-    } else if (u.hostname === 'youtu.be') {
-      id = u.pathname.slice(1);
+    if (u.hostname.includes("youtube.com")) {
+      if (u.pathname.startsWith("/shorts/")) {
+        return u.pathname.split("/")[2] || "";
+      }
+
+      return u.searchParams.get("v") || "";
     }
-    if (!id) return url;
-    return `https://www.youtube.com/embed/${id}`;
-  } catch (e) {
+
+    if (u.hostname === "youtu.be") {
+      return u.pathname.slice(1).split("/")[0];
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
+// Convert YouTube watch, Shorts, or youtu.be URLs to the standard embed player.
+export function toEmbedUrl(url) {
+  const id = getYouTubeVideoId(url);
+  if (!id) {
     return url;
+  }
+
+  return `https://www.youtube.com/embed/${id}?rel=0`;
+}
+
+export function isYouTubeShortUrl(url) {
+  if (!url) return false;
+
+  try {
+    return new URL(url).pathname.startsWith("/shorts/");
+  } catch {
+    return false;
   }
 }

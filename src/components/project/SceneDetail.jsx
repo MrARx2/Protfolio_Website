@@ -1,167 +1,101 @@
-import React, { useState } from 'react';
-import { toEmbedUrl } from '../../utils/youtubeHelpers';
+import React from "react";
+import { toEmbedUrl } from "../../utils/youtubeHelpers";
+import ProjectGallery from "./ProjectGallery";
 
 function SceneDetail({ project, onImageClick }) {
-  const [imagesLoaded, setImagesLoaded] = useState({});
-
-  const handleImageLoad = (key) => {
-    setImagesLoaded(prev => ({ ...prev, [key]: true }));
-  };
-
-  const images = project.images || [];
   const coolFeatures = project.coolFeatures || [];
+  const collections = [
+    {
+      id: "environment",
+      label: "Environment",
+      images: project.images || []
+    },
+    {
+      id: "technical",
+      label: "Technical views",
+      images: coolFeatures.map((feature) => feature.image).filter(Boolean)
+    }
+  ];
 
   return (
     <div className="scene-detail">
-      {/* Header */}
-      <div className="scene-detail-header">
+      <header className="scene-detail-header">
+        <span className="project-eyebrow">Environment case study</span>
         <h1 className="scene-detail-title">{project.title}</h1>
         <p className="scene-detail-summary">{project.summary}</p>
 
-        {/* Meta Info */}
         <div className="scene-meta-info">
           <div className="scene-meta-item">
-            <div className="meta-row">
-              <span className="meta-icon" aria-hidden="true">⏱️</span>
-              <span className="meta-label">Time:</span>
-            </div>
+            <span className="meta-label">Duration</span>
             <span className="meta-value">{project.time}</span>
           </div>
           <div className="scene-meta-item">
-            <div className="meta-row">
-              <span className="meta-icon" aria-hidden="true">🎮</span>
-              <span className="meta-label">Engine:</span>
-            </div>
+            <span className="meta-label">Engine</span>
             <span className="meta-value">{project.engine}</span>
           </div>
         </div>
 
-        {/* Tags */}
-        {project.tags && project.tags.length > 0 && (
+        {project.tags?.length > 0 && (
           <div className="scene-tags-container">
-            {project.tags.map((tag, i) => (
-              <span className="tag scene-tag" key={i}>{tag}</span>
-            ))}
+            {project.tags.map((tag) => <span className="tag scene-tag" key={tag}>{tag}</span>)}
           </div>
         )}
-      </div>
+      </header>
 
-      {/* Main Gallery */}
-      {images.length > 0 && (
-        <section className="scene-section">
-          <div className="section-header">
-            <h2 className="section-title">Environment Showcase</h2>
-            <div className="section-divider"></div>
-            <p className="section-description">
-              Capturing the atmosphere and detail of this environment
-            </p>
-          </div>
-          <div className="scene-gallery">
-            {images.map((img, idx) => (
-              <div 
-                key={`img-${idx}`} 
-                className="scene-photo-card"
-                onClick={() => onImageClick(images, idx)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onImageClick(images, idx);
-                  }
-                }}
-                aria-label={`View ${project.title} image ${idx + 1} in full screen`}
-              >
-                <div className="photo-wrapper">
-                  {!imagesLoaded[`img-${idx}`] && (
-                    <div className="skeleton-loader" aria-label="Loading image"></div>
-                  )}
-                  <img
-                    src={img}
-                    alt={`${project.title} screenshot ${idx + 1}`}
-                    className="scene-photo"
-                    onLoad={() => handleImageLoad(`img-${idx}`)}
-                    style={{ opacity: imagesLoaded[`img-${idx}`] ? 1 : 0 }}
-                    loading="lazy"
-                  />
-                  <div className="photo-overlay">
-                    <span className="zoom-icon">🔍</span>
-                    <span className="photo-label">Click to enlarge</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Cool Features Section */}
-      {coolFeatures.length > 0 && (
-        <section className="scene-section cool-features-section">
-          <div className="section-header">
-            <h2 className="section-title">
-              <span className="cool-badge">✨ Cool Features</span>
-            </h2>
-            <div className="section-divider section-divider-special"></div>
-          </div>
-          {coolFeatures.map((feature, idx) => (
-            <div key={`feature-${idx}`} className="cool-feature-card">
-              <div className="cool-feature-header">
-                <span className="cool-feature-icon">{feature.icon}</span>
-                <h3 className="cool-feature-title">{feature.title}</h3>
-              </div>
-              <p className="cool-feature-description">{feature.description}</p>
-              {feature.image && (
-                <div 
-                  className="cool-feature-image-wrap"
-                  onClick={() => onImageClick([feature.image], 0)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onImageClick([feature.image], 0);
-                    }
-                  }}
-                >
-                  {!imagesLoaded[`feature-${idx}`] && (
-                    <div className="skeleton-loader" aria-label="Loading image"></div>
-                  )}
-                  <img
-                    src={feature.image}
-                    alt={`${feature.title} visualization`}
-                    className="cool-feature-image"
-                    onLoad={() => handleImageLoad(`feature-${idx}`)}
-                    style={{ opacity: imagesLoaded[`feature-${idx}`] ? 1 : 0 }}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </section>
-      )}
-
-      {/* Video Section */}
       {project.videoUrl && (
-        <section className="scene-section">
+        <section className="case-study-section scene-video-section">
           <div className="section-header">
-            <h2 className="section-title">Video Showcase</h2>
-            <div className="section-divider"></div>
+            <span className="section-kicker">Watch it in motion</span>
+            <h2 className="section-title">Video showcase</h2>
+            <p className="section-description">A cinematic pass through the environment, lighting, and final composition.</p>
           </div>
           <div className="video-wrapper">
             <iframe
               src={toEmbedUrl(project.videoUrl)}
               title={`${project.title} video`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
-            ></iframe>
+              loading="lazy"
+            />
           </div>
         </section>
       )}
 
-      {/* Details Section */}
       {project.details && (
-        <section className="scene-details-section">
+        <section className="case-study-section scene-overview-section">
+          <div className="section-header">
+            <span className="section-kicker">The environment</span>
+            <h2 className="section-title">Overview</h2>
+          </div>
           <p className="scene-details-text">{project.details}</p>
+        </section>
+      )}
+
+      <ProjectGallery
+        title="Environment gallery"
+        description="A focused viewer for the finished scene and its technical visualization. Open any frame when you want the full-resolution detail."
+        projectTitle={project.title}
+        collections={collections}
+        onImageClick={onImageClick}
+      />
+
+      {coolFeatures.length > 0 && (
+        <section className="case-study-section cool-features-section">
+          <div className="section-header">
+            <span className="section-kicker">Technical focus</span>
+            <h2 className="section-title">Under the surface</h2>
+          </div>
+          <div className="cool-features-grid">
+            {coolFeatures.map((feature) => (
+              <article className="cool-feature-card" key={feature.title}>
+                <div className="cool-feature-header">
+                  <span className="cool-feature-icon" aria-hidden="true">{feature.icon}</span>
+                  <h3 className="cool-feature-title">{feature.title}</h3>
+                </div>
+                <p className="cool-feature-description">{feature.description}</p>
+              </article>
+            ))}
+          </div>
         </section>
       )}
     </div>

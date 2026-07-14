@@ -1,136 +1,192 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-function ImageModal({ images, initialIndex = 0, onClose }) {
+function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
   const [index, setIndex] = useState(initialIndex);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const modalRef = useRef(null);
-  const total = images ? images.length : 0;
+  const closeButtonRef = useRef(null);
+  const imageContainerRef = useRef(null);
+  const touchStartX = useRef(null);
+  const total = images?.length || 0;
 
-  // Detect mobile
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+  const previous = useCallback(() => {
+    if (total < 2) return;
+    setIndex((current) => (current - 1 + total) % total);
+  }, [total]);
+
+  const next = useCallback(() => {
+    if (total < 2) return;
+    setIndex((current) => (current + 1) % total);
+  }, [total]);
+
+  const scrollPortraitImage = useCallback((direction) => {
+    const imageViewport = imageContainerRef.current;
+    if (!imageViewport) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    imageViewport.scrollBy({
+      top: direction * Math.max(180, imageViewport.clientHeight * 0.55),
+      behavior: reduceMotion ? "auto" : "smooth"
+    });
   }, []);
 
   useEffect(() => {
-    // Reset loaded state and zoom when image changes
+    setIndex(initialIndex);
+  }, [initialIndex, images]);
+
+  useEffect(() => {
     setImageLoaded(false);
     setIsZoomed(false);
+    if (imageContainerRef.current) imageContainerRef.current.scrollTop = 0;
   }, [index]);
 
   useEffect(() => {
-    function handleKey(e) {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') setIndex(i => Math.min(i + 1, total - 1));
-      if (e.key === 'ArrowLeft') setIndex(i => Math.max(i - 1, 0));
-    }
-    window.addEventListener('keydown', handleKey);
-    
-    // Focus trap
-    if (modalRef.current) {
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0];
-      firstElement?.focus();
-    }
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        next();
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        previous();
+      }
+      if (portrait && event.key === "ArrowUp") {
+        event.preventDefault();
+        scrollPortraitImage(-1);
+      }
+      if (portrait && event.key === "ArrowDown") {
+        event.preventDefault();
+        scrollPortraitImage(1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        setIndex(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        setIndex(total - 1);
+      }
+    };
 
-    // Prevent body scroll and save scroll position
-    const scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     return () => {
-      // Restore scroll position
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
-      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose, total]);
+  }, [next, onClose, portrait, previous, scrollPortraitImage, total]);
 
-  if (!images || images.length === 0) return null;
+  if (!images || total === 0) return null;
 
-  function prev() {
-    setIndex(i => (i - 1 + total) % total);
-  }
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
 
-  function next() {
-    setIndex(i => (i + 1) % total);
-  }
+  const handleTouchEnd = (event) => {
+    if (touchStartX.current === null) return;
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
+    const distance = endX - touchStartX.current;
+    if (distance > 55) previous();
+    if (distance < -55) next();
+    touchStartX.current = null;
+  };
 
   return (
     <div
-      ref={modalRef}
       className="image-modal"
       role="dialog"
       aria-modal="true"
-      aria-label="Image gallery"
-      onClick={(e) => {
-        // Close when clicking overlay (desktop only)
-        if (isMobile) return; // Disable background click on mobile
-        const t = e.target;
-        if (t.closest && (t.closest('.modal-image') || t.closest('.modal-nav-btn') || t.closest('.modal-close-btn'))) {
-          return;
-        }
-        onClose();
+      aria-label={`Full-screen project gallery.${portrait ? " Use up and down to scroll the image, and left and right to change images." : " Use left and right to change images."}`}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
       }}
     >
-      <button
-        className="modal-nav-btn modal-prev-btn"
-        onClick={prev}
-        aria-label="Previous image"
-        disabled={index === 0}
-      >
-        ◀
-      </button>
-      <div className="modal-image-wrapper">
-        <button
-          className="modal-close-btn"
-          onClick={onClose}
-          aria-label="Close gallery"
+      <div className="modal-shell">
+        <header className="modal-topbar">
+          <div>
+            <span className="modal-eyebrow">Full-resolution view</span>
+            <span className="modal-counter" aria-live="polite">
+              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
+          </div>
+          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close gallery" type="button">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+
+        <div
+          ref={imageContainerRef}
+          className={`modal-image-container ${isZoomed ? "zoomed" : ""} ${portrait ? "portrait-navigation" : ""}`}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          ✕
-        </button>
-        <div className={`modal-image-container ${isZoomed ? 'zoomed' : ''}`}>
+          {total > 1 && (
+            <>
+              <button
+                type="button"
+                className="modal-side-control modal-side-control-previous"
+                onClick={previous}
+                aria-label={`Previous image, ${index === 0 ? `wrap to image ${total}` : `image ${index}`}`}
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <button
+                type="button"
+                className="modal-side-control modal-side-control-next"
+                onClick={next}
+                aria-label={`Next image, ${index === total - 1 ? "wrap to image 1" : `image ${index + 2}`}`}
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </>
+          )}
           {!imageLoaded && (
-            <div className="modal-image-loader" aria-label="Loading image">
-              <div className="spinner"></div>
+            <div className="modal-image-loader" aria-label="Loading full-resolution image">
+              <div className="spinner" />
             </div>
           )}
-          <img
-            src={images[index]}
-            alt={`Screenshot ${index + 1} of ${total}`}
-            className={`modal-image ${isZoomed ? 'zoomed' : ''}`}
-            onLoad={() => setImageLoaded(true)}
-            onClick={() => setIsZoomed(!isZoomed)}
-            style={{ 
-              opacity: imageLoaded ? 1 : 0,
-              cursor: isZoomed ? 'zoom-out' : 'zoom-in'
-            }}
-            title={isZoomed ? "Click to zoom out" : "Click to zoom in"}
-          />
+          <button
+            type="button"
+            className="modal-image-button"
+            onClick={() => setIsZoomed((current) => !current)}
+            aria-label={isZoomed ? "Zoom image out" : "Zoom image in"}
+          >
+            <img
+              key={images[index]}
+              src={images[index]}
+              alt={`Project screenshot ${index + 1} of ${total}`}
+              className={`modal-image ${isZoomed ? "zoomed" : ""}`}
+              onLoad={() => setImageLoaded(true)}
+              style={{ opacity: imageLoaded ? 1 : 0 }}
+            />
+          </button>
         </div>
+
+        <footer className="modal-controls">
+          <button type="button" onClick={previous} disabled={total < 2} aria-label="Previous image">
+            <span aria-hidden="true">←</span> Previous
+          </button>
+          <span>
+            {isZoomed
+              ? "Click image to fit"
+              : total > 1
+                ? portrait ? "↑ ↓ scroll image · ← → browse" : "Use ← → keys to browse"
+                : "Click image to inspect"}
+          </span>
+          <button type="button" onClick={next} disabled={total < 2} aria-label="Next image">
+            Next <span aria-hidden="true">→</span>
+          </button>
+        </footer>
       </div>
-      <div className="modal-indicator" aria-live="polite">
-        {index + 1} / {total}
-      </div>
-      <button
-        className="modal-nav-btn modal-next-btn"
-        onClick={next}
-        aria-label="Next image"
-        disabled={index === total - 1}
-      >
-        ▶
-      </button>
     </div>
   );
 }

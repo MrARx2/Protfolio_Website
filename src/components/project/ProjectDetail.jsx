@@ -1,335 +1,197 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { mechanicsData } from '../../data/projects';
-import { toEmbedUrl } from '../../utils/youtubeHelpers';
-import ModelingDetail from './ModelingDetail';
-import SceneDetail from './SceneDetail';
-import { useProjectSectionScroll } from '../../hooks/useProjectSectionScroll';
+import React, { useEffect, useLayoutEffect, useRef } from "react";
+import { mechanicsData } from "../../data/projects";
+import { isYouTubeShortUrl, toEmbedUrl } from "../../utils/youtubeHelpers";
+import ModelingDetail from "./ModelingDetail";
+import SceneDetail from "./SceneDetail";
+import ProjectGallery from "./ProjectGallery";
 
-function ProjectDetail({ project, onBack, onImageClick }) {
-  const [imagesLoaded, setImagesLoaded] = useState({});
+function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onImageClick }) {
   const backdropRef = useRef(null);
+  const backButtonRef = useRef(null);
+  const mechanics = mechanicsData[project.id] || [];
+  const isPortraitTrailer = isYouTubeShortUrl(project.youtube);
+  const portraitVideoStyle = isPortraitTrailer
+    ? { "--video-aspect-ratio": project.videoAspectRatio || "9 / 16" }
+    : undefined;
 
-  // Unified scroll hook for all project types (snapping ON, wheel OFF, swipe-down-to-close OFF)
-  useProjectSectionScroll(backdropRef, false, null, true, false);
+  useLayoutEffect(() => {
+    const backdrop = backdropRef.current;
+    if (!backdrop) return;
+
+    backdrop.scrollTop = 0;
+    backButtonRef.current?.focus({ preventScroll: true });
+  }, [project.id]);
 
   useEffect(() => {
-    // Hide scrollbar on body when project detail is open
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && !isGalleryOpen) onBack();
     };
-  }, []);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isGalleryOpen, onBack]);
 
-  const handleBackdropClick = (e) => {
-    // Only close if clicking the backdrop itself, not its children
-    if (e.target.classList.contains('project-detail-backdrop')) {
-      onBack();
-    }
+  const handleBackdropClick = (event) => {
+    if (event.target === backdropRef.current) onBack();
   };
 
-  const handleImageLoad = (idx) => {
-    setImagesLoaded(prev => ({ ...prev, [idx]: true }));
-  };
-
-  const mechanics = mechanicsData[project.id] || [];
-  
-  // Split mechanics into pairs for grid layout
-  const mechanicPairs = [];
-  for (let i = 0; i < mechanics.length; i += 2) {
-    mechanicPairs.push(mechanics.slice(i, i + 2));
-  }
-
-  // Check if this is an academic project (all game projects except specific ones)
-  const isAcademicProject = project.id !== 'star-wars-scene';
-  
-  // Team credit info
-  const hasTeamCredit = project.team === '2' && isAcademicProject;
+  const isAcademicProject = project.type !== "scene";
 
   return (
-    <div className="project-detail-backdrop" onClick={handleBackdropClick} ref={backdropRef}>
-      <div className="project-detail">
-        <button
-          className="back-btn"
-          onClick={onBack}
-          aria-label="Go back to projects"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+    <div
+      className="project-detail-backdrop"
+      onClick={handleBackdropClick}
+      ref={backdropRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${project.title} case study`}
+    >
+      <article className="project-detail">
+        <div className="case-study-toolbar">
+          <button ref={backButtonRef} className="back-btn" onClick={onBack} type="button" aria-label={backLabel}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            <span>{backLabel}</span>
+          </button>
+          <span className="case-study-toolbar-label">Case study</span>
+        </div>
 
-        {project.type === 'modeling' ? (
+        {project.type === "modeling" ? (
           <ModelingDetail project={project} onImageClick={onImageClick} />
-        ) : project.type === 'scene' ? (
+        ) : project.type === "scene" ? (
           <SceneDetail project={project} onImageClick={onImageClick} />
         ) : (
-          /* Game Detail Content */
-          <>
-            <div className="detail-header">
-              <h2 className="game-detail-title">{project.title}</h2>
-              <p className="game-detail-summary">
-                {project.summary}
-              </p>
-
-              {/* Meta Info */}
-              <div className="modeling-meta-info" style={{ marginTop: '1.5em', marginBottom: '1em' }}>
-                <div className="modeling-meta-item">
-                  <div className="meta-row">
-                    <span className="meta-icon" aria-hidden="true">👤</span>
-                    <span className="meta-label">Role:</span>
-                  </div>
-                  <span className="meta-value">{project.role || 'Programmer'}</span>
-                </div>
-                <div className="modeling-meta-item">
-                  <div className="meta-row">
-                    <span className="meta-icon" aria-hidden="true">👥</span>
-                    <span className="meta-label">Team:</span>
-                  </div>
-                  <span className="meta-value">{project.team || '—'}</span>
-                </div>
-                <div className="modeling-meta-item">
-                  <div className="meta-row">
-                    <span className="meta-icon" aria-hidden="true">⏳</span>
-                    <span className="meta-label">Time:</span>
-                  </div>
-                  <span className="meta-value">{project.time || '—'}</span>
-                </div>
-                <div className="modeling-meta-item">
-                  <div className="meta-row">
-                    <span className="meta-icon" aria-hidden="true">🛠️</span>
-                    <span className="meta-label">Engine:</span>
-                  </div>
-                  <span className="meta-value">{project.engine || '—'}</span>
-                </div>
+          <div className="game-case-study">
+            <header className="case-study-hero">
+              <div className="case-study-title-block">
+                <span className="project-eyebrow">{isAcademicProject ? "Academic game project" : "Game project"}</span>
+                <h1 className="game-detail-title">{project.title}</h1>
+                <p className="game-detail-summary">{project.summary}</p>
               </div>
 
-              {/* Academic Project Label */}
-              {isAcademicProject && (
-                <div style={{ 
-                  display: 'inline-block',
-                  padding: '8px 16px',
-                  background: 'rgba(0, 234, 255, 0.1)',
-                  border: '1px solid rgba(0, 234, 255, 0.3)',
-                  borderRadius: '8px',
-                  marginBottom: '1.5em',
-                  fontSize: '0.9rem',
-                  color: '#00eaff'
-                }}>
-                  <span style={{ marginRight: '6px' }}>🎓</span>
-                  Academic Project
-                </div>
-              )}
+              <dl className="case-study-meta">
+                <div><dt>Role</dt><dd>{project.role || "Programmer"}</dd></div>
+                <div><dt>Team</dt><dd>{project.team || "—"}</dd></div>
+                <div><dt>Duration</dt><dd>{project.time || "—"}</dd></div>
+                <div><dt>Engine</dt><dd>{project.engine || "—"}</dd></div>
+              </dl>
 
-              {/* Tags */}
-              <div className="card-footer" style={{ justifyContent: 'center', marginBottom: '2em' }}>
-                {project.tags && project.tags.map((tag, i) => (
-                  <span className="tag" key={i}>{tag}</span>
-                ))}
+              <div className="case-study-tags">
+                {project.tags?.map((tag) => <span key={tag}>{tag}</span>)}
               </div>
-            </div>
+            </header>
 
-            <div className="detail-images">
-              {project.images.map((img, idx) => (
-                <div key={idx} className="detail-image-item">
-                  {!imagesLoaded[idx] && (
-                    <div className="skeleton-loader" aria-label="Loading image"></div>
+            {project.youtube && (
+              <section
+                className={`case-study-section case-study-video-section${isPortraitTrailer ? " case-study-video-portrait" : ""}`}
+                style={portraitVideoStyle}
+              >
+                <div className="section-header">
+                  <span className="section-kicker">Watch it in motion</span>
+                  <h2 className="section-title">{isPortraitTrailer ? "Mobile gameplay trailer" : "Gameplay preview"}</h2>
+                  <p className="section-description">
+                    {isPortraitTrailer
+                      ? "A portrait-first look at the combat, progression, and moment-to-moment mobile experience."
+                      : "A closer look at the game&apos;s pace, systems, and player feedback."}
+                  </p>
+                  {isPortraitTrailer && (
+                    <div
+                      className="video-format-note"
+                      aria-label={`${project.videoAspectLabel || "9:16"} portrait video captured on Galaxy S24+`}
+                    >
+                      <span>{project.videoAspectLabel || "9:16"}</span>
+                      <span>{project.videoCaptureLabel || "Optimized for mobile viewing"}</span>
+                    </div>
                   )}
-                  <img
-                    src={img}
-                    alt={`${project.title} screenshot ${idx + 1}`}
-                    className="detail-image"
-                    onClick={() => onImageClick(project.images, idx)}
-                    onLoad={() => handleImageLoad(idx)}
-                    style={{
-                      cursor: "zoom-in",
-                      opacity: imagesLoaded[idx] ? 1 : 0
-                    }}
+                </div>
+                <div className={`video-wrapper${isPortraitTrailer ? " video-wrapper-portrait" : ""}`}>
+                  <iframe
+                    title={`${project.title} gameplay preview`}
+                    src={toEmbedUrl(project.youtube)}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
                     loading="lazy"
                   />
                 </div>
-              ))}
-            </div>
-
-            {project.youtube && (
-              <div style={{ width: '100%', margin: '2em 0' }}>
-                <div className="section-header">
-                  <h2 className="section-title">Game Preview</h2>
-                  <div className="section-divider"></div>
-                  <p className="section-description">
-                    Watch the gameplay in action
-                  </p>
-                </div>
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  margin: '0 auto',
-                  maxWidth: '900px'
-                }}>
-                  <div className="video-wrapper" style={{
-                    position: 'relative',
-                    width: '100%',
-                    paddingTop: '56.25%',
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    overflow: 'hidden'
-                  }}>
-                    <iframe
-                      title={`${project.title} preview`}
-                      src={toEmbedUrl(project.youtube)}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        backgroundColor: 'transparent'
-                      }}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
+              </section>
             )}
 
             {project.details && (
-              <div className="detail-body">{project.details}</div>
+              <section className="case-study-section case-study-overview">
+                <div className="section-header">
+                  <span className="section-kicker">The project</span>
+                  <h2 className="section-title">Overview</h2>
+                </div>
+                <div className="detail-body">
+                  {project.details.split("\n").filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+                </div>
+              </section>
             )}
 
             {mechanics.length > 0 && (
-              <div className="mechanics-section">
+              <section className="case-study-section mechanics-section">
                 <div className="section-header">
-                  <h2 className="section-title">Game Mechanics</h2>
-                  <div className="section-divider"></div>
-                  <p className="section-description">
-                    Core gameplay features and systems
-                  </p>
+                  <span className="section-kicker">Systems & interaction</span>
+                  <h2 className="section-title">Core mechanics</h2>
+                  <p className="section-description">The features that shape the moment-to-moment experience.</p>
                 </div>
                 <div className="mechanics-list-grid">
-                  {mechanicPairs.map((pair, i) => (
-                    <div className="mechanics-row" key={i}>
-                      {pair.map((m, j) => (
-                        <div className="mechanic-item" key={j}>
-                          <span className="mechanic-icon" aria-hidden="true">{m.icon}</span>
-                          <div className="mechanic-label-row"><strong>{m.label}</strong></div>
-                          <p className="mechanic-desc">{m.desc}</p>
-                        </div>
-                      ))}
-                    </div>
+                  {mechanics.map((mechanic) => (
+                    <article className="mechanic-item" key={mechanic.label}>
+                      <span className="mechanic-icon" aria-hidden="true">{mechanic.icon}</span>
+                      <h3>{mechanic.label}</h3>
+                      <p className="mechanic-desc">{mechanic.desc}</p>
+                    </article>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Team Credits Section */}
+            <ProjectGallery
+              title="Selected gallery"
+              description={project.galleryPresentation === "phone-showcase"
+                ? "Move through the complete mobile experience—from combat and exploration to progression and interface design."
+                : "Gameplay, interface, and key moments—kept compact here and available in full resolution when you want a closer look."}
+              projectTitle={project.title}
+              presentation={project.galleryPresentation}
+              groups={project.galleryGroups}
+              collections={[{
+                id: "project-images",
+                label: project.galleryPresentation === "phone-showcase" ? "Mobile showcase" : "Game showcase",
+                images: project.images
+              }]}
+              onImageClick={onImageClick}
+            />
+
             {project.teamCredits && (
-              <div style={{
-                marginTop: '3em',
-                padding: '1.5em',
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                textAlign: 'left'
-              }}>
-                <h3 style={{
-                  color: '#00eaff',
-                  fontSize: '1.2rem',
-                  marginBottom: '0.8em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5em'
-                }}>
-                  <span>🤝</span> Team Collaboration
-                </h3>
-                <p style={{ color: '#b6b6d6', lineHeight: '1.6', marginBottom: '1.2em' }}>
-                  {project.teamCredits.intro}
-                </p>
-                {project.teamCredits.members.map((member, idx) => (
-                  <div key={idx} style={{ marginBottom: idx < project.teamCredits.members.length - 1 ? '1.2em' : '0.8em' }}>
-                    <p style={{ color: '#b6b6d6', lineHeight: '1.6', marginBottom: '0.6em' }}>
-                      <strong style={{ color: '#00eaff' }}>{member.name}</strong> — {member.description}
-                    </p>
-                    {member.linkedin && (
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.5em',
-                          color: '#00bfff',
-                          textDecoration: 'none',
-                          fontSize: '0.95rem',
-                          padding: '0.5em 1em',
-                          background: 'rgba(0, 191, 255, 0.1)',
-                          borderRadius: '6px',
-                          border: '1px solid rgba(0, 191, 255, 0.3)',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        Connect with {member.name.split(' ')[0]}
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <section className="case-study-section team-section">
+                <div className="section-header">
+                  <span className="section-kicker">Built together</span>
+                  <h2 className="section-title">Team collaboration</h2>
+                </div>
+                <p className="team-intro">{project.teamCredits.intro}</p>
+                <div className="team-grid">
+                  {project.teamCredits.members.map((member) => (
+                    <article className="team-member" key={member.name}>
+                      <h3>{member.name}</h3>
+                      <p>{member.description}</p>
+                      {member.linkedin && (
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                          Connect on LinkedIn <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              </section>
             )}
-
-            {/* Legacy Team Credits Section - Jack Lavy */}
-            {hasTeamCredit && !project.teamCredits && (
-              <div style={{
-                marginTop: '3em',
-                padding: '1.5em',
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                textAlign: 'left'
-              }}>
-                <h3 style={{
-                  color: '#00eaff',
-                  fontSize: '1.2rem',
-                  marginBottom: '0.8em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5em'
-                }}>
-                  <span>🤝</span> Team Collaboration
-                </h3>
-                <p style={{ color: '#b6b6d6', lineHeight: '1.6', marginBottom: '0.8em' }}>
-                  This project was created in collaboration with my colleague <strong style={{ color: '#00eaff' }}>Jack Lavy</strong>, 
-                  who brought the game to life through his exceptional work in art design, sound design, and visual effects.
-                </p>
-                <a 
-                  href="https://www.linkedin.com/in/jack-lavy-144bb812b/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5em',
-                    color: '#00bfff',
-                    textDecoration: 'none',
-                    fontSize: '0.95rem',
-                    padding: '0.5em 1em',
-                    background: 'rgba(0, 191, 255, 0.1)',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(0, 191, 255, 0.3)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Connect with Jack on LinkedIn
-                </a>
-              </div>
-            )}
-          </>
+          </div>
         )}
-      </div>
+      </article>
     </div>
   );
 }

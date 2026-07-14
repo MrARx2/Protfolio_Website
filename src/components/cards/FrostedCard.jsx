@@ -1,77 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-function FrostedCard({ project, onClick }) {
+function FrostedCard({ project, onClick, featured = false }) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imageSrc = project.thumbnail || project.images?.[0];
 
-  // Info for each project
-  let info;
-  if (project.type === 'modeling') {
-    info = [
-      { icon: '⏳', label: 'Time', value: project.time || '—' },
-      { icon: '🛠️', label: 'Software', value: project.software || '—' }
-    ];
-  } else {
-    info = [
-      { icon: '👤', label: 'Role', value: project.role || 'Programmer' },
-      { icon: '👥', label: 'Team', value: project.team || '—' },
-      { icon: '⏳', label: 'Time', value: project.time || '—' },
-      { icon: '🛠️', label: 'Engine', value: project.engine || '—' }
-    ];
-  }
-
-  const imageSrc = project.type === 'modeling'
-    ? (project.renders?.[0] || project.references?.[0])
-    : project.images[0];
+  const openProject = () => onClick(project);
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openProject();
+    }
+  };
 
   return (
-    <div
-      className="frosted-card"
-      onClick={() => onClick(project)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick(project);
-        }
-      }}
+    <article
+      className={`project-card game-card ${featured ? "game-card-featured" : ""}`}
+      onClick={openProject}
+      onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-pressed="false"
-      aria-label={`View details for ${project.title}`}
+      aria-label={`View case study for ${project.title}`}
     >
-      <div className="card-image-wrapper">
-        {!imageLoaded && (
-          <div className="skeleton-loader" aria-label="Loading image"></div>
-        )}
+      <div className="project-card-media">
+        {!imageLoaded && <div className="skeleton-loader" aria-label="Loading image" />}
         <img
           src={imageSrc}
-          alt={project.title}
+          alt={`${project.title} gameplay`}
           onLoad={() => setImageLoaded(true)}
-          style={{ 
-            opacity: imageLoaded ? 1 : 0,
-            ...(project.id === 'path-of-embers' ? { objectFit: 'cover', objectPosition: 'center 41%' } : {})
-          }}
-          loading="lazy"
+          style={{ opacity: imageLoaded ? 1 : 0 }}
+          loading={featured ? "eager" : "lazy"}
         />
+        <span className="project-card-badge">{featured ? "Featured · Mobile" : "Game"}</span>
       </div>
-      <h2>{project.title}</h2>
-      <p>{project.summary}</p>
-      <div className="card-footer">
-        {project.tags && project.tags.map((tag, i) => (
-          <span className="tag" key={i}>{tag}</span>
-        ))}
+
+      <div className="project-card-content">
+        <div className="project-card-topline">
+          <span>{project.engine}</span>
+          <span>{project.time}</span>
+        </div>
+        <h3>{project.title}</h3>
+        <p className="project-card-summary">{project.summary}</p>
+
+        <dl className="project-card-meta">
+          <div>
+            <dt>Role</dt>
+            <dd>{project.role || "Programmer"}</dd>
+          </div>
+          <div>
+            <dt>Team</dt>
+            <dd>{project.team || "—"}</dd>
+          </div>
+          <div>
+            <dt>Focus</dt>
+            <dd>{project.tags?.[0] || "Gameplay"}</dd>
+          </div>
+        </dl>
+
+        <div className="project-card-footer">
+          <div className="project-card-tags" aria-label="Project tags">
+            {project.tags?.slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
+          </div>
+          <span className="project-card-link">View case study <span aria-hidden="true">↗</span></span>
+        </div>
       </div>
-      <div className="project-meta project-meta-bottom">
-        <ul className="project-meta-list">
-          {info.map((item, idx) => (
-            <li className="project-meta-list-item" key={idx} title={item.label}>
-              <span className="project-meta-icon" aria-hidden="true">{item.icon}</span>
-              <span className="project-meta-label">{item.label}</span>
-              <span className="project-meta-value">{item.value}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    </article>
   );
 }
 

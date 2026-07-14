@@ -1,221 +1,289 @@
-/**
- * Main Application Component
- * 
- * This is the root component that manages:
- * - Filter navigation (All, Games, Modeling, Scenes)
- * - Project selection and detail views
- * - Image modal/lightbox
- * - Browser history integration
- * 
- * @component
- */
-
-import React, { useState, Suspense, useEffect } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./style.css";
 
-// Layout Components
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import AnimatedDotsBg from "./components/layout/AnimatedDotsBg";
 import Navbar from "./components/layout/Navbar";
 import AboutSection from "./components/sections/AboutSection";
-
-// Card Components (for grid display)
 import FrostedCard from "./components/cards/FrostedCard";
 import ModelingCard from "./components/cards/ModelingCard";
 import SceneCard from "./components/cards/SceneCard";
-
-// Detail Components (for individual project pages)
 import ProjectDetail from "./components/project/ProjectDetail";
 import ImageModal from "./components/modals/ImageModal";
-
-// Project Data
+import PhoneImageModal from "./components/modals/PhoneImageModal";
+import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
 
-// Loading fallback component
 function LoadingSpinner() {
   return (
     <div className="loading-spinner" aria-label="Loading">
-      <div className="spinner"></div>
+      <div className="spinner" />
     </div>
   );
 }
 
-/**
- * Category Section Component
- * Renders a section header + card grid for a project category
- */
-function CategorySection({ id, icon, title, children, accentClass }) {
+function SectionHeading({ title, description }) {
   return (
-    <section className={`category-section ${accentClass || ''}`} id={id}>
-      <div className="category-header">
-        <span className="category-icon">{icon}</span>
-        <h2 className="category-title">{title}</h2>
-        <div className="category-divider"></div>
-      </div>
-      {children}
-    </section>
+    <header className="work-section-heading">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </header>
   );
 }
 
-/**
- * Main App Component
- * Handles all application state and routing
- */
+const backLabels = {
+  games: "Back to games",
+  modeling: "Back to 3D modeling",
+  scenes: "Back to environments"
+};
+
+function getProjectCategory(project) {
+  if (project?.type === "modeling") return "modeling";
+  if (project?.type === "scene") return "scenes";
+  return "games";
+}
+
 function App() {
-  // State Management
-  const [filter, setFilter] = useState("all"); // Current active filter
-  const [selected, setSelected] = useState(null); // Currently selected project
-  const [modal, setModal] = useState(null); // Image modal state
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [selected, setSelected] = useState(null);
+  const [projectReturnCategory, setProjectReturnCategory] = useState(null);
+  const [modal, setModal] = useState(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const savedScrollPosition = useRef(0);
 
-  // Determine which sections to show
-  const showGames = filter === "all" || filter === "games";
-  const showModeling = filter === "all" || filter === "modeling";
-  const showScenes = filter === "all" || filter === "scenes";
+  const allProjects = useMemo(
+    () => [...gameProjects, ...modelingProjects, ...sceneProjects],
+    []
+  );
 
-  /**
-   * Browser Back Button Support
-   * Handles popstate events to enable browser navigation
-   */
+  const categories = useMemo(
+    () => [
+      { id: "all", label: "All work", count: allProjects.length, target: "projects" },
+      { id: "games", label: "Games", count: gameProjects.length, target: "games-section" },
+      { id: "modeling", label: "3D Modeling", count: modelingProjects.length, target: "modeling-section" },
+      { id: "scenes", label: "Environments", count: sceneProjects.length, target: "scenes-section" }
+    ],
+    [allProjects.length]
+  );
+
+  const scrollToSection = useCallback((category) => {
+    const destination = categories.find((item) => item.id === category);
+    const target = destination ? document.getElementById(destination.target) : null;
+    if (!target) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    window.history.replaceState({}, "", category === "all" ? "#projects" : `#${category}`);
+  }, [categories]);
+
+  const goHome = useCallback(() => {
+    setSelected(null);
+    setProjectReturnCategory(null);
+    setModal(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.history.replaceState({}, "", "#about");
+  }, []);
+
+  const openProject = useCallback((project) => {
+    savedScrollPosition.current = window.scrollY;
+    setProjectReturnCategory(activeCategory === "all" ? getProjectCategory(project) : activeCategory);
+    setSelected(project);
+    window.history.pushState({ project: project.id }, "", `#project/${project.id}`);
+  }, [activeCategory]);
+
+  const closeProject = useCallback(() => {
+    setModal(null);
+    setSelected(null);
+    setProjectReturnCategory(null);
+    window.history.replaceState({}, "", activeCategory === "all" ? "#projects" : `#${activeCategory}`);
+    window.requestAnimationFrame(() => window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" }));
+  }, [activeCategory]);
+
   useEffect(() => {
-    const handlePopState = (event) => {
-      if (modal) {
-        // Close modal first
-        setModal(null);
-      } else if (selected) {
-        // Then close project detail
-        setSelected(null);
+    let ticking = false;
+
+    const updateScrollState = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
+
+      if (!selected) {
+        const marker = window.scrollY + Math.min(window.innerHeight * 0.32, 300);
+        const sections = [
+          { id: "games-section", category: "games" },
+          { id: "modeling-section", category: "modeling" },
+          { id: "scenes-section", category: "scenes" }
+        ];
+        let nextCategory = "all";
+        sections.forEach(({ id, category }) => {
+          const section = document.getElementById(id);
+          if (section && section.offsetTop <= marker) nextCategory = category;
+        });
+        setActiveCategory((current) => current === nextCategory ? current : nextCategory);
+      }
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateScrollState);
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [selected, modal]);
-
-  /**
-   * Update URL when project is selected
-   * Pushes project ID to browser history
-   */
-  useEffect(() => {
-    if (selected) {
-      window.history.pushState({ project: selected.id }, '', `#${selected.id}`);
-    } else if (!modal) {
-      window.history.pushState({}, '', '#projects');
-    }
+    updateScrollState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, [selected]);
 
-  /**
-   * Update URL when modal is opened
-   * Maintains current hash while adding modal state
-   */
   useEffect(() => {
-    if (modal) {
-      window.history.pushState({ modal: true }, '', window.location.hash);
-    }
-  }, [modal]);
+    const handlePopState = () => {
+      if (modal) {
+        setModal(null);
+        return;
+      }
+      if (selected) {
+        setSelected(null);
+        setProjectReturnCategory(null);
+        window.requestAnimationFrame(() => window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" }));
+      }
+    };
 
-  /**
-   * Reset to home state
-   * Called when clicking logo or home button
-   */
-  function goHome() {
-    setFilter('all');
-    setSelected(null);
-    setModal(null);
-    window.history.pushState({}, '', '#projects');
-  }
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [modal, selected]);
 
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
-        <AnimatedDotsBg />
-        <Navbar onHomeClick={goHome} />
-        {!selected && <AboutSection />}
-        <div className="container">
-          {!selected && <h1 id="projects">Creative Technology Showcase</h1>}
-          {!selected && (
-            <>
-              <div className="tabs" role="tablist" aria-label="Project filters">
-                <button
-                  className={`tab-all ${filter === "all" ? "active" : ""}`}
-                  onClick={() => setFilter("all")}
-                  role="tab"
-                  aria-selected={filter === "all"}
-                >
-                  All
-                </button>
-                <button
-                  className={`tab-games ${filter === "games" ? "active" : ""}`}
-                  onClick={() => setFilter("games")}
-                  role="tab"
-                  aria-selected={filter === "games"}
-                >
-                  Games
-                </button>
-                <button
-                  className={`tab-modeling ${filter === "modeling" ? "active" : ""}`}
-                  onClick={() => setFilter("modeling")}
-                  role="tab"
-                  aria-selected={filter === "modeling"}
-                >
-                  3D Modeling
-                </button>
-                <button
-                  className={`tab-scenes ${filter === "scenes" ? "active" : ""}`}
-                  onClick={() => setFilter("scenes")}
-                  role="tab"
-                  aria-selected={filter === "scenes"}
-                >
-                  Scenes
-                </button>
+        <div className="site-shell">
+          <div className="site-progress" aria-hidden="true">
+            <span style={{ transform: `scaleX(${scrollProgress})` }} />
+          </div>
+
+          <AnimatedDotsBg />
+          <Navbar onHomeClick={goHome} />
+          <AboutSection onExplore={() => scrollToSection("all")} />
+
+          <main className="work-main" id="main-content">
+            <div className="work-nav-shell" id="projects">
+              <nav className="work-nav" aria-label="Project categories">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    className={activeCategory === category.id ? "active" : ""}
+                    aria-current={activeCategory === category.id ? "true" : undefined}
+                    onClick={() => scrollToSection(category.id)}
+                  >
+                    <span>{category.label}</span>
+                    <sup>{String(category.count).padStart(2, "0")}</sup>
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            <section className="work-section games-section" id="games-section" data-category="games">
+              <SectionHeading
+                title="Games"
+                description="Systems-driven projects built around responsive controls, readable feedback, and a strong core loop."
+              />
+              <div className="games-showcase">
+                {gameProjects[0] && (
+                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured />
+                )}
+                <div className="games-secondary-grid">
+                  {gameProjects.slice(1).map((project) => (
+                    <FrostedCard project={project} key={project.id} onClick={openProject} />
+                  ))}
+                </div>
               </div>
+            </section>
 
-              <div id="projects-panel" role="tabpanel">
-                {/* Games Section */}
-                {showGames && (
-                  <CategorySection id="games-section" icon="🎮" title="Games" accentClass="accent-games">
-                    <div className="card-grid">
-                      {gameProjects.map((project, idx) => (
-                        <FrostedCard project={project} key={project.id || idx} onClick={setSelected} />
-                      ))}
-                    </div>
-                  </CategorySection>
-                )}
-
-                {/* 3D Modeling Section */}
-                {showModeling && (
-                  <CategorySection id="modeling-section" icon="🧊" title="3D Modeling" accentClass="accent-modeling">
-                    <div className="modeling-grid">
-                      {modelingProjects.map((project, idx) => (
-                        <ModelingCard project={project} key={project.id || idx} onClick={setSelected} />
-                      ))}
-                    </div>
-                  </CategorySection>
-                )}
-
-                {/* Scenes Section */}
-                {showScenes && (
-                  <CategorySection id="scenes-section" icon="🌌" title="Scenes & Environments" accentClass="accent-scenes">
-                    <div className="scene-grid">
-                      {sceneProjects.map((project, idx) => (
-                        <SceneCard project={project} key={project.id || idx} onClick={setSelected} />
-                      ))}
-                    </div>
-                  </CategorySection>
-                )}
+            <section className="work-section modeling-section" id="modeling-section" data-category="modeling">
+              <SectionHeading
+                title="3D Modeling"
+                description="Hard-surface studies developed from modeling and topology through texturing and final real-time presentation."
+              />
+              <div className="modeling-showcase">
+                {modelingProjects.map((project, index) => (
+                  <ModelingCard
+                    project={project}
+                    key={project.id}
+                    index={index}
+                    onClick={openProject}
+                  />
+                ))}
               </div>
-            </>
-          )}
-          {selected && !modal && (
+            </section>
+
+            <section className="work-section scenes-section" id="scenes-section" data-category="scenes">
+              <SectionHeading
+                title="Scenes & Environments"
+                description="Cinematic spaces that explore atmosphere, composition, and next-generation rendering workflows."
+              />
+              <div className="scene-showcase">
+                {sceneProjects.map((project) => (
+                  <SceneCard project={project} key={project.id} onClick={openProject} />
+                ))}
+              </div>
+            </section>
+          </main>
+
+          <footer className="contact-section" id="contact">
+            <div className="contact-glow" aria-hidden="true" />
+            <span className="section-kicker">Let&apos;s connect</span>
+            <h2>Let&apos;s build something interactive.</h2>
+            <p>
+              I&apos;m always interested in thoughtful game projects, technical challenges,
+              and opportunities to create memorable player experiences.
+            </p>
+            <div className="contact-actions">
+              <a className="button button-primary" href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">
+                Connect on LinkedIn <span aria-hidden="true">↗</span>
+              </a>
+              <a className="button button-secondary" href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">
+                View GitHub <span aria-hidden="true">↗</span>
+              </a>
+              <a className="button button-quiet" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
+                Resume <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+            <div className="footer-meta">
+              <span>© {new Date().getFullYear()} Ariel Cohen</span>
+              <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+                Back to top <span aria-hidden="true">↑</span>
+              </button>
+            </div>
+          </footer>
+
+          {selected && (
             <ProjectDetail
               project={selected}
-              onBack={() => setSelected(null)}
-              onImageClick={(images, idx) => setModal({ images, index: idx })}
+              backLabel={backLabels[projectReturnCategory || getProjectCategory(selected)]}
+              isGalleryOpen={Boolean(modal)}
+              onBack={closeProject}
+              onImageClick={(images, index, options = {}) => setModal({ images, index, ...options })}
             />
           )}
-          {modal && (
+
+          {modal?.presentation === "phone-showcase" && (
+            <PhoneImageModal
+              images={modal.images}
+              initialIndex={modal.index}
+              onClose={() => setModal(null)}
+            />
+          )}
+
+          {modal && modal.presentation !== "phone-showcase" && (
             <ImageModal
               images={modal.images}
               initialIndex={modal.index}
+              portrait={modal.portrait}
               onClose={() => setModal(null)}
             />
           )}

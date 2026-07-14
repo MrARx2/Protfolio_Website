@@ -1,75 +1,60 @@
-import React, { useEffect, useRef } from 'react';
-import { personalInfo } from '../../data/personalInfo';
+import React from "react";
+import { personalInfo } from "../../data/personalInfo";
 
-function AboutSection() {
-  const isScrollingRef = useRef(false);
-  const touchStartY = useRef(0);
-  const mouseStartY = useRef(0);
-  const isMouseDownRef = useRef(false);
-
-  const scrollToProjects = () => {
-    if (isScrollingRef.current) return;
-    isScrollingRef.current = true;
-    
-    const projectsSection = document.getElementById('projects');
-    if (projectsSection) {
-      const yOffset = -90; 
-      const y = projectsSection.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-    
-    setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 800);
-  };
-
-  useEffect(() => {
-    const handleGlobalWheel = (e) => {
-      if (isScrollingRef.current) return;
-      const projectsSection = document.getElementById('projects');
-      if (!projectsSection) return;
-
-      const yOffset = -90; 
-      const projectsY = projectsSection.getBoundingClientRect().top + window.scrollY + yOffset;
-      
-      if (window.scrollY < 50 && e.deltaY > 10) {
-        isScrollingRef.current = true;
-        window.scrollTo({ top: projectsY, behavior: 'smooth' });
-        setTimeout(() => { isScrollingRef.current = false; }, 800);
-      }
-      else if (window.scrollY > 0 && window.scrollY <= projectsY + 50 && e.deltaY < -10) {
-        isScrollingRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => { isScrollingRef.current = false; }, 800);
-      }
-    };
-
-    window.addEventListener('wheel', handleGlobalWheel, { passive: true });
-    
-    return () => {
-      window.removeEventListener('wheel', handleGlobalWheel);
-      document.body.style.userSelect = '';
-      document.body.style.cursor = '';
-    };
-  }, []);
-
+function AboutSection({ onExplore }) {
   return (
     <section className="hero-section" id="about">
-      <video className="hero-video-bg" autoPlay loop muted playsInline>
-        <source src={process.env.PUBLIC_URL + "/Videos/herotrailer8_Compressed.mp4"} type="video/mp4" />
+      <video
+        className="hero-video-bg"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source
+          src={process.env.PUBLIC_URL + "/Videos/herotrailer8_Compressed.mp4"}
+          type="video/mp4"
+        />
       </video>
-      <div className="hero-overlay"></div>
-      
+
+      <div className="hero-overlay" />
+      <div className="hero-grain" aria-hidden="true" />
+
       <div className="hero-content">
-        <div className="hero-titles">
-          <h1 className="hero-name">{personalInfo.name}</h1>
-          <h2 className="hero-role">{personalInfo.role}</h2>
-        </div>
-        <div className="hero-bottom-group">
-          <p className="hero-value-prop">{personalInfo.bio}</p>
-          <div className="hero-scroll-indicator" onClick={scrollToProjects} style={{ cursor: 'pointer' }}>
-            <div className="hero-mouse"></div>
+        <div className="hero-copy">
+          <div className="hero-kicker">
+            <span className="hero-kicker-dot" aria-hidden="true" />
+            Game developer · Programmer · Technical artist
           </div>
+
+          <h1 className="hero-name">
+            <span className="hero-name-primary">Ariel</span>
+            <span className="hero-name-secondary">
+              Cohen<span className="hero-name-dot">.</span>
+            </span>
+          </h1>
+
+          <div className="hero-intro">
+            <p className="hero-value-prop">{personalInfo.bio}</p>
+            <div className="hero-actions">
+              <button className="button button-primary" type="button" onClick={onExplore}>
+                Explore my work <span aria-hidden="true">↓</span>
+              </button>
+              <a className="button button-secondary" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
+                View resume <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-bottom-bar">
+          <span>Unity · Unreal Engine · Maya</span>
+          <button className="hero-scroll-indicator" type="button" onClick={onExplore} aria-label="Scroll to selected work">
+            <span>Selected work</span>
+            <span className="hero-scroll-line" aria-hidden="true" />
+          </button>
         </div>
       </div>
     </section>
