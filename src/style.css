@@ -524,6 +524,27 @@ video {
   padding-bottom: 80px;
 }
 
+.work-main::before {
+  content: "";
+  position: absolute;
+  top: -72px;
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  height: 220px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 10, 11, 0) 0%,
+    rgba(9, 10, 11, 0.7) 28%,
+    rgba(9, 10, 11, 0.98) 52%,
+    rgba(9, 10, 11, 0.88) 70%,
+    rgba(9, 10, 11, 0.22) 88%,
+    rgba(9, 10, 11, 0) 100%
+  );
+}
+
 .work-nav-shell {
   position: sticky;
   top: var(--nav-height);
@@ -531,8 +552,7 @@ video {
   scroll-margin-top: var(--nav-height);
   margin: 0 -24px;
   padding: 8px 24px;
-  background: linear-gradient(180deg, rgba(9, 10, 11, 0.98) 64%, rgba(9, 10, 11, 0.76) 84%, transparent);
-  backdrop-filter: blur(14px);
+  background: transparent;
 }
 
 .work-nav {
@@ -3101,6 +3121,7 @@ video {
     padding: 8px 14px;
     overflow-x: auto;
     scrollbar-width: none;
+    background: transparent;
   }
 
   .work-nav-shell::-webkit-scrollbar {
