@@ -174,7 +174,7 @@ function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onIm
                   <h2 className="section-title">Team collaboration</h2>
                 </div>
                 <p className="team-intro">{project.teamCredits.intro}</p>
-                <div className="team-grid">
+                <div className={`team-grid${project.teamCredits.members.length === 1 ? " team-grid-single" : ""}`}>
                   {project.teamCredits.members.map((member) => (
                     <article className="team-member" key={member.name}>
                       <h3>{member.name}</h3>

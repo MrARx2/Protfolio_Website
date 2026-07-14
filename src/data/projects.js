@@ -80,7 +80,17 @@ export const gameProjects = [
     role: "Programmer",
     team: "2",
     time: "2 months",
-    engine: "Unreal Engine 5.5.4"
+    engine: "Unreal Engine 5.5.4",
+    teamCredits: {
+      intro: "Ricochet was developed in collaboration with Jack Lavy, whose creative direction helped give the game its energetic arcade identity and strengthen its competitive experience.",
+      members: [
+        {
+          name: "Jack Lavy",
+          description: "Jack led the art direction, UI implementation, 3D asset creation, and sound design, establishing Ricochet's distinctive neon presentation and punchy arcade feedback. He also collaborated on refining the gameplay loop within the systems I developed, improving match pacing and the transition between striker and goalkeeper rounds.",
+          linkedin: "https://www.linkedin.com/in/jack-lavy-144bb812b/"
+        }
+      ]
+    }
   },
   {
     id: "slingshot",
@@ -101,7 +111,17 @@ export const gameProjects = [
     role: "Programmer",
     team: "2",
     time: "2 weeks",
-    engine: "Unity 6"
+    engine: "Unity 6",
+    teamCredits: {
+      intro: "Slingshot was created alongside Jack Lavy, whose visual and design contributions helped turn its movement systems into a clearer and more cohesive racing experience.",
+      members: [
+        {
+          name: "Jack Lavy",
+          description: "Jack shaped the game's art direction, implemented its interface, created its 3D assets, and produced the sound design that reinforces its space-racing atmosphere. He also helped tune the gameplay loop built around my core systems, improving checkpoint clarity, the sense of speed, and the overall flow of each race.",
+          linkedin: "https://www.linkedin.com/in/jack-lavy-144bb812b/"
+        }
+      ]
+    }
   },
   /*
   {

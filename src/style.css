@@ -1494,11 +1494,19 @@ video {
   margin-top: 32px;
 }
 
+.team-grid-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .team-member {
   padding: 30px;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   background: var(--surface);
+}
+
+.team-grid-single .team-member p {
+  max-width: 980px;
 }
 
 .team-member h3 {
