@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { personalInfo } from '../../data/personalInfo';
+import { themes } from '../../data/themes';
 import ResumeModal from './ResumeModal';
 
-function Navbar({ onHomeClick }) {
+function Navbar({ onHomeClick, theme, onThemeChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const themePickerRef = useRef(null);
+  const currentTheme = themes.find(({ id }) => id === theme) || themes[0];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,8 +19,29 @@ function Navbar({ onHomeClick }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!themeMenuOpen) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!themePickerRef.current?.contains(event.target)) setThemeMenuOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setThemeMenuOpen(false);
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [themeMenuOpen]);
+
   const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+    setMobileMenuOpen((open) => {
+      if (open) setThemeMenuOpen(false);
+      return !open;
+    });
   };
 
   return (
@@ -62,6 +87,44 @@ function Navbar({ onHomeClick }) {
         <div className="mobile-menu-header">
           <h2 className="mobile-menu-name">Ariel Cohen</h2>
           <p className="mobile-menu-role">Game Developer</p>
+        </div>
+
+        <div className="theme-picker" ref={themePickerRef}>
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={`Change color theme. Current theme: ${currentTheme.label}`}
+            aria-haspopup="menu"
+            aria-expanded={themeMenuOpen}
+            onClick={() => setThemeMenuOpen((open) => !open)}
+          >
+            <span className="theme-toggle-swatch" style={{ backgroundColor: currentTheme.swatch }} aria-hidden="true" />
+            <span className="theme-toggle-label">Theme</span>
+            <span className="theme-toggle-current">{currentTheme.label}</span>
+          </button>
+
+          {themeMenuOpen && (
+            <div className="theme-menu" role="menu" aria-label="Choose color theme">
+              <span className="theme-menu-title">Color theme</span>
+              {themes.map((option) => (
+                <button
+                  className={`theme-option${option.id === theme ? ' active' : ''}`}
+                  key={option.id}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={option.id === theme}
+                  onClick={() => {
+                    onThemeChange(option.id);
+                    setThemeMenuOpen(false);
+                  }}
+                >
+                  <span className="theme-option-swatch" style={{ backgroundColor: option.swatch }} aria-hidden="true" />
+                  <span>{option.label}</span>
+                  <span className="theme-option-check" aria-hidden="true">{option.id === theme ? '✓' : ''}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         
         <a

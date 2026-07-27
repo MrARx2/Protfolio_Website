@@ -13,6 +13,7 @@ import ImageModal from "./components/modals/ImageModal";
 import PhoneImageModal from "./components/modals/PhoneImageModal";
 import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
+import { applyTheme, getInitialTheme } from "./data/themes";
 
 function LoadingSpinner() {
   return (
@@ -44,6 +45,7 @@ function getProjectCategory(project) {
 }
 
 function App() {
+  const [theme, setTheme] = useState(getInitialTheme);
   const [activeCategory, setActiveCategory] = useState("all");
   const [selected, setSelected] = useState(null);
   const [projectReturnCategory, setProjectReturnCategory] = useState(null);
@@ -65,6 +67,10 @@ function App() {
     ],
     [allProjects.length]
   );
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   const scrollToSection = useCallback((category) => {
     const destination = categories.find((item) => item.id === category);
@@ -166,7 +172,7 @@ function App() {
           </div>
 
           <AnimatedDotsBg />
-          <Navbar onHomeClick={goHome} />
+          <Navbar onHomeClick={goHome} theme={theme} onThemeChange={setTheme} />
           <AboutSection onExplore={() => scrollToSection("all")} />
 
           <main className="work-main" id="main-content">
