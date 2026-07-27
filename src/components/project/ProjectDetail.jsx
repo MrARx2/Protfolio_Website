@@ -4,8 +4,10 @@ import { isYouTubeShortUrl, toEmbedUrl } from "../../utils/youtubeHelpers";
 import ModelingDetail from "./ModelingDetail";
 import SceneDetail from "./SceneDetail";
 import ProjectGallery from "./ProjectGallery";
+import ProjectEntryCover from "./ProjectEntryCover";
+import { projectTransitionStyle } from "../../utils/projectTransitions";
 
-function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onImageClick }) {
+function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick }) {
   const backdropRef = useRef(null);
   const backButtonRef = useRef(null);
   const mechanics = mechanicsData[project.id] || [];
@@ -18,8 +20,33 @@ function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onIm
     const backdrop = backdropRef.current;
     if (!backdrop) return;
 
+    let userRequestedScroll = false;
+    const resetPosition = () => {
+      if (!userRequestedScroll && backdrop.scrollTop !== 0) backdrop.scrollTop = 0;
+    };
+    const allowUserScroll = () => { userRequestedScroll = true; };
+    const handleOpeningScroll = () => resetPosition();
+
     backdrop.scrollTop = 0;
     backButtonRef.current?.focus({ preventScroll: true });
+    backdrop.addEventListener("scroll", handleOpeningScroll, { passive: true });
+    backdrop.addEventListener("wheel", allowUserScroll, { passive: true, once: true });
+    backdrop.addEventListener("touchstart", allowUserScroll, { passive: true, once: true });
+
+    const frame = window.requestAnimationFrame(resetPosition);
+    const timers = [120, 500, 1200, 2400].map((delay) => window.setTimeout(resetPosition, delay));
+    const releaseGuard = window.setTimeout(() => {
+      backdrop.removeEventListener("scroll", handleOpeningScroll);
+    }, 3200);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
+      window.clearTimeout(releaseGuard);
+      backdrop.removeEventListener("scroll", handleOpeningScroll);
+      backdrop.removeEventListener("wheel", allowUserScroll);
+      backdrop.removeEventListener("touchstart", allowUserScroll);
+    };
   }, [project.id]);
 
   useEffect(() => {
@@ -39,6 +66,7 @@ function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onIm
   };
 
   const isAcademicProject = project.type !== "scene";
+  const showEntryCover = project.id !== "path-of-embers" && Boolean(project.cardPreview);
 
   return (
     <div
@@ -61,15 +89,21 @@ function ProjectDetail({ project, backLabel, isGalleryOpen = false, onBack, onIm
         </div>
 
         {project.type === "modeling" ? (
-          <ModelingDetail project={project} onImageClick={onImageClick} />
+          <ModelingDetail project={project} entryPreview={entryPreview} onImageClick={onImageClick} />
         ) : project.type === "scene" ? (
-          <SceneDetail project={project} onImageClick={onImageClick} />
+          <SceneDetail project={project} entryPreview={entryPreview} onImageClick={onImageClick} />
         ) : (
           <div className="game-case-study">
-            <header className="case-study-hero">
+            <header className={`case-study-hero${showEntryCover ? " project-detail-header-with-cover" : ""}`}>
+              {showEntryCover && <ProjectEntryCover project={project} previewFrame={entryPreview} />}
               <div className="case-study-title-block">
                 <span className="project-eyebrow">{isAcademicProject ? "Academic game project" : "Game project"}</span>
-                <h1 className="game-detail-title">{project.title}</h1>
+                <h1
+                  className="game-detail-title"
+                  style={showEntryCover ? projectTransitionStyle(project, "title") : undefined}
+                >
+                  {project.title}
+                </h1>
                 <p className="game-detail-summary">{project.summary}</p>
               </div>
 

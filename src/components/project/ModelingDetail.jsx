@@ -1,7 +1,9 @@
 import React from "react";
 import ProjectGallery from "./ProjectGallery";
+import ProjectEntryCover from "./ProjectEntryCover";
+import { projectTransitionStyle } from "../../utils/projectTransitions";
 
-function ModelingDetail({ project, onImageClick }) {
+function ModelingDetail({ project, entryPreview, onImageClick }) {
   const collections = [
     {
       id: "renders",
@@ -27,9 +29,10 @@ function ModelingDetail({ project, onImageClick }) {
 
   return (
     <div className="modeling-detail">
-      <header className="modeling-detail-header">
+      <header className="modeling-detail-header project-detail-header-with-cover">
+        <ProjectEntryCover project={project} previewFrame={entryPreview} />
         <span className="project-eyebrow">3D modeling case study</span>
-        <h1 className="modeling-detail-title">{project.title}</h1>
+        <h1 className="modeling-detail-title" style={projectTransitionStyle(project, "title")}>{project.title}</h1>
         <p className="modeling-detail-summary">{project.summary}</p>
 
         <div className="modeling-meta-info">

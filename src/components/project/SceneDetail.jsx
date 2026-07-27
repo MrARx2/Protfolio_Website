@@ -1,8 +1,10 @@
 import React from "react";
 import { toEmbedUrl } from "../../utils/youtubeHelpers";
 import ProjectGallery from "./ProjectGallery";
+import ProjectEntryCover from "./ProjectEntryCover";
+import { projectTransitionStyle } from "../../utils/projectTransitions";
 
-function SceneDetail({ project, onImageClick }) {
+function SceneDetail({ project, entryPreview, onImageClick }) {
   const coolFeatures = project.coolFeatures || [];
   const collections = [
     {
@@ -19,9 +21,10 @@ function SceneDetail({ project, onImageClick }) {
 
   return (
     <div className="scene-detail">
-      <header className="scene-detail-header">
+      <header className="scene-detail-header project-detail-header-with-cover">
+        <ProjectEntryCover project={project} previewFrame={entryPreview} />
         <span className="project-eyebrow">Environment case study</span>
-        <h1 className="scene-detail-title">{project.title}</h1>
+        <h1 className="scene-detail-title" style={projectTransitionStyle(project, "title")}>{project.title}</h1>
         <p className="scene-detail-summary">{project.summary}</p>
 
         <div className="scene-meta-info">

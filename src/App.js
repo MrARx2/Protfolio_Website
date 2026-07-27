@@ -1,4 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import "./style.css";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
@@ -48,10 +49,12 @@ function App() {
   const [theme, setTheme] = useState(getInitialTheme);
   const [activeCategory, setActiveCategory] = useState("all");
   const [selected, setSelected] = useState(null);
+  const [selectedPreview, setSelectedPreview] = useState(null);
   const [projectReturnCategory, setProjectReturnCategory] = useState(null);
   const [modal, setModal] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const savedScrollPosition = useRef(0);
+  const openedProjectId = useRef(null);
 
   const allProjects = useMemo(
     () => [...gameProjects, ...modelingProjects, ...sceneProjects],
@@ -72,6 +75,30 @@ function App() {
     applyTheme(theme);
   }, [theme]);
 
+  const runProjectTransition = useCallback((update) => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || typeof document.startViewTransition !== "function") {
+      update();
+      return null;
+    }
+
+    try {
+      return document.startViewTransition(() => flushSync(update));
+    } catch {
+      update();
+      return null;
+    }
+  }, []);
+
+  const restoreProjectCard = useCallback((projectId) => {
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" });
+      window.requestAnimationFrame(() => {
+        document.getElementById(`project-card-${projectId}`)?.focus({ preventScroll: true });
+      });
+    });
+  }, []);
+
   const scrollToSection = useCallback((category) => {
     const destination = categories.find((item) => item.id === category);
     const target = destination ? document.getElementById(destination.target) : null;
@@ -84,26 +111,49 @@ function App() {
 
   const goHome = useCallback(() => {
     setSelected(null);
+    setSelectedPreview(null);
     setProjectReturnCategory(null);
     setModal(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
     window.history.replaceState({}, "", "#about");
   }, []);
 
-  const openProject = useCallback((project) => {
+  const openProject = useCallback((project, previewFrame = null) => {
     savedScrollPosition.current = window.scrollY;
-    setProjectReturnCategory(activeCategory === "all" ? getProjectCategory(project) : activeCategory);
-    setSelected(project);
+    openedProjectId.current = project.id;
+    const projectCategory = getProjectCategory(project);
+    const update = () => {
+      setProjectReturnCategory(projectCategory);
+      setSelectedPreview(previewFrame);
+      setSelected(project);
+    };
+
+    if (project.cardPreview) {
+      const transition = runProjectTransition(update);
+      transition?.finished.finally(() => {
+        const backdrop = document.querySelector(".project-detail-backdrop");
+        if (backdrop) backdrop.scrollTop = 0;
+      });
+    } else update();
     window.history.pushState({ project: project.id }, "", `#project/${project.id}`);
-  }, [activeCategory]);
+  }, [activeCategory, runProjectTransition]);
 
   const closeProject = useCallback(() => {
-    setModal(null);
-    setSelected(null);
-    setProjectReturnCategory(null);
+    const projectId = selected?.id || openedProjectId.current;
+    const returnCategory = selected ? getProjectCategory(selected) : activeCategory;
+    const update = () => {
+      setModal(null);
+      setSelected(null);
+      setSelectedPreview(null);
+      setProjectReturnCategory(null);
+      setActiveCategory(returnCategory);
+    };
+
+    if (selected?.cardPreview) runProjectTransition(update);
+    else update();
     window.history.replaceState({}, "", activeCategory === "all" ? "#projects" : `#${activeCategory}`);
-    window.requestAnimationFrame(() => window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" }));
-  }, [activeCategory]);
+    if (projectId) restoreProjectCard(projectId);
+  }, [activeCategory, restoreProjectCard, runProjectTransition, selected]);
 
   useEffect(() => {
     let ticking = false;
@@ -122,7 +172,10 @@ function App() {
         let nextCategory = "all";
         sections.forEach(({ id, category }) => {
           const section = document.getElementById(id);
-          if (section && section.offsetTop <= marker) nextCategory = category;
+          const sectionTop = section
+            ? window.scrollY + section.getBoundingClientRect().top
+            : Number.POSITIVE_INFINITY;
+          if (sectionTop <= marker) nextCategory = category;
         });
         setActiveCategory((current) => current === nextCategory ? current : nextCategory);
       }
@@ -153,15 +206,21 @@ function App() {
         return;
       }
       if (selected) {
-        setSelected(null);
-        setProjectReturnCategory(null);
-        window.requestAnimationFrame(() => window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" }));
+        const projectId = selected.id;
+        const update = () => {
+          setSelected(null);
+          setSelectedPreview(null);
+          setProjectReturnCategory(null);
+        };
+        if (selected.cardPreview) runProjectTransition(update);
+        else update();
+        restoreProjectCard(projectId);
       }
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [modal, selected]);
+  }, [modal, restoreProjectCard, runProjectTransition, selected]);
 
   return (
     <ErrorBoundary>
@@ -200,11 +259,11 @@ function App() {
               />
               <div className="games-showcase">
                 {gameProjects[0] && (
-                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured />
+                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured activeProjectId={selected?.id} />
                 )}
                 <div className="games-secondary-grid">
                   {gameProjects.slice(1).map((project) => (
-                    <FrostedCard project={project} key={project.id} onClick={openProject} />
+                    <FrostedCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
                   ))}
                 </div>
               </div>
@@ -222,6 +281,7 @@ function App() {
                     key={project.id}
                     index={index}
                     onClick={openProject}
+                    activeProjectId={selected?.id}
                   />
                 ))}
               </div>
@@ -234,7 +294,7 @@ function App() {
               />
               <div className="scene-showcase">
                 {sceneProjects.map((project) => (
-                  <SceneCard project={project} key={project.id} onClick={openProject} />
+                  <SceneCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
                 ))}
               </div>
             </section>
@@ -271,6 +331,7 @@ function App() {
             <ProjectDetail
               project={selected}
               backLabel={backLabels[projectReturnCategory || getProjectCategory(selected)]}
+              entryPreview={selectedPreview}
               isGalleryOpen={Boolean(modal)}
               onBack={closeProject}
               onImageClick={(images, index, options = {}) => setModal({ images, index, ...options })}

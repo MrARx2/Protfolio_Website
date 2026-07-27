@@ -64,6 +64,18 @@ export const gameProjects = [
     id: "Ricochet",
     title: "Ricochet",
     thumbnail: "/Images/Ricochet/Mid-Match.jpg",
+    cardPreview: {
+      presentation: "game",
+      glow: "206, 64, 255",
+      contribution: "Gameplay systems, AI, and match flow",
+      depth: "7 screens · gameplay video · systems breakdown",
+      cta: "Explore gameplay & systems",
+      frames: [
+        { src: "/Images/Ricochet/Mid-Match.jpg", label: "Compete" },
+        { src: "/Images/Ricochet/StartOfMatch.jpg", label: "Prepare" },
+        { src: "/Images/Ricochet/Winner Screen.jpg", label: "Victory" }
+      ]
+    },
     summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
     images: [
       "/Images/Ricochet/Intro.jpg", // Logo/Title screen first
@@ -96,6 +108,18 @@ export const gameProjects = [
     id: "slingshot",
     title: "Slingshot",
     thumbnail: "/Images/Slingshot/Slingshot -midrace-red-planet.jpg",
+    cardPreview: {
+      presentation: "game",
+      glow: "116, 78, 255",
+      contribution: "Flight systems, procedural tracks, and race flow",
+      depth: "6 screens · gameplay video · systems breakdown",
+      cta: "Explore the racing system",
+      frames: [
+        { src: "/Images/Slingshot/Slingshot -midrace-red-planet.jpg", label: "Accelerate" },
+        { src: "/Images/Slingshot/Slingshot - Launch.jpg", label: "Launch" },
+        { src: "/Images/Slingshot/Slingshot - checkpoint captured.jpg", label: "Navigate" }
+      ]
+    },
     summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
     images: [
       "/Images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
@@ -153,6 +177,18 @@ export const modelingProjects = [
     id: 'cozmo-robot',
     title: 'Cozmo Robot',
     thumbnail: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
+    cardPreview: {
+      presentation: 'modeling',
+      glow: '92, 174, 255',
+      contribution: 'Modeling, texturing, and real-time presentation',
+      depth: '5 renders · materials · progression',
+      cta: 'View modeling breakdown',
+      frames: [
+        { src: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00011.png', label: 'Front study', position: 'center 72%' },
+        { src: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00012.png', label: 'Side profile', position: 'center 68%' },
+        { src: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00013.png', label: 'Top details', position: 'center 58%' }
+      ]
+    },
     summary: 'Portfolio project: stylized Cozmo robot modeled, textured and rendered.',
     renders: [
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
@@ -187,6 +223,18 @@ export const modelingProjects = [
     id: 'rainbow-dagger',
     title: 'Rainbow Dagger',
     thumbnail: '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png',
+    cardPreview: {
+      presentation: 'modeling',
+      glow: '246, 132, 255',
+      contribution: 'Hard-surface modeling, PBR materials, and presentation',
+      depth: '3 renders · materials · topology',
+      cta: 'View modeling breakdown',
+      frames: [
+        { src: '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png', label: 'Hero render' },
+        { src: '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00007.png', label: 'Side profile' },
+        { src: '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00008.png', label: 'Surface detail' }
+      ]
+    },
     summary: 'Realistic dagger with detailed materials and PBR texturing, designed for a more grounded aesthetic.',
     renders: [
       '/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png',
@@ -249,6 +297,18 @@ export const sceneProjects = [
     id: 'star-wars-scene',
     title: 'Star Wars Scene',
     thumbnail: '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png',
+    cardPreview: {
+      presentation: 'scene',
+      glow: '98, 155, 255',
+      contribution: 'Environment assembly, lighting, and real-time rendering',
+      depth: '5 views · video showcase · Nanite breakdown',
+      cta: 'Enter the environment',
+      frames: [
+        { src: '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png', label: 'Establishing shot' },
+        { src: '/Images/Scenes/Starwars Scene/Highres-Screenshot00003.png', label: 'Atmosphere' },
+        { src: '/Images/Scenes/Starwars Scene/Highres-Screenshot00006.png', label: 'Composition' }
+      ]
+    },
     summary: 'Cinematic environment recreation featuring advanced Unreal Engine 5 technologies including Nanite virtualized geometry.',
     images: [
       '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png',

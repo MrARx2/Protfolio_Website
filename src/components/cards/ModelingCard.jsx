@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { projectTransitionStyle } from "../../utils/projectTransitions";
+import ProjectPreviewMedia from "./ProjectPreviewMedia";
 
-function ModelingCard({ project, onClick, index = 0 }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const imageSrc = project.thumbnail || project.renders?.[0] || project.references?.[0];
+function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
+  const previewRef = useRef(null);
+  const transitionEnabled = activeProjectId !== project.id;
 
-  const openProject = () => onClick(project);
+  const openProject = () => {
+    onClick(project, previewRef.current?.getCurrentFrame());
+  };
+
   const handleKeyDown = (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -14,38 +19,53 @@ function ModelingCard({ project, onClick, index = 0 }) {
 
   return (
     <article
-      className={`modeling-card ${index % 2 === 1 ? "modeling-card-reversed" : ""}`}
+      className={`modeling-card living-project-card ${index % 2 === 1 ? "modeling-card-reversed" : ""}`}
+      id={`project-card-${project.id}`}
       onClick={openProject}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
       aria-label={`View case study for ${project.title}`}
+      style={{ "--project-glow": project.cardPreview?.glow || "242, 163, 58" }}
     >
-      <div className="modeling-image-wrap">
-        {!imageLoaded && <div className="skeleton-loader" aria-label="Loading image" />}
-        <img
-          src={imageSrc}
-          alt={`${project.title} final render`}
-          onLoad={() => setImageLoaded(true)}
-          style={{ opacity: imageLoaded ? 1 : 0 }}
-          loading="lazy"
-        />
-        <span className="modeling-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-      </div>
+      <ProjectPreviewMedia
+        className="modeling-image-wrap"
+        project={project}
+        badge={`3D study · ${String(index + 1).padStart(2, "0")}`}
+        paused={Boolean(activeProjectId)}
+        ref={previewRef}
+        transitionEnabled={transitionEnabled}
+      />
 
-      <div className="modeling-card-content">
-        <span className="project-eyebrow">3D study</span>
-        <h3 className="modeling-card-title">{project.title}</h3>
-        <p className="modeling-card-summary">{project.summary}</p>
-        <dl className="modeling-card-meta">
-          <div><dt>Software</dt><dd>{project.software}</dd></div>
-          <div><dt>Rendered in</dt><dd>{project.render || "—"}</dd></div>
-          <div><dt>Duration</dt><dd>{project.time}</dd></div>
-        </dl>
-        <div className="project-card-tags">
-          {project.tags?.slice(0, 4).map((tag) => <span key={tag}>{tag}</span>)}
+      <div className="modeling-card-content living-card-content">
+        <div className="card-compact-meta" aria-label="Project details">
+          <span>{project.software}</span>
+          <span>{project.render || "Real-time render"}</span>
+          <span>{project.time}</span>
         </div>
-        <span className="project-card-link">Explore the process <span aria-hidden="true">↗</span></span>
+        <h3
+          className="modeling-card-title"
+          style={projectTransitionStyle(project, "title", transitionEnabled)}
+        >
+          {project.title}
+        </h3>
+        <p className="modeling-card-summary">{project.summary}</p>
+
+        <p className="project-contribution">
+          <span>My focus</span>
+          {project.cardPreview?.contribution || "Modeling and presentation"}
+        </p>
+
+        <div className="project-card-tags" aria-label="Project tags">
+          {project.tags?.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}
+        </div>
+
+        <div className="living-card-action-row">
+          <span className="case-study-depth">{project.cardPreview?.depth}</span>
+          <span className="project-card-link project-card-cta">
+            {project.cardPreview?.cta || "Explore the process"} <span aria-hidden="true">→</span>
+          </span>
+        </div>
       </div>
     </article>
   );
