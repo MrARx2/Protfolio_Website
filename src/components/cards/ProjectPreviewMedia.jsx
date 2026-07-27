@@ -16,13 +16,14 @@ function normalizedIndex(index, length) {
 
 const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   project,
+  previewData,
   className = "",
   badge,
   paused = false,
   eager = false,
   transitionEnabled = true
 }, ref) {
-  const preview = project.cardPreview || {};
+  const preview = previewData || project.cardPreview || {};
   const frames = useMemo(() => {
     if (preview.frames?.length) return preview.frames;
     const fallback = project.thumbnail || project.images?.[0] || project.renders?.[0];

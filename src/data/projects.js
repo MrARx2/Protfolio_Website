@@ -13,6 +13,14 @@ export const gameProjects = [
     id: "path-of-embers",
     title: "Path of Embers",
     thumbnail: "/Images/Path Of Embers/Gameplay4.jpg",
+    featuredPreview: {
+      presentation: "phone",
+      frames: [
+        { src: "/Images/Path Of Embers/Gameplay4.jpg", label: "Combat" },
+        { src: "/Images/Path Of Embers/Gameplay7.jpg", label: "Boss encounter" },
+        { src: "/Images/Path Of Embers/TalentWheel.jpg", label: "Talent progression" }
+      ]
+    },
     summary: "Path of Embers is a fast-paced roguelike action mobile game where you battle through unique, procedurally generated arenas. Master combat and movement, adapt to new hazards in every run, and experience fluid 60 FPS gameplay built entirely from scratch.",
     images: [
       "/Images/Path Of Embers/MainMenu.jpg",

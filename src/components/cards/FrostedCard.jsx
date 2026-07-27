@@ -1,11 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { projectTransitionStyle } from "../../utils/projectTransitions";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 
 function FrostedCard({ project, onClick, featured = false, activeProjectId = null }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const previewRef = useRef(null);
-  const imageSrc = project.thumbnail || project.images?.[0];
   const transitionEnabled = activeProjectId !== project.id;
 
   const openProject = () => {
@@ -31,13 +29,14 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
         aria-label={`View case study for ${project.title}`}
       >
         <div className="project-card-media">
-          {!imageLoaded && <div className="skeleton-loader" aria-label="Loading image" />}
-          <img
-            src={imageSrc}
-            alt={`${project.title} gameplay`}
-            onLoad={() => setImageLoaded(true)}
-            style={{ opacity: imageLoaded ? 1 : 0 }}
-            loading="eager"
+          <ProjectPreviewMedia
+            className="featured-phone-preview"
+            project={project}
+            previewData={project.featuredPreview}
+            paused={Boolean(activeProjectId)}
+            eager
+            ref={previewRef}
+            transitionEnabled={false}
           />
           <span className="project-card-badge">Featured · Mobile</span>
         </div>

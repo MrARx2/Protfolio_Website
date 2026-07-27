@@ -880,8 +880,8 @@ video {
   transition: transform 650ms var(--ease), opacity 300ms ease;
 }
 
-.project-card:not(.living-project-card):hover .project-card-media img,
-.project-card:not(.living-project-card):focus-visible .project-card-media img {
+.project-card:not(.living-project-card):hover .project-card-media > img,
+.project-card:not(.living-project-card):focus-visible .project-card-media > img {
   transform: scale(1.035);
 }
 
@@ -895,14 +895,31 @@ video {
     linear-gradient(145deg, #17181a, #0b0c0e);
 }
 
-.game-card-featured .project-card-media img {
+.game-card-featured .featured-phone-preview {
   width: auto;
   max-width: 78%;
   height: min(610px, 86%);
-  object-fit: contain;
+  aspect-ratio: 6 / 13;
+  flex: none;
   border: 7px solid #050506;
   border-radius: 34px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.56), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.game-card-featured .featured-phone-preview .project-preview-frame {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: cover;
+}
+
+.featured-phone-preview .project-preview-scrim,
+.featured-phone-preview .project-preview-hud,
+.featured-phone-preview .project-preview-progress {
+  display: none;
 }
 
 .project-card-badge {
@@ -3880,7 +3897,7 @@ video {
     min-height: 590px;
   }
 
-  .game-card-featured .project-card-media img {
+  .game-card-featured .featured-phone-preview {
     max-width: 76%;
     height: 520px;
   }
@@ -4181,6 +4198,37 @@ video {
 }
 
 @media (max-width: 480px) {
+  .work-nav-shell {
+    margin: 0;
+    padding: 8px 0;
+    overflow: visible;
+  }
+
+  .work-nav {
+    width: 100%;
+    max-width: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    margin: 0;
+    border-radius: 24px;
+  }
+
+  .work-nav button {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 18px;
+    font-size: 0.78rem;
+  }
+
+  .work-section {
+    scroll-margin-top: 180px;
+  }
+
   .hero-actions,
   .contact-actions {
     flex-direction: column;
@@ -4201,7 +4249,7 @@ video {
     padding: 24px;
   }
 
-  .game-card-featured .project-card-media img {
+  .game-card-featured .featured-phone-preview {
     max-width: 84%;
     height: 450px;
   }
