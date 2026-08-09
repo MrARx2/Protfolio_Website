@@ -12,6 +12,7 @@ import SceneCard from "./components/cards/SceneCard";
 import ProjectDetail from "./components/project/ProjectDetail";
 import ImageModal from "./components/modals/ImageModal";
 import PhoneImageModal from "./components/modals/PhoneImageModal";
+import useScrollReveal from "./hooks/useScrollReveal";
 import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
 import { applyTheme, getInitialTheme } from "./data/themes";
@@ -55,6 +56,8 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const savedScrollPosition = useRef(0);
   const openedProjectId = useRef(null);
+
+  useScrollReveal(selected?.id || "portfolio");
 
   const allProjects = useMemo(
     () => [...gameProjects, ...modelingProjects, ...sceneProjects],
@@ -200,12 +203,15 @@ function App() {
   }, [selected]);
 
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = (event) => {
       if (modal) {
         setModal(null);
         return;
       }
       if (selected) {
+        const remainsOnSelectedProject = event.state?.project === selected.id
+          || window.location.hash === `#project/${selected.id}`;
+        if (remainsOnSelectedProject) return;
         const projectId = selected.id;
         const update = () => {
           setSelected(null);

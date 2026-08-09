@@ -166,11 +166,11 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
       <div className="project-preview-scrim" aria-hidden="true" />
       {badge && <span className="project-preview-badge">{badge}</span>}
       <div className="project-preview-hud" aria-hidden="true">
-        <div className="project-preview-story">
+        <div className="project-preview-story" key={`story-${activeIndex}`}>
           <span>Project preview</span>
           <strong>{activeFrame.label}</strong>
         </div>
-        <span className="project-preview-count">
+        <span className="project-preview-count" key={`count-${activeIndex}`}>
           {String(activeIndex + 1).padStart(2, "0")} / {String(frames.length).padStart(2, "0")}
         </span>
       </div>

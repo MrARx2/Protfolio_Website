@@ -1,0 +1,68 @@
+import { useLayoutEffect } from "react";
+
+const revealSelector = [
+  ".work-section-heading",
+  ".project-card",
+  ".modeling-card",
+  ".scene-card",
+  ".contact-section > .section-kicker",
+  ".contact-section > h2",
+  ".contact-section > p",
+  ".contact-section > .contact-actions",
+  ".contact-section > .footer-meta",
+  ".project-detail .case-study-hero",
+  ".project-detail .modeling-detail-header",
+  ".project-detail .scene-detail-header",
+  ".project-detail .case-study-section",
+  ".project-detail .modeling-section",
+  ".project-detail .scene-section",
+  ".project-detail .scene-details-section"
+].join(",");
+
+function revealDelay(target) {
+  const parent = target.parentElement;
+  if (!parent) return 0;
+
+  const siblings = Array.from(parent.children).filter((child) => child.matches?.(
+    ".project-card, .modeling-card, .scene-card"
+  ));
+  const index = siblings.indexOf(target);
+  return index >= 0 ? Math.min(index * 90, 180) : 0;
+}
+
+export default function useScrollReveal(refreshKey) {
+  useLayoutEffect(() => {
+    const targets = Array.from(document.querySelectorAll(revealSelector));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    targets.forEach((target) => {
+      target.classList.add("motion-reveal");
+      target.style.setProperty("--reveal-delay", `${revealDelay(target)}ms`);
+    });
+
+    document.documentElement.classList.add("motion-observer-ready");
+
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      targets.forEach((target) => target.classList.add("is-revealed"));
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-revealed");
+        observer.unobserve(entry.target);
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: "0px 0px -7% 0px"
+    });
+
+    targets.forEach((target) => {
+      if (target.classList.contains("is-revealed")) return;
+      observer.observe(target);
+    });
+
+    return () => observer.disconnect();
+  }, [refreshKey]);
+}

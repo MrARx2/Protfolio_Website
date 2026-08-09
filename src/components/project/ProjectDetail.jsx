@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
 import { isYouTubeShortUrl, toEmbedUrl } from "../../utils/youtubeHelpers";
 import ModelingDetail from "./ModelingDetail";
@@ -6,15 +6,57 @@ import SceneDetail from "./SceneDetail";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
 import { projectTransitionStyle } from "../../utils/projectTransitions";
+import MechanicModal from "../modals/MechanicModal";
 
 function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick }) {
   const backdropRef = useRef(null);
   const backButtonRef = useRef(null);
+  const mechanicTriggerRef = useRef(null);
+  const [selectedMechanic, setSelectedMechanic] = useState(null);
   const mechanics = mechanicsData[project.id] || [];
   const isPortraitTrailer = isYouTubeShortUrl(project.youtube);
   const portraitVideoStyle = isPortraitTrailer
     ? { "--video-aspect-ratio": project.videoAspectRatio || "9 / 16" }
     : undefined;
+
+  const openMechanic = useCallback((mechanic, trigger) => {
+    mechanicTriggerRef.current = trigger;
+    window.history.pushState(
+      { ...(window.history.state || {}), project: project.id, mechanic: mechanic.label },
+      "",
+      window.location.href
+    );
+    setSelectedMechanic(mechanic);
+  }, [project.id]);
+
+  const clearMechanic = useCallback(() => {
+    setSelectedMechanic(null);
+    window.requestAnimationFrame(() => mechanicTriggerRef.current?.focus({ preventScroll: true }));
+  }, []);
+
+  const closeMechanic = useCallback(() => {
+    const historyState = window.history.state;
+    if (historyState?.project === project.id && historyState?.mechanic) {
+      window.history.back();
+      return;
+    }
+    clearMechanic();
+  }, [clearMechanic, project.id]);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const mechanicLabel = event.state?.project === project.id ? event.state?.mechanic : null;
+      if (mechanicLabel) {
+        const mechanic = mechanics.find((item) => item.label === mechanicLabel);
+        if (mechanic) setSelectedMechanic(mechanic);
+        return;
+      }
+      clearMechanic();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [clearMechanic, mechanics, project.id]);
 
   useLayoutEffect(() => {
     const backdrop = backdropRef.current;
@@ -52,14 +94,14 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handleKeyDown = (event) => {
-      if (event.key === "Escape" && !isGalleryOpen) onBack();
+      if (event.key === "Escape" && !isGalleryOpen && !selectedMechanic) onBack();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isGalleryOpen, onBack]);
+  }, [isGalleryOpen, onBack, selectedMechanic]);
 
   const handleBackdropClick = (event) => {
     if (event.target === backdropRef.current) onBack();
@@ -130,7 +172,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                   <p className="section-description">
                     {isPortraitTrailer
                       ? "A portrait-first look at the combat, progression, and moment-to-moment mobile experience."
-                      : "A closer look at the game&apos;s pace, systems, and player feedback."}
+                      : "A closer look at the game's pace, systems, and player feedback."}
                   </p>
                   {isPortraitTrailer && (
                     <div
@@ -175,11 +217,20 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                 </div>
                 <div className="mechanics-list-grid">
                   {mechanics.map((mechanic) => (
-                    <article className="mechanic-item" key={mechanic.label}>
+                    <button
+                      className="mechanic-item"
+                      key={mechanic.label}
+                      type="button"
+                      aria-haspopup="dialog"
+                      onClick={(event) => openMechanic(mechanic, event.currentTarget)}
+                    >
                       <span className="mechanic-icon" aria-hidden="true">{mechanic.icon}</span>
                       <h3>{mechanic.label}</h3>
                       <p className="mechanic-desc">{mechanic.desc}</p>
-                    </article>
+                      <span className="mechanic-open-cue">
+                        Explore system <span aria-hidden="true">↗</span>
+                      </span>
+                    </button>
                   ))}
                 </div>
               </section>
@@ -226,6 +277,10 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
           </div>
         )}
       </article>
+
+      {selectedMechanic && (
+        <MechanicModal mechanic={selectedMechanic} onClose={closeMechanic} />
+      )}
     </div>
   );
 }
