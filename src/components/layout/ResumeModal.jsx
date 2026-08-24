@@ -1,16 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 function ResumeModal({ resumeUrl, onClose }) {
   const [isLoading, setIsLoading] = useState(true);
+  const modalRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const titleId = useId();
 
   // Lock body scroll when modal is open
   useEffect(() => {
+    const previouslyFocused = document.activeElement;
+    const portfolioPage = document.querySelector('.portfolio-page');
+    const previousOverflow = document.body.style.overflow;
+    if (portfolioPage) {
+      portfolioPage.inert = true;
+      portfolioPage.setAttribute('aria-hidden', 'true');
+    }
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(modalRef.current?.querySelectorAll(
+        'button:not([disabled]), [href], iframe, [tabindex]:not([tabindex="-1"])'
+      ) || []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-  }, []);
+
+    window.addEventListener('keydown', handleKeyDown);
+    closeButtonRef.current?.focus({ preventScroll: true });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+      if (portfolioPage) {
+        portfolioPage.inert = false;
+        portfolioPage.removeAttribute('aria-hidden');
+      }
+      window.requestAnimationFrame(() => {
+        if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
+      });
+    };
+  }, [onClose]);
 
   const handleBackdropClick = (e) => {
     if (e.target.classList.contains('resume-modal-backdrop')) {
@@ -19,9 +62,16 @@ function ResumeModal({ resumeUrl, onClose }) {
   };
 
   const modalContent = (
-    <div className="resume-modal-backdrop" onClick={handleBackdropClick}>
-      <div className="resume-modal-content frosted-card">
+    <div className="resume-modal-backdrop" onMouseDown={handleBackdropClick}>
+      <div
+        className="resume-modal-content frosted-card"
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
         <button 
+          ref={closeButtonRef}
           className="resume-close-btn" 
           onClick={onClose} 
           aria-label="Close modal"
@@ -30,7 +80,7 @@ function ResumeModal({ resumeUrl, onClose }) {
         </button>
 
         <div className="resume-modal-header">
-          <h2 className="section-title" style={{ margin: 0, fontSize: '1.8rem', textAlign: 'center', width: '100%' }}>Resume Preview</h2>
+          <h2 id={titleId} className="section-title" style={{ margin: 0, fontSize: '1.8rem', textAlign: 'center', width: '100%' }}>Resume Preview</h2>
         </div>
         
         <div className="resume-preview-container">

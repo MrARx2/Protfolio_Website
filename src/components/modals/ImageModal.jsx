@@ -5,6 +5,7 @@ function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const closeButtonRef = useRef(null);
+  const modalShellRef = useRef(null);
   const imageContainerRef = useRef(null);
   const touchStartX = useRef(null);
   const total = images?.length || 0;
@@ -41,6 +42,7 @@ function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
   }, [index]);
 
   useEffect(() => {
+    const previouslyFocused = document.activeElement;
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -70,6 +72,21 @@ function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
         event.preventDefault();
         setIndex(total - 1);
       }
+      if (event.key === "Tab") {
+        const focusable = Array.from(modalShellRef.current?.querySelectorAll(
+          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        ) || []);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
@@ -80,6 +97,9 @@ function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      window.requestAnimationFrame(() => {
+        if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
+      });
     };
   }, [next, onClose, portrait, previous, scrollPortraitImage, total]);
 
@@ -108,7 +128,7 @@ function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="modal-shell">
+      <div className="modal-shell" ref={modalShellRef}>
         <header className="modal-topbar">
           <div>
             <span className="modal-eyebrow">Full-resolution view</span>

@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef } from "react";
+import { createPortal } from "react-dom";
 
 function MechanicModal({ mechanic, onClose }) {
   const modalRef = useRef(null);
@@ -7,6 +8,12 @@ function MechanicModal({ mechanic, onClose }) {
   const descriptionId = useId();
 
   useEffect(() => {
+    const projectBackdrop = document.querySelector(".project-detail-backdrop");
+    if (projectBackdrop) {
+      projectBackdrop.inert = true;
+      projectBackdrop.setAttribute("aria-hidden", "true");
+    }
+
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -34,10 +41,16 @@ function MechanicModal({ mechanic, onClose }) {
 
     window.addEventListener("keydown", handleKeyDown);
     closeButtonRef.current?.focus({ preventScroll: true });
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (projectBackdrop) {
+        projectBackdrop.inert = false;
+        projectBackdrop.removeAttribute("aria-hidden");
+      }
+    };
   }, [onClose]);
 
-  return (
+  return createPortal((
     <div
       className="mechanic-modal-backdrop"
       onClick={(event) => {
@@ -151,7 +164,7 @@ function MechanicModal({ mechanic, onClose }) {
         </footer>
       </div>
     </div>
-  );
+  ), document.body);
 }
 
 export default MechanicModal;

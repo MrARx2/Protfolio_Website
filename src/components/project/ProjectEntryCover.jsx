@@ -1,25 +1,33 @@
 import React from "react";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 
 function ProjectEntryCover({ project, previewFrame }) {
-  const image = previewFrame?.src
+  const curatedHero = project.caseStudyHero;
+  const image = curatedHero?.src
     || project.thumbnail
+    || previewFrame?.src
     || project.images?.[0]
     || project.renders?.[0];
+  const label = curatedHero?.label
+    || project.cardPreview?.frames?.find((frame) => frame.src === image)?.label
+    || previewFrame?.label
+    || "Project overview";
 
   if (!image) return null;
 
   return (
     <div
       className={`project-entry-cover project-entry-cover-${project.cardPreview?.presentation || "game"}`}
-      style={projectTransitionStyle(project, "media")}
       aria-hidden="true"
     >
-      <img src={image} alt="" />
+      <img
+        src={image}
+        alt=""
+        style={{ objectPosition: curatedHero?.position || "center" }}
+      />
       <div className="project-entry-cover-shade" />
       <div className="project-entry-cover-note">
         <span>Opening frame</span>
-        <strong>{previewFrame?.label || project.cardPreview?.frames?.[0]?.label || "Project overview"}</strong>
+        <strong>{label}</strong>
       </div>
     </div>
   );

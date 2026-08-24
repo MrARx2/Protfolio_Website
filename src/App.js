@@ -1,5 +1,4 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import "./style.css";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
@@ -35,6 +34,7 @@ function SectionHeading({ title, description }) {
 }
 
 const backLabels = {
+  all: "Back to all work",
   games: "Back to games",
   modeling: "Back to 3D modeling",
   scenes: "Back to environments"
@@ -46,23 +46,67 @@ function getProjectCategory(project) {
   return "games";
 }
 
+const portfolioProjects = [...gameProjects, ...modelingProjects, ...sceneProjects];
+
+function categoryFromHash(hash = window.location.hash) {
+  const value = hash.replace(/^#/, "");
+  if (value === "games" || value === "modeling" || value === "scenes") return value;
+  return "all";
+}
+
+function projectRouteFromHash(hash = window.location.hash) {
+  const parts = hash.replace(/^#/, "").split("/");
+  if (parts[0] !== "project" || !parts[1]) return null;
+  return {
+    projectId: decodeURIComponent(parts[1]),
+    overlay: parts[2] || null,
+    overlayId: parts[3] ? decodeURIComponent(parts.slice(3).join("/")) : null
+  };
+}
+
+function projectById(projectId) {
+  return portfolioProjects.find((project) => String(project.id) === String(projectId)) || null;
+}
+
+function fallbackGalleryForProject(project) {
+  if (!project) return null;
+  const images = project.images || project.renders || [];
+  if (!images.length) return null;
+  return {
+    images,
+    index: 0,
+    presentation: project.galleryPresentation === "phone-showcase" ? "phone-showcase" : undefined,
+    portrait: project.galleryPresentation === "phone-showcase"
+  };
+}
+
 function App() {
+  const initialProjectRoute = useMemo(() => projectRouteFromHash(), []);
+  const initialProject = useMemo(
+    () => projectById(initialProjectRoute?.projectId),
+    [initialProjectRoute]
+  );
   const [theme, setTheme] = useState(getInitialTheme);
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [selected, setSelected] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(() => (
+    initialProject ? getProjectCategory(initialProject) : categoryFromHash()
+  ));
+  const [selected, setSelected] = useState(initialProject);
   const [selectedPreview, setSelectedPreview] = useState(null);
-  const [projectReturnCategory, setProjectReturnCategory] = useState(null);
-  const [modal, setModal] = useState(null);
+  const [projectReturnCategory, setProjectReturnCategory] = useState(
+    initialProject ? getProjectCategory(initialProject) : null
+  );
+  const [modal, setModal] = useState(() => (
+    initialProjectRoute?.overlay === "gallery" ? fallbackGalleryForProject(initialProject) : null
+  ));
   const [scrollProgress, setScrollProgress] = useState(0);
   const savedScrollPosition = useRef(0);
-  const openedProjectId = useRef(null);
+  const openedProjectId = useRef(initialProject?.id || null);
+  const portfolioPageRef = useRef(null);
+  const projectActionRef = useRef(initialProject ? "open" : "closed");
 
   useScrollReveal(selected?.id || "portfolio");
 
-  const allProjects = useMemo(
-    () => [...gameProjects, ...modelingProjects, ...sceneProjects],
-    []
-  );
+  const allProjects = useMemo(() => portfolioProjects, []);
 
   const categories = useMemo(
     () => [
@@ -78,26 +122,23 @@ function App() {
     applyTheme(theme);
   }, [theme]);
 
-  const runProjectTransition = useCallback((update) => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion || typeof document.startViewTransition !== "function") {
-      update();
-      return null;
-    }
-
-    try {
-      return document.startViewTransition(() => flushSync(update));
-    } catch {
-      update();
-      return null;
-    }
+  const commitProjectUpdate = useCallback((update, onFinished) => {
+    update();
+    onFinished?.();
   }, []);
 
-  const restoreProjectCard = useCallback((projectId) => {
+  const restoreProjectCard = useCallback((projectId, scrollPosition = savedScrollPosition.current) => {
     window.requestAnimationFrame(() => {
-      window.scrollTo({ top: savedScrollPosition.current, behavior: "auto" });
+      window.scrollTo({ top: scrollPosition, behavior: "auto" });
       window.requestAnimationFrame(() => {
-        document.getElementById(`project-card-${projectId}`)?.focus({ preventScroll: true });
+        const card = document.getElementById(`project-card-${projectId}`);
+        const stickyNav = document.querySelector(".work-nav-shell");
+        if (card && stickyNav) {
+          const safeTop = stickyNav.getBoundingClientRect().bottom + 14;
+          const cardTop = card.getBoundingClientRect().top;
+          if (cardTop < safeTop) window.scrollBy({ top: cardTop - safeTop, behavior: "auto" });
+        }
+        card?.focus({ preventScroll: true });
       });
     });
   }, []);
@@ -109,54 +150,152 @@ function App() {
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-    window.history.replaceState({}, "", category === "all" ? "#projects" : `#${category}`);
+    window.history.replaceState(
+      { kind: "portfolio", category, scrollY: window.scrollY },
+      "",
+      category === "all" ? "#projects" : `#${category}`
+    );
   }, [categories]);
 
-  const goHome = useCallback(() => {
-    setSelected(null);
-    setSelectedPreview(null);
-    setProjectReturnCategory(null);
-    setModal(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    window.history.replaceState({}, "", "#about");
-  }, []);
-
   const openProject = useCallback((project, previewFrame = null) => {
+    if (projectActionRef.current !== "closed") return;
+
     savedScrollPosition.current = window.scrollY;
     openedProjectId.current = project.id;
     const projectCategory = getProjectCategory(project);
+    const returnCategory = activeCategory === "all" ? projectCategory : activeCategory;
+    projectActionRef.current = "opening";
+
+    window.history.replaceState(
+      {
+        kind: "portfolio",
+        category: returnCategory,
+        scrollY: savedScrollPosition.current
+      },
+      "",
+      returnCategory === "all" ? "#projects" : `#${returnCategory}`
+    );
+
     const update = () => {
-      setProjectReturnCategory(projectCategory);
+      setProjectReturnCategory(returnCategory);
       setSelectedPreview(previewFrame);
       setSelected(project);
     };
 
-    if (project.cardPreview) {
-      const transition = runProjectTransition(update);
-      transition?.finished.finally(() => {
-        const backdrop = document.querySelector(".project-detail-backdrop");
-        if (backdrop) backdrop.scrollTop = 0;
-      });
-    } else update();
-    window.history.pushState({ project: project.id }, "", `#project/${project.id}`);
-  }, [activeCategory, runProjectTransition]);
+    commitProjectUpdate(update, () => {
+      projectActionRef.current = "open";
+    });
+    window.history.pushState(
+      {
+        kind: "project",
+        project: project.id,
+        returnCategory,
+        scrollY: savedScrollPosition.current,
+        canGoBack: true
+      },
+      "",
+      `#project/${encodeURIComponent(project.id)}`
+    );
+  }, [activeCategory, commitProjectUpdate]);
 
-  const closeProject = useCallback(() => {
-    const projectId = selected?.id || openedProjectId.current;
-    const returnCategory = selected ? getProjectCategory(selected) : activeCategory;
+  const finishClosingProject = useCallback((returnCategory, projectId, scrollPosition) => {
+    projectActionRef.current = "closing";
     const update = () => {
       setModal(null);
       setSelected(null);
       setSelectedPreview(null);
       setProjectReturnCategory(null);
       setActiveCategory(returnCategory);
+      openedProjectId.current = null;
     };
 
-    if (selected?.cardPreview) runProjectTransition(update);
-    else update();
-    window.history.replaceState({}, "", activeCategory === "all" ? "#projects" : `#${activeCategory}`);
-    if (projectId) restoreProjectCard(projectId);
-  }, [activeCategory, restoreProjectCard, runProjectTransition, selected]);
+    const onFinished = () => {
+      projectActionRef.current = "closed";
+      if (projectId) restoreProjectCard(projectId, scrollPosition);
+    };
+
+    commitProjectUpdate(update, onFinished);
+  }, [commitProjectUpdate, restoreProjectCard]);
+
+  const closeProject = useCallback(() => {
+    const projectId = selected?.id || openedProjectId.current;
+    const currentState = window.history.state || {};
+    const returnCategory = projectReturnCategory
+      || currentState.returnCategory
+      || (selected ? getProjectCategory(selected) : activeCategory);
+
+    if (currentState.kind === "project" && currentState.project === projectId && currentState.canGoBack) {
+      window.history.back();
+      return;
+    }
+
+    finishClosingProject(returnCategory, projectId, currentState.scrollY ?? savedScrollPosition.current);
+    window.history.replaceState(
+      { kind: "portfolio", category: returnCategory, scrollY: savedScrollPosition.current },
+      "",
+      returnCategory === "all" ? "#projects" : `#${returnCategory}`
+    );
+  }, [activeCategory, finishClosingProject, projectReturnCategory, selected]);
+
+  const openImageModal = useCallback((images, index, options = {}) => {
+    if (!selected) return;
+    const gallery = { images, index, ...options };
+    window.history.pushState(
+      {
+        ...(window.history.state || {}),
+        kind: "gallery",
+        project: selected.id,
+        gallery,
+        canGoBack: true
+      },
+      "",
+      `#project/${encodeURIComponent(selected.id)}/gallery`
+    );
+    setModal(gallery);
+  }, [selected]);
+
+  const closeImageModal = useCallback(() => {
+    const currentState = window.history.state || {};
+    if (currentState.kind === "gallery" && currentState.project === selected?.id && currentState.canGoBack) {
+      window.history.back();
+      return;
+    }
+    setModal(null);
+    if (selected) {
+      window.history.replaceState(
+        { ...currentState, kind: "project", project: selected.id },
+        "",
+        `#project/${encodeURIComponent(selected.id)}`
+      );
+    }
+  }, [selected]);
+
+  useEffect(() => {
+    const route = projectRouteFromHash();
+    if (initialProject) {
+      const gallery = route?.overlay === "gallery" ? fallbackGalleryForProject(initialProject) : null;
+      window.history.replaceState(
+        {
+          kind: gallery ? "gallery" : "project",
+          project: initialProject.id,
+          returnCategory: getProjectCategory(initialProject),
+          scrollY: 0,
+          canGoBack: false,
+          ...(gallery ? { gallery } : {})
+        },
+        "",
+        window.location.hash
+      );
+      return;
+    }
+
+    const category = categoryFromHash();
+    window.history.replaceState(
+      { kind: "portfolio", category, scrollY: window.scrollY },
+      "",
+      window.location.hash || "#about"
+    );
+  }, [initialProject]);
 
   useEffect(() => {
     let ticking = false;
@@ -204,29 +343,75 @@ function App() {
 
   useEffect(() => {
     const handlePopState = (event) => {
-      if (modal) {
-        setModal(null);
+      const state = event.state || {};
+      const route = projectRouteFromHash();
+      const nextProject = projectById(state.project || route?.projectId);
+
+      if (nextProject) {
+        const nextGallery = state.kind === "gallery"
+          ? state.gallery || fallbackGalleryForProject(nextProject)
+          : route?.overlay === "gallery"
+            ? fallbackGalleryForProject(nextProject)
+            : null;
+        const returnCategory = state.returnCategory || getProjectCategory(nextProject);
+
+        setModal(nextGallery);
+        setProjectReturnCategory(returnCategory);
+        openedProjectId.current = nextProject.id;
+        savedScrollPosition.current = state.scrollY ?? savedScrollPosition.current;
+
+        if (selected?.id !== nextProject.id) {
+          projectActionRef.current = "opening";
+          const update = () => {
+            setSelectedPreview(null);
+            setSelected(nextProject);
+          };
+          commitProjectUpdate(update, () => { projectActionRef.current = "open"; });
+        }
         return;
       }
+
+      setModal(null);
+      const returnCategory = state.category || categoryFromHash();
+      const returnScroll = state.scrollY ?? savedScrollPosition.current;
       if (selected) {
-        const remainsOnSelectedProject = event.state?.project === selected.id
-          || window.location.hash === `#project/${selected.id}`;
-        if (remainsOnSelectedProject) return;
-        const projectId = selected.id;
-        const update = () => {
-          setSelected(null);
-          setSelectedPreview(null);
-          setProjectReturnCategory(null);
-        };
-        if (selected.cardPreview) runProjectTransition(update);
-        else update();
-        restoreProjectCard(projectId);
+        finishClosingProject(returnCategory, selected.id, returnScroll);
+      } else {
+        setActiveCategory(returnCategory);
+        window.requestAnimationFrame(() => window.scrollTo({ top: returnScroll, behavior: "auto" }));
       }
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [modal, restoreProjectCard, runProjectTransition, selected]);
+  }, [commitProjectUpdate, finishClosingProject, selected]);
+
+  useEffect(() => {
+    const portfolioPage = portfolioPageRef.current;
+    if (portfolioPage) {
+      portfolioPage.inert = Boolean(selected);
+      if (selected) portfolioPage.setAttribute("aria-hidden", "true");
+      else portfolioPage.removeAttribute("aria-hidden");
+    }
+
+    const projectBackdrop = document.querySelector(".project-detail-backdrop");
+    if (projectBackdrop) {
+      projectBackdrop.inert = Boolean(modal);
+      if (modal) projectBackdrop.setAttribute("aria-hidden", "true");
+      else projectBackdrop.removeAttribute("aria-hidden");
+    }
+
+    return () => {
+      if (portfolioPage) {
+        portfolioPage.inert = false;
+        portfolioPage.removeAttribute("aria-hidden");
+      }
+      if (projectBackdrop) {
+        projectBackdrop.inert = false;
+        projectBackdrop.removeAttribute("aria-hidden");
+      }
+    };
+  }, [modal, selected]);
 
   return (
     <ErrorBoundary>
@@ -236,11 +421,12 @@ function App() {
             <span style={{ transform: `scaleX(${scrollProgress})` }} />
           </div>
 
-          <AnimatedDotsBg />
-          <Navbar onHomeClick={goHome} theme={theme} onThemeChange={setTheme} />
-          <AboutSection onExplore={() => scrollToSection("all")} />
+          <div className="portfolio-page" ref={portfolioPageRef}>
+            <AnimatedDotsBg />
+            <Navbar theme={theme} onThemeChange={setTheme} />
+            <AboutSection onExplore={() => scrollToSection("all")} paused={Boolean(selected)} />
 
-          <main className="work-main" id="main-content">
+            <main className="work-main" id="main-content">
             <div className="work-nav-shell" id="projects">
               <nav className="work-nav" aria-label="Project categories">
                 {categories.map((category) => (
@@ -304,9 +490,9 @@ function App() {
                 ))}
               </div>
             </section>
-          </main>
+            </main>
 
-          <footer className="contact-section" id="contact">
+            <footer className="contact-section" id="contact">
             <div className="contact-glow" aria-hidden="true" />
             <span className="section-kicker">Let&apos;s connect</span>
             <h2>Let&apos;s build something interactive.</h2>
@@ -331,7 +517,8 @@ function App() {
                 Back to top <span aria-hidden="true">↑</span>
               </button>
             </div>
-          </footer>
+            </footer>
+          </div>
 
           {selected && (
             <ProjectDetail
@@ -340,7 +527,7 @@ function App() {
               entryPreview={selectedPreview}
               isGalleryOpen={Boolean(modal)}
               onBack={closeProject}
-              onImageClick={(images, index, options = {}) => setModal({ images, index, ...options })}
+              onImageClick={openImageModal}
             />
           )}
 
@@ -348,7 +535,7 @@ function App() {
             <PhoneImageModal
               images={modal.images}
               initialIndex={modal.index}
-              onClose={() => setModal(null)}
+              onClose={closeImageModal}
             />
           )}
 
@@ -357,7 +544,7 @@ function App() {
               images={modal.images}
               initialIndex={modal.index}
               portrait={modal.portrait}
-              onClose={() => setModal(null)}
+              onClose={closeImageModal}
             />
           )}
         </div>

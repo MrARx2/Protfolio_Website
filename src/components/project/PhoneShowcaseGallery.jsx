@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PhoneFrame from "./PhoneFrame";
 
 function PhoneShowcaseGallery({
+  sectionId,
   title = "Selected gallery",
   description,
   collections = [],
@@ -177,7 +178,7 @@ function PhoneShowcaseGallery({
   const activeImage = images[activeIndex];
 
   return (
-    <section className="case-study-section adaptive-gallery-section phone-showcase-section">
+    <section id={sectionId} className="case-study-section adaptive-gallery-section phone-showcase-section">
       <div className="gallery-heading-row phone-showcase-heading">
         <div className="section-header">
           <span className="section-kicker">Visual development</span>

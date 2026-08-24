@@ -6,6 +6,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isInspecting, setIsInspecting] = useState(false);
   const closeButtonRef = useRef(null);
+  const modalShellRef = useRef(null);
   const imageViewportRef = useRef(null);
   const touchStartRef = useRef(null);
   const total = images?.length || 0;
@@ -67,6 +68,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
   }, [images, index, total]);
 
   useEffect(() => {
+    const previouslyFocused = document.activeElement;
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -96,6 +98,21 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
         event.preventDefault();
         setIndex(total - 1);
       }
+      if (event.key === "Tab") {
+        const focusable = Array.from(modalShellRef.current?.querySelectorAll(
+          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        ) || []);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
@@ -106,6 +123,9 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      window.requestAnimationFrame(() => {
+        if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
+      });
     };
   }, [isInspecting, next, onClose, previous, scrollImage, total]);
 
@@ -141,7 +161,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="phone-modal-shell">
+      <div className="phone-modal-shell" ref={modalShellRef}>
         <header className="modal-topbar phone-modal-topbar">
           <div>
             <span className="modal-eyebrow">Mobile screen</span>

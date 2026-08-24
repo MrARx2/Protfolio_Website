@@ -1,10 +1,8 @@
 import React, { useRef } from "react";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 
 function FrostedCard({ project, onClick, featured = false, activeProjectId = null }) {
   const previewRef = useRef(null);
-  const transitionEnabled = activeProjectId !== project.id;
 
   const openProject = () => {
     onClick(project, previewRef.current?.getCurrentFrame());
@@ -36,7 +34,6 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
             paused={Boolean(activeProjectId)}
             eager
             ref={previewRef}
-            transitionEnabled={false}
           />
           <span className="project-card-badge">Featured · Mobile</span>
         </div>
@@ -83,7 +80,6 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
         badge="Game"
         paused={Boolean(activeProjectId)}
         ref={previewRef}
-        transitionEnabled={transitionEnabled}
       />
 
       <div className="project-card-content living-card-content">
@@ -91,7 +87,7 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
           <span>{project.engine}</span>
           <span>{project.time}</span>
         </div>
-        <h3 style={projectTransitionStyle(project, "title", transitionEnabled)}>{project.title}</h3>
+        <h3>{project.title}</h3>
         <p className="project-card-summary">{project.summary}</p>
 
         <p className="project-contribution">

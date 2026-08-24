@@ -1,7 +1,6 @@
 import React from "react";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 
 function ModelingDetail({ project, entryPreview, onImageClick }) {
   const collections = [
@@ -29,10 +28,10 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
 
   return (
     <div className="modeling-detail">
-      <header className="modeling-detail-header project-detail-header-with-cover">
+      <header id="case-study-overview" className="modeling-detail-header project-detail-header-with-cover">
         <ProjectEntryCover project={project} previewFrame={entryPreview} />
         <span className="project-eyebrow">3D modeling case study</span>
-        <h1 className="modeling-detail-title" style={projectTransitionStyle(project, "title")}>{project.title}</h1>
+        <h1 className="modeling-detail-title">{project.title}</h1>
         <p className="modeling-detail-summary">{project.summary}</p>
 
         <div className="modeling-meta-info">
@@ -60,7 +59,7 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
       </header>
 
       {project.details && (
-        <section className="case-study-section modeling-overview-section">
+        <section id="case-study-about" className="case-study-section modeling-overview-section">
           <div className="section-header">
             <span className="section-kicker">The project</span>
             <h2 className="section-title">About the work</h2>
@@ -70,6 +69,7 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
       )}
 
       <ProjectGallery
+        sectionId="case-study-gallery"
         title="Modeling process"
         description="Move between final renders, material work, development stages, and references without losing your place in the case study."
         projectTitle={project.title}

@@ -1,14 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { personalInfo } from '../../data/personalInfo';
 import { themes } from '../../data/themes';
 import ResumeModal from './ResumeModal';
 
-function Navbar({ onHomeClick, theme, onThemeChange }) {
+function Navbar({ theme, onThemeChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showResume, setShowResume] = useState(false);
+  const [showResume, setShowResume] = useState(() => window.location.hash === '#resume');
   const [isScrolled, setIsScrolled] = useState(false);
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const themePickerRef = useRef(null);
+  const resumeTriggerRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+  const mobileToggleRef = useRef(null);
   const currentTheme = themes.find(({ id }) => id === theme) || themes[0];
 
   useEffect(() => {
@@ -24,15 +27,46 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
     if (!mobileMenuOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
+    const backgroundRegions = ['#about', '#main-content', '#contact']
+      .map((selector) => document.querySelector(selector))
+      .filter(Boolean);
+    backgroundRegions.forEach((region) => {
+      region.inert = true;
+      region.setAttribute('aria-hidden', 'true');
+    });
+
     const closeOnEscape = (event) => {
       if (event.key === 'Escape') setMobileMenuOpen(false);
+      if (event.key !== 'Tab') return;
+      const menuItems = Array.from(mobileMenuRef.current?.querySelectorAll(
+        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+      ) || []).filter((element) => element.offsetParent !== null);
+      const focusable = [mobileToggleRef.current, ...menuItems].filter(Boolean);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', closeOnEscape);
+    window.requestAnimationFrame(() => {
+      mobileMenuRef.current?.querySelector('button, [href]')?.focus({ preventScroll: true });
+    });
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', closeOnEscape);
+      backgroundRegions.forEach((region) => {
+        region.inert = false;
+        region.removeAttribute('aria-hidden');
+      });
+      window.requestAnimationFrame(() => mobileToggleRef.current?.focus({ preventScroll: true }));
     };
   }, [mobileMenuOpen]);
 
@@ -54,6 +88,48 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
     };
   }, [themeMenuOpen]);
 
+  useEffect(() => {
+    if (window.location.hash === '#resume' && window.history.state?.kind !== 'resume') {
+      window.history.replaceState(
+        { ...(window.history.state || {}), kind: 'resume', overlay: 'resume', canGoBack: false },
+        '',
+        '#resume'
+      );
+    }
+
+    const handlePopState = (event) => {
+      const shouldShow = event.state?.kind === 'resume' || window.location.hash === '#resume';
+      setShowResume(shouldShow);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const openResume = useCallback(() => {
+    window.history.pushState(
+      { ...(window.history.state || {}), kind: 'resume', overlay: 'resume', canGoBack: true },
+      '',
+      '#resume'
+    );
+    setShowResume(true);
+    setMobileMenuOpen(false);
+  }, []);
+
+  const closeResume = useCallback(() => {
+    const state = window.history.state || {};
+    if (state.kind === 'resume' && state.canGoBack) {
+      window.history.back();
+      return;
+    }
+    setShowResume(false);
+    window.history.replaceState(
+      { kind: 'portfolio', category: 'all', scrollY: window.scrollY },
+      '',
+      '#about'
+    );
+    window.requestAnimationFrame(() => resumeTriggerRef.current?.focus({ preventScroll: true }));
+  }, []);
+
   const toggleMobileMenu = () => {
     setMobileMenuOpen((open) => {
       if (open) setThemeMenuOpen(false);
@@ -63,31 +139,9 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
 
   return (
     <nav className={`navbar ${isScrolled ? 'navbar-glass' : 'navbar-transparent'}`} role="navigation" aria-label="Main navigation">
-      <div className={`navbar-left ${isScrolled ? 'fade-in' : 'fade-out'}`}>
-        <span
-          className="navbar-title"
-          role="button"
-          tabIndex={0}
-          onClick={() => {
-            onHomeClick && onHomeClick();
-            setMobileMenuOpen(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onHomeClick && onHomeClick();
-              setMobileMenuOpen(false);
-            }
-          }}
-          aria-label="Go to homepage"
-        >
-          {personalInfo.name}
-          <span className="navbar-role">{personalInfo.role}</span>
-        </span>
-      </div>
-
       {/* Mobile menu toggle */}
       <button
+        ref={mobileToggleRef}
         className="mobile-menu-toggle"
         onClick={toggleMobileMenu}
         aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
@@ -99,13 +153,7 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
       </button>
 
       {/* Navigation links */}
-      <div className={`navbar-right ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
-        {/* Mobile menu header */}
-        <div className="mobile-menu-header">
-          <h2 className="mobile-menu-name">Ariel Cohen</h2>
-          <p className="mobile-menu-role">Game Developer</p>
-        </div>
-
+      <div ref={mobileMenuRef} className={`navbar-right ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         <div className="theme-picker" ref={themePickerRef}>
           <button
             className="theme-toggle"
@@ -202,12 +250,12 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
           <span className="nav-link-text">X</span>
         </a>
         <a
+          ref={resumeTriggerRef}
           href={personalInfo.resume}
           className="nav-link nav-resume-btn"
           onClick={(e) => {
             e.preventDefault();
-            setShowResume(true);
-            setMobileMenuOpen(false);
+            openResume();
           }}
         >
           <img 
@@ -222,7 +270,7 @@ function Navbar({ onHomeClick, theme, onThemeChange }) {
       {showResume && (
         <ResumeModal 
           resumeUrl={personalInfo.resume} 
-          onClose={() => setShowResume(false)} 
+          onClose={closeResume}
         />
       )}
     </nav>

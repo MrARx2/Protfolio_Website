@@ -7,7 +7,6 @@ import React, {
   useRef,
   useState
 } from "react";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 
 function normalizedIndex(index, length) {
   if (!length) return 0;
@@ -20,8 +19,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   className = "",
   badge,
   paused = false,
-  eager = false,
-  transitionEnabled = true
+  eager = false
 }, ref) {
   const preview = previewData || project.cardPreview || {};
   const frames = useMemo(() => {
@@ -39,6 +37,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   const [loadedFrames, setLoadedFrames] = useState(() => new Set());
   const [inView, setInView] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [pageVisible, setPageVisible] = useState(() => !document.hidden);
   const initialDelay = useMemo(() => {
     const projectSeed = Array.from(project.id || "preview")
       .reduce((total, character) => total + character.charCodeAt(0), 0);
@@ -69,6 +68,12 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     updatePreference();
     mediaQuery.addEventListener?.("change", updatePreference);
     return () => mediaQuery.removeEventListener?.("change", updatePreference);
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => setPageVisible(!document.hidden);
+    document.addEventListener("visibilitychange", updateVisibility);
+    return () => document.removeEventListener("visibilitychange", updateVisibility);
   }, []);
 
   useEffect(() => {
@@ -103,7 +108,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   }, [frames.length, project.id, reducedMotion]);
 
   useEffect(() => {
-    if (!inView || paused || reducedMotion || frames.length < 2) return undefined;
+    if (!inView || !pageVisible || paused || reducedMotion || frames.length < 2) return undefined;
 
     const delay = hasStartedCyclingRef.current ? 2800 : initialDelay;
     const timer = window.setTimeout(() => {
@@ -112,7 +117,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     }, delay);
 
     return () => window.clearTimeout(timer);
-  }, [activeIndex, frames.length, inView, initialDelay, paused, reducedMotion, showFrame]);
+  }, [activeIndex, frames.length, inView, initialDelay, pageVisible, paused, reducedMotion, showFrame]);
 
   useEffect(() => {
     if (!inView || reducedMotion || frames.length < 2 || typeof window.Image !== "function") return undefined;
@@ -144,7 +149,6 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     <div
       className={`${className} project-preview-media project-preview-${presentation}`.trim()}
       ref={rootRef}
-      style={projectTransitionStyle(project, "media", transitionEnabled)}
     >
       {!loadedFrames.has(activeIndex) && <div className="skeleton-loader project-preview-loader" aria-hidden="true" />}
       {visibleIndexes.map((index) => {
@@ -158,7 +162,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
             style={{ objectPosition: frame.position || undefined }}
             key={`${index}-${isActive ? "active" : "previous"}`}
             onLoad={() => markLoaded(index)}
-            loading={eager || index === 0 ? "eager" : "lazy"}
+            loading={eager ? "eager" : "lazy"}
           />
         );
       })}

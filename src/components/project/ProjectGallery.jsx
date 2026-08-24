@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PhoneShowcaseGallery from "./PhoneShowcaseGallery";
 
 function StandardProjectGallery({
+  sectionId,
   title = "Selected gallery",
   description,
   collections = [],
@@ -140,7 +141,7 @@ function StandardProjectGallery({
   const visibleIndexes = [activeIndex];
 
   return (
-    <section className={`case-study-section adaptive-gallery-section ${portrait ? "adaptive-gallery-portrait" : "adaptive-gallery-landscape"}`}>
+    <section id={sectionId} className={`case-study-section adaptive-gallery-section ${portrait ? "adaptive-gallery-portrait" : "adaptive-gallery-landscape"}`}>
       <div className="gallery-heading-row">
         <div className="section-header">
           <span className="section-kicker">Visual development</span>

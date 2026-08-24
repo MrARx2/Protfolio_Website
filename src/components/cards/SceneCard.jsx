@@ -1,10 +1,8 @@
 import React, { useRef } from "react";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 
 function SceneCard({ project, onClick, activeProjectId = null }) {
   const previewRef = useRef(null);
-  const transitionEnabled = activeProjectId !== project.id;
 
   const openProject = () => {
     onClick(project, previewRef.current?.getCurrentFrame());
@@ -34,7 +32,6 @@ function SceneCard({ project, onClick, activeProjectId = null }) {
         badge="Environment · Unreal Engine"
         paused={Boolean(activeProjectId)}
         ref={previewRef}
-        transitionEnabled={transitionEnabled}
       />
       <div className="scene-gradient" aria-hidden="true" />
 
@@ -43,10 +40,7 @@ function SceneCard({ project, onClick, activeProjectId = null }) {
           <span>{project.time}</span>
           <span>{project.tags?.includes("Nanite") ? "Nanite" : project.engine}</span>
         </div>
-        <h3
-          className="scene-card-title"
-          style={projectTransitionStyle(project, "title", transitionEnabled)}
-        >
+        <h3 className="scene-card-title">
           {project.title}
         </h3>
         <p className="scene-card-summary">{project.summary}</p>

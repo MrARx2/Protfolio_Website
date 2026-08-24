@@ -1,10 +1,8 @@
 import React, { useRef } from "react";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 
 function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
   const previewRef = useRef(null);
-  const transitionEnabled = activeProjectId !== project.id;
 
   const openProject = () => {
     onClick(project, previewRef.current?.getCurrentFrame());
@@ -34,7 +32,6 @@ function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
         badge={`3D study · ${String(index + 1).padStart(2, "0")}`}
         paused={Boolean(activeProjectId)}
         ref={previewRef}
-        transitionEnabled={transitionEnabled}
       />
 
       <div className="modeling-card-content living-card-content">
@@ -43,10 +40,7 @@ function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
           <span>{project.render || "Real-time render"}</span>
           <span>{project.time}</span>
         </div>
-        <h3
-          className="modeling-card-title"
-          style={projectTransitionStyle(project, "title", transitionEnabled)}
-        >
+        <h3 className="modeling-card-title">
           {project.title}
         </h3>
         <p className="modeling-card-summary">{project.summary}</p>

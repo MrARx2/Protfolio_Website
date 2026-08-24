@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
 import { isYouTubeShortUrl, toEmbedUrl } from "../../utils/youtubeHelpers";
 import ModelingDetail from "./ModelingDetail";
 import SceneDetail from "./SceneDetail";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 import MechanicModal from "../modals/MechanicModal";
+import CaseStudyNav from "./CaseStudyNav";
 
 function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick }) {
   const backdropRef = useRef(null);
@@ -22,9 +22,15 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
   const openMechanic = useCallback((mechanic, trigger) => {
     mechanicTriggerRef.current = trigger;
     window.history.pushState(
-      { ...(window.history.state || {}), project: project.id, mechanic: mechanic.label },
+      {
+        ...(window.history.state || {}),
+        kind: "mechanic",
+        project: project.id,
+        mechanic: mechanic.label,
+        canGoBack: true
+      },
       "",
-      window.location.href
+      `#project/${encodeURIComponent(project.id)}/mechanic/${encodeURIComponent(mechanic.label)}`
     );
     setSelectedMechanic(mechanic);
   }, [project.id]);
@@ -36,16 +42,29 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
   const closeMechanic = useCallback(() => {
     const historyState = window.history.state;
-    if (historyState?.project === project.id && historyState?.mechanic) {
+    if (historyState?.kind === "mechanic" && historyState?.project === project.id && historyState?.canGoBack) {
       window.history.back();
       return;
     }
     clearMechanic();
+    window.history.replaceState(
+      { ...(historyState || {}), kind: "project", project: project.id },
+      "",
+      `#project/${encodeURIComponent(project.id)}`
+    );
   }, [clearMechanic, project.id]);
 
   useEffect(() => {
     const handlePopState = (event) => {
-      const mechanicLabel = event.state?.project === project.id ? event.state?.mechanic : null;
+      const hashParts = window.location.hash.replace(/^#/, "").split("/");
+      const hashMechanic = hashParts[0] === "project"
+        && decodeURIComponent(hashParts[1] || "") === String(project.id)
+        && hashParts[2] === "mechanic"
+        ? decodeURIComponent(hashParts.slice(3).join("/"))
+        : null;
+      const mechanicLabel = event.state?.project === project.id
+        ? event.state?.mechanic || hashMechanic
+        : hashMechanic;
       if (mechanicLabel) {
         const mechanic = mechanics.find((item) => item.label === mechanicLabel);
         if (mechanic) setSelectedMechanic(mechanic);
@@ -58,47 +77,47 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
     return () => window.removeEventListener("popstate", handlePopState);
   }, [clearMechanic, mechanics, project.id]);
 
+  useEffect(() => {
+    const hashParts = window.location.hash.replace(/^#/, "").split("/");
+    if (hashParts[0] !== "project" || hashParts[2] !== "mechanic") return;
+    const mechanicLabel = decodeURIComponent(hashParts.slice(3).join("/"));
+    const mechanic = mechanics.find((item) => item.label === mechanicLabel);
+    if (mechanic) setSelectedMechanic(mechanic);
+  }, [mechanics, project.id]);
+
   useLayoutEffect(() => {
     const backdrop = backdropRef.current;
     if (!backdrop) return;
 
-    let userRequestedScroll = false;
-    const resetPosition = () => {
-      if (!userRequestedScroll && backdrop.scrollTop !== 0) backdrop.scrollTop = 0;
-    };
-    const allowUserScroll = () => { userRequestedScroll = true; };
-    const handleOpeningScroll = () => resetPosition();
-
     backdrop.scrollTop = 0;
-    backButtonRef.current?.focus({ preventScroll: true });
-    backdrop.addEventListener("scroll", handleOpeningScroll, { passive: true });
-    backdrop.addEventListener("wheel", allowUserScroll, { passive: true, once: true });
-    backdrop.addEventListener("touchstart", allowUserScroll, { passive: true, once: true });
-
-    const frame = window.requestAnimationFrame(resetPosition);
-    const timers = [120, 500, 1200, 2400].map((delay) => window.setTimeout(resetPosition, delay));
-    const releaseGuard = window.setTimeout(() => {
-      backdrop.removeEventListener("scroll", handleOpeningScroll);
-    }, 3200);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      timers.forEach((timer) => window.clearTimeout(timer));
-      window.clearTimeout(releaseGuard);
-      backdrop.removeEventListener("scroll", handleOpeningScroll);
-      backdrop.removeEventListener("wheel", allowUserScroll);
-      backdrop.removeEventListener("touchstart", allowUserScroll);
-    };
+    const frame = window.requestAnimationFrame(() => backButtonRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
   }, [project.id]);
 
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const handleKeyDown = (event) => {
       if (event.key === "Escape" && !isGalleryOpen && !selectedMechanic) onBack();
+      if (event.key !== "Tab" || isGalleryOpen || selectedMechanic) return;
+
+      const focusable = Array.from(backdropRef.current?.querySelectorAll(
+        'button:not([disabled]), [href], iframe, [tabindex]:not([tabindex="-1"])'
+      ) || []).filter((element) => element.getAttribute("aria-hidden") !== "true");
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isGalleryOpen, onBack, selectedMechanic]);
@@ -109,6 +128,34 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
   const isAcademicProject = project.type !== "scene";
   const showEntryCover = project.id !== "path-of-embers" && Boolean(project.cardPreview);
+  const caseStudySections = useMemo(() => {
+    if (project.type === "modeling") {
+      return [
+        { id: "case-study-overview", label: "Overview" },
+        ...(project.details ? [{ id: "case-study-about", label: "About" }] : []),
+        { id: "case-study-gallery", label: "Gallery" }
+      ];
+    }
+
+    if (project.type === "scene") {
+      return [
+        { id: "case-study-overview", label: "Overview" },
+        ...(project.videoUrl ? [{ id: "case-study-video", label: "Video" }] : []),
+        ...(project.details ? [{ id: "case-study-about", label: "Story" }] : []),
+        { id: "case-study-gallery", label: "Gallery" },
+        ...(project.coolFeatures?.length ? [{ id: "case-study-technical", label: "Technical" }] : [])
+      ];
+    }
+
+    return [
+      { id: "case-study-overview", label: "Overview" },
+      ...(project.youtube ? [{ id: "case-study-video", label: isPortraitTrailer ? "Trailer" : "Video" }] : []),
+      ...(project.details ? [{ id: "case-study-about", label: "About" }] : []),
+      ...(mechanics.length ? [{ id: "case-study-mechanics", label: "Mechanics" }] : []),
+      { id: "case-study-gallery", label: "Gallery" },
+      ...(project.teamCredits ? [{ id: "case-study-team", label: "Team" }] : [])
+    ];
+  }, [isPortraitTrailer, mechanics.length, project.coolFeatures?.length, project.details, project.teamCredits, project.type, project.videoUrl, project.youtube]);
 
   return (
     <div
@@ -118,6 +165,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
       role="dialog"
       aria-modal="true"
       aria-label={`${project.title} case study`}
+      tabIndex={-1}
     >
       <article className="project-detail">
         <div className="case-study-toolbar">
@@ -127,6 +175,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             </svg>
             <span>{backLabel}</span>
           </button>
+          <CaseStudyNav sections={caseStudySections} scrollRootRef={backdropRef} />
           <span className="case-study-toolbar-label">Case study</span>
         </div>
 
@@ -136,14 +185,11 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
           <SceneDetail project={project} entryPreview={entryPreview} onImageClick={onImageClick} />
         ) : (
           <div className="game-case-study">
-            <header className={`case-study-hero${showEntryCover ? " project-detail-header-with-cover" : ""}`}>
+            <header id="case-study-overview" className={`case-study-hero${showEntryCover ? " project-detail-header-with-cover" : ""}`}>
               {showEntryCover && <ProjectEntryCover project={project} previewFrame={entryPreview} />}
               <div className="case-study-title-block">
                 <span className="project-eyebrow">{isAcademicProject ? "Academic game project" : "Game project"}</span>
-                <h1
-                  className="game-detail-title"
-                  style={showEntryCover ? projectTransitionStyle(project, "title") : undefined}
-                >
+                <h1 className="game-detail-title">
                   {project.title}
                 </h1>
                 <p className="game-detail-summary">{project.summary}</p>
@@ -163,6 +209,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
             {project.youtube && (
               <section
+                id="case-study-video"
                 className={`case-study-section case-study-video-section${isPortraitTrailer ? " case-study-video-portrait" : ""}`}
                 style={portraitVideoStyle}
               >
@@ -197,7 +244,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             )}
 
             {project.details && (
-              <section className="case-study-section case-study-overview">
+              <section id="case-study-about" className="case-study-section case-study-overview">
                 <div className="section-header">
                   <span className="section-kicker">The project</span>
                   <h2 className="section-title">Overview</h2>
@@ -209,7 +256,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             )}
 
             {mechanics.length > 0 && (
-              <section className="case-study-section mechanics-section">
+              <section id="case-study-mechanics" className="case-study-section mechanics-section">
                 <div className="section-header">
                   <span className="section-kicker">Systems & interaction</span>
                   <h2 className="section-title">Core mechanics</h2>
@@ -237,6 +284,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             )}
 
             <ProjectGallery
+              sectionId="case-study-gallery"
               title="Selected gallery"
               description={project.galleryPresentation === "phone-showcase"
                 ? "Move through the complete mobile experience—from combat and exploration to progression and interface design."
@@ -253,7 +301,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             />
 
             {project.teamCredits && (
-              <section className="case-study-section team-section">
+              <section id="case-study-team" className="case-study-section team-section">
                 <div className="section-header">
                   <span className="section-kicker">Built together</span>
                   <h2 className="section-title">Team collaboration</h2>

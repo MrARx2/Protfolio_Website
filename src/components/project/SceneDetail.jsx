@@ -2,7 +2,6 @@ import React from "react";
 import { toEmbedUrl } from "../../utils/youtubeHelpers";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
-import { projectTransitionStyle } from "../../utils/projectTransitions";
 
 function SceneDetail({ project, entryPreview, onImageClick }) {
   const coolFeatures = project.coolFeatures || [];
@@ -21,10 +20,10 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
 
   return (
     <div className="scene-detail">
-      <header className="scene-detail-header project-detail-header-with-cover">
+      <header id="case-study-overview" className="scene-detail-header project-detail-header-with-cover">
         <ProjectEntryCover project={project} previewFrame={entryPreview} />
         <span className="project-eyebrow">Environment case study</span>
-        <h1 className="scene-detail-title" style={projectTransitionStyle(project, "title")}>{project.title}</h1>
+        <h1 className="scene-detail-title">{project.title}</h1>
         <p className="scene-detail-summary">{project.summary}</p>
 
         <div className="scene-meta-info">
@@ -46,7 +45,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       </header>
 
       {project.videoUrl && (
-        <section className="case-study-section scene-video-section">
+        <section id="case-study-video" className="case-study-section scene-video-section">
           <div className="section-header">
             <span className="section-kicker">Watch it in motion</span>
             <h2 className="section-title">Video showcase</h2>
@@ -65,7 +64,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       )}
 
       {project.details && (
-        <section className="case-study-section scene-overview-section">
+        <section id="case-study-about" className="case-study-section scene-overview-section">
           <div className="section-header">
             <span className="section-kicker">The environment</span>
             <h2 className="section-title">Overview</h2>
@@ -75,6 +74,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       )}
 
       <ProjectGallery
+        sectionId="case-study-gallery"
         title="Environment gallery"
         description="A focused viewer for the finished scene and its technical visualization. Open any frame when you want the full-resolution detail."
         projectTitle={project.title}
@@ -83,7 +83,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       />
 
       {coolFeatures.length > 0 && (
-        <section className="case-study-section cool-features-section">
+        <section id="case-study-technical" className="case-study-section cool-features-section">
           <div className="section-header">
             <span className="section-kicker">Technical focus</span>
             <h2 className="section-title">Under the surface</h2>

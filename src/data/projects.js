@@ -21,7 +21,7 @@ export const gameProjects = [
         { src: "/Images/Path Of Embers/TalentWheel.jpg", label: "Talent progression" }
       ]
     },
-    summary: "Path of Embers is a fast-paced roguelike action mobile game where you battle through unique, procedurally generated arenas. Master combat and movement, adapt to new hazards in every run, and experience fluid 60 FPS gameplay built entirely from scratch.",
+    summary: "Path of Embers is a fast-paced mobile roguelike built around stackable talents, tactical combat, and a performance-aware 16-segment map. Build powerful synergies, manage encounter pacing, and fight through handcrafted progression at a responsive 60 FPS.",
     images: [
       "/Images/Path Of Embers/MainMenu.jpg",
       "/Images/Path Of Embers/Gameplay1.jpg",
@@ -48,7 +48,7 @@ export const gameProjects = [
     videoAspectRatio: "6 / 13",
     videoAspectLabel: "9:19.5",
     videoCaptureLabel: "Galaxy S24+ · 1440 × 3120",
-    details: "Path of Embers is a fast-paced roguelike action mobile game where players battle through procedurally generated arenas, mastering combat, movement, and strategic decision-making. Each run introduces a new layout filled with enemies, hazards, and opportunities, encouraging players to adapt and refine their approach with every attempt. Designed for a smooth and responsive 60 FPS experience, the game emphasizes performance, precision, and fluid gameplay on mobile devices.\n\nAll assets were created from scratch, including 3D models, visual effects, audio, and gameplay systems, resulting in a cohesive and fully original experience. Built with scalability in mind, Path of Embers supports expanding content, more complex encounters, and deeper mechanics, offering strong potential for future development and replayability.",
+    details: "Path of Embers is a fast-paced mobile roguelike built around stackable talents, tactical combat, and deliberate encounter pacing. Its 16 handcrafted map segments follow a fixed progression, with the miniboss on segment 11 and the final boss on segment 16. A performance-aware streaming system keeps only the two or three segments nearest the player active, suspends or despawns distant enemies, and preserves stable mobile performance.\n\nChoosing when to fight is part of the run. Clearing a segment can trigger a second wave and more opportunities to strengthen the build, while rushing forward leaves rewards behind and increases the difficulty of later encounters. A moving meteor fireline prevents stagnation and keeps that choice fast-paced. All gameplay systems and the game’s original visual assets were built for a responsive 60 FPS mobile experience.",
     role: "Programmer / Technical Artist",
     team: "3",
     time: "4 months",
@@ -72,6 +72,11 @@ export const gameProjects = [
     id: "Ricochet",
     title: "Ricochet",
     thumbnail: "/Images/Ricochet/Mid-Match.jpg",
+    caseStudyHero: {
+      src: "/Images/Ricochet/Mid-Match.jpg",
+      label: "Live match",
+      position: "center center"
+    },
     cardPreview: {
       presentation: "game",
       glow: "206, 64, 255",
