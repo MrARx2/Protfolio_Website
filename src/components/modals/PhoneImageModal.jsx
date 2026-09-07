@@ -1,3 +1,4 @@
+import { imageVariant } from "../../utils/responsiveImages";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useDialog from "../../hooks/useDialog";
 import PhoneFrame from "../project/PhoneFrame";
@@ -5,6 +6,8 @@ import PhoneFrame from "../project/PhoneFrame";
 function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
   const [index, setIndex] = useState(initialIndex);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
   const [isInspecting, setIsInspecting] = useState(false);
   const closeButtonRef = useRef(null);
   const modalShellRef = useRef(null);
@@ -35,7 +38,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
   }, [isInspecting]);
 
   const toggleInspection = () => {
-    if (Date.now() < suppressClickUntil.current) return;
+    if (!imageLoaded || Date.now() < suppressClickUntil.current) return;
     setIsInspecting((current) => {
       const nextValue = !current;
       window.requestAnimationFrame(() => {
@@ -59,6 +62,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
 
   useEffect(() => {
     setImageLoaded(false);
+    setImageFailed(false);
     setIsInspecting(false);
     imageViewportRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [index]);
@@ -76,6 +80,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         previous();
@@ -159,7 +164,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
           onTouchEnd={handleTouchEnd}
           onTouchCancel={() => { touchStartRef.current = null; }}
         >
-          <div className="phone-modal-ambient" style={{ backgroundImage: `url("${activeImage}")` }} aria-hidden="true" />
+          <div className="phone-modal-ambient" style={{ backgroundImage: `url("${imageVariant(activeImage, 320)}")` }} aria-hidden="true" />
           <div className="phone-modal-scrim" aria-hidden="true" />
 
           {total > 1 && (
@@ -174,7 +179,12 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
           )}
 
           <div className="phone-modal-device-wrap">
-            {!imageLoaded && <div className="phone-modal-loader"><div className="spinner" /></div>}
+            {!imageLoaded && !imageFailed && <div className="phone-modal-loader" role="status" aria-label="Loading mobile screen"><div className="spinner" /></div>}
+            {imageFailed && <div className="phone-modal-error" role="status">
+              <p>This screen couldn’t load.</p>
+              <button type="button" onClick={() => { setImageFailed(false); setRetry((value) => value + 1); }}>Try again</button>
+              <a href={activeImage} target="_blank" rel="noopener noreferrer">Open original ↗</a>
+            </div>}
             <PhoneFrame
               className={`phone-modal-device ${isInspecting ? "is-inspecting" : ""}`}
               screenRef={imageViewportRef}
@@ -189,11 +199,12 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
                 aria-label={isInspecting ? "Fit the complete mobile screen" : "Inspect mobile screen details"}
               >
                 <img
-                  key={activeImage}
+                  key={`${activeImage}-${retry}`}
                   src={activeImage}
                   alt={`Path of Embers mobile screen ${index + 1} of ${total}`}
                   className="phone-modal-image"
-                  onLoad={() => setImageLoaded(true)}
+                  onLoad={() => { setImageLoaded(true); setImageFailed(false); }}
+                  onError={() => { setImageLoaded(false); setImageFailed(true); }}
                   style={{ opacity: imageLoaded ? 1 : 0 }}
                 />
               </button>
@@ -207,7 +218,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
           </button>
           <div className="phone-modal-center-controls">
             <span>{isInspecting ? "↑ ↓ scroll details · ← → browse" : "Complete screen · ← → browse"}</span>
-            <button type="button" className="phone-modal-inspect-button" onClick={toggleInspection}>
+            <button type="button" className="phone-modal-inspect-button" onClick={toggleInspection} disabled={!imageLoaded}>
               {isInspecting ? "Fit screen" : "Inspect details"}
             </button>
           </div>

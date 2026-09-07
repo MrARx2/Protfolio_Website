@@ -1,3 +1,4 @@
+import { decodeRoutePart } from "./utils/routeHelpers";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import "./style.css";
@@ -69,9 +70,9 @@ function projectRouteFromHash(hash = window.location.hash) {
   const parts = hash.replace(/^#/, "").split("/");
   if (parts[0] !== "project" || !parts[1]) return null;
   return {
-    projectId: decodeURIComponent(parts[1]),
+    projectId: decodeRoutePart(parts[1]),
     overlay: parts[2] || null,
-    overlayId: parts[3] ? decodeURIComponent(parts.slice(3).join("/")) : null
+    overlayId: parts[3] ? decodeRoutePart(parts.slice(3).join("/")) : null
   };
 }
 
@@ -134,6 +135,10 @@ function App() {
     ],
     [allProjects.length]
   );
+
+  useEffect(() => {
+    document.title = selected ? `${selected.title} — Ariel Cohen` : "Ariel Cohen - Game Developer Portfolio | Unity & Unreal Engine";
+  }, [selected]);
 
   useEffect(() => {
     applyTheme(theme);
@@ -483,7 +488,7 @@ function App() {
         finishClosingProject(returnCategory, selected.id, returnScroll);
       } else {
         setActiveCategory(returnCategory);
-        window.requestAnimationFrame(() => window.scrollTo({ top: returnScroll, behavior: "auto" }));
+        // The portfolio stayed mounted beneath the menu/resume; preserve its live position.
       }
     };
 

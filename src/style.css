@@ -5716,7 +5716,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
 @media (max-width: 480px) { .work-nav-inline .category-label-full { display: inline; } }
 @media (max-width: 900px) {
   .scene-card.living-project-card { min-height: 0; background: var(--surface); }
-  .scene-card .project-preview-media.scene-image-wrap { position: relative; inset: auto; min-height: 220px; aspect-ratio: 16 / 9; }
+  .scene-card .project-preview-media.scene-image-wrap { position: relative; inset: auto; width: 100%; min-height: 220px; aspect-ratio: 16 / 9; }
   .scene-card .scene-gradient { display: none; }
   .scene-card.living-project-card .scene-card-content { width: 100%; min-height: 0; padding: 28px; }
   .scene-card.living-project-card .scene-card-title { font-size: clamp(2.3rem, 6vw, 3.5rem); letter-spacing: -.035em; line-height: 1; margin-top: 18px; }
@@ -5739,6 +5739,14 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
 .mechanic-modal-backdrop { overscroll-behavior: contain; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
 .mechanic-modal-shell { max-width: 100%; max-height: calc(100dvh - 16px); }
 .work-main:focus { outline: none; }
-.case-study-index-rail { scrollbar-width: thin; scrollbar-color: var(--amber-border) transparent; }
-.case-study-index-rail::-webkit-scrollbar { display: block; height: 3px; }
+.case-study-index-rail { scrollbar-width: none; }
+.case-study-index-rail::-webkit-scrollbar { display: none; }
 .case-study-index-rail::-webkit-scrollbar-thumb { border-radius: 3px; background: var(--amber-border); }
+/* Keep all case-study sections discoverable at narrow widths. */
+.case-study-index { display: flex; align-items: center; gap: 2px; }
+.case-study-index-rail { flex: 1 1 auto; min-width: 0; }
+.case-study-index .case-study-rail-arrow { flex: 0 0 32px; min-width: 32px; min-height: 44px; padding: 0; font-size: 1.5rem; color: var(--amber-bright); background: transparent; border: 0; cursor: pointer; }
+.case-study-index .case-study-rail-arrow:disabled { opacity: .25; cursor: default; }
+.phone-modal-error { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 16px; text-align: center; color: var(--text); background: var(--surface); border-radius: 20px; }
+.phone-modal-error p { margin: 0; }
+.phone-modal-error button, .phone-modal-error a { min-height: 44px; padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: 12px; color: var(--amber-bright); background: var(--bg-soft); cursor: pointer; }

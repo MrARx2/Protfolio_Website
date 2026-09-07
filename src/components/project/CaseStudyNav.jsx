@@ -5,6 +5,30 @@ function CaseStudyNav({ sections, scrollRootRef }) {
   const navRef = useRef(null);
   const frameRef = useRef(null);
   const scrollAnimationRef = useRef(null);
+  const indexRef = useRef(null);
+  const [railEdges, setRailEdges] = useState({ overflow: false, start: true, end: true });
+
+  useEffect(() => {
+    const rail = navRef.current;
+    const index = indexRef.current;
+    if (!rail || !index) return undefined;
+    const measure = () => {
+      const next = { overflow: rail.scrollWidth > index.clientWidth + 2,
+        start: rail.scrollLeft <= 2, end: rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2 };
+      setRailEdges((previous) => Object.keys(next).every((key) => next[key] === previous[key]) ? previous : next);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(index);
+    observer.observe(rail);
+    rail.addEventListener("scroll", measure, { passive: true });
+    measure();
+    return () => { observer.disconnect(); rail.removeEventListener("scroll", measure); };
+  }, [sections]);
+
+  const scrollRail = (direction) => navRef.current?.scrollBy({
+    left: direction * Math.max(120, navRef.current.clientWidth * 0.65),
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+  });
 
   useEffect(() => {
     setActiveSection(sections[0]?.id || "");
@@ -140,7 +164,8 @@ function CaseStudyNav({ sections, scrollRootRef }) {
   if (sections.length < 2) return null;
 
   return (
-    <nav className="case-study-index" aria-label="Case study sections">
+    <nav className="case-study-index" aria-label="Case study sections" ref={indexRef}>
+      {railEdges.overflow && <button type="button" className="case-study-rail-arrow" aria-label="Show earlier sections" disabled={railEdges.start} onClick={() => scrollRail(-1)}>‹</button>}
       <div className="case-study-index-rail" ref={navRef}>
         {sections.map((section) => (
           <button
@@ -155,6 +180,7 @@ function CaseStudyNav({ sections, scrollRootRef }) {
           </button>
         ))}
       </div>
+      {railEdges.overflow && <button type="button" className="case-study-rail-arrow" aria-label="Show more sections" disabled={railEdges.end} onClick={() => scrollRail(1)}>›</button>}
     </nav>
   );
 }

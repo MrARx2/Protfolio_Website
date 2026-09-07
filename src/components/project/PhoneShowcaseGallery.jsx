@@ -1,3 +1,5 @@
+import { imageVariant } from "../../utils/responsiveImages";
+import ResponsiveImage from "./ResponsiveImage";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PhoneFrame from "./PhoneFrame";
 
@@ -70,7 +72,7 @@ function PhoneShowcaseGallery({
     const preloadIndexes = [(activeIndex - 1 + total) % total, (activeIndex + 1) % total];
     const preloads = preloadIndexes.map((index) => {
       const image = new Image();
-      image.src = images[index];
+      image.src = imageVariant(images[index], 768);
       return image;
     });
     return () => preloads.forEach((image) => { image.src = ""; });
@@ -83,6 +85,7 @@ function PhoneShowcaseGallery({
   if (total === 0) return null;
 
   const handleStageKeys = (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       previous();
@@ -160,7 +163,7 @@ function PhoneShowcaseGallery({
       >
         <div
           className="phone-showcase-ambient"
-          style={{ backgroundImage: `url("${activeImage}")` }}
+          style={{ backgroundImage: `url("${imageVariant(activeImage, 320)}")` }}
           aria-hidden="true"
         />
         <div className="phone-showcase-glow" aria-hidden="true" />
@@ -182,9 +185,10 @@ function PhoneShowcaseGallery({
                 onTouchCancel={handleTouchCancel}
                 aria-label={`Open ${projectTitle} mobile screen ${activeIndex + 1} in detail view`}
               >
-                <img
+                <ResponsiveImage
                   key={activeImage}
                   src={activeImage}
+                  sizes="(max-width: 768px) 68vw, 360px"
                   alt={`${projectTitle} mobile screen ${activeIndex + 1}`}
                   className={`phone-showcase-image direction-${transitionDirection}`}
                 />
@@ -234,7 +238,7 @@ function PhoneShowcaseGallery({
                           aria-label={`Show mobile screen ${index + 1} of ${total}`}
                           onClick={() => selectImage(index)}
                         >
-                          <img src={image} alt="" loading="lazy" />
+                          <ResponsiveImage src={image} sizes="100px" alt="" loading="lazy" />
                           <span>{String(index + 1).padStart(2, "0")}</span>
                         </button>
                       );

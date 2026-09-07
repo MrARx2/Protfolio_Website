@@ -20,6 +20,7 @@ function Navbar({
   const themePickerRef = useRef(null);
   const resumeTriggerRef = useRef(null);
   const mobileToggleRef = useRef(null);
+  const afterMenuCloseRef = useRef(null);
   const currentTheme = themes.find(({ id }) => id === theme) || themes[0];
   const categoriesVisible = showCategories;
   const wordmarkVisible = isScrolled;
@@ -70,17 +71,26 @@ function Navbar({
     const handlePopState = (event) => {
       const shouldShow = event.state?.kind === 'resume' || window.location.hash === '#resume';
       setShowResume(shouldShow);
+      setMobileMenuOpen(event.state?.kind === 'menu');
+      if (event.state?.kind !== 'menu' && afterMenuCloseRef.current) {
+        const action = afterMenuCloseRef.current;
+        afterMenuCloseRef.current = null;
+        requestAnimationFrame(action);
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const openResume = useCallback(() => {
-    window.history.pushState(
-      { ...(window.history.state || {}), kind: 'resume', overlay: 'resume', canGoBack: true },
-      '',
-      '#resume'
-    );
+    const state = window.history.state || {};
+    const fromMenu = state.kind === 'menu';
+    if (!fromMenu) {
+      window.history.replaceState({ ...state, scrollY: window.scrollY }, '', window.location.hash);
+    }
+    const next = { ...state, kind: 'resume', overlay: 'resume', scrollY: window.scrollY, canGoBack: true };
+    if (fromMenu) window.history.replaceState(next, '', '#resume');
+    else window.history.pushState(next, '', '#resume');
     setShowResume(true);
     setMobileMenuOpen(false);
   }, []);
@@ -100,9 +110,22 @@ function Navbar({
     window.requestAnimationFrame(() => resumeTriggerRef.current?.focus({ preventScroll: true }));
   }, []);
 
-  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+  const closeMobileMenu = useCallback((afterClose) => {
+    const action = typeof afterClose === 'function' ? afterClose : null;
+    if (window.history.state?.kind === 'menu' && window.history.state?.canGoBack) {
+      afterMenuCloseRef.current = action;
+      window.history.back();
+      return;
+    }
+    setMobileMenuOpen(false);
+    action?.();
+  }, []);
 
   const toggleMobileMenu = () => {
+    if (mobileMenuOpen) return;
+    const state = { ...(window.history.state || {}), scrollY: window.scrollY };
+    window.history.replaceState(state, '', window.location.hash);
+    window.history.pushState({ ...state, kind: 'menu', canGoBack: true }, '', window.location.hash);
     setThemeMenuOpen(false);
     setMobileMenuOpen(true);
   };

@@ -1,3 +1,4 @@
+import ResponsiveImage from "./ResponsiveImage";
 import React from "react";
 import VideoPreview from "./VideoPreview";
 import ProjectGallery from "./ProjectGallery";
@@ -89,7 +90,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
                 </div>
                 <p className="cool-feature-description">{feature.description}</p>
                 {feature.image && <button type="button" className="technical-image-button" onClick={() => onImageClick([feature.image], 0)} aria-label={`Enlarge ${feature.title} visualization`}>
-                  <img src={feature.image} alt={`${feature.title} visualization`} loading="lazy" />
+                  <ResponsiveImage src={feature.image} alt={`${feature.title} visualization`} loading="lazy" />
                   <span>View full image ↗</span>
                 </button>}
               </article>

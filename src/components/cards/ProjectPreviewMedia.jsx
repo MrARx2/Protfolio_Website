@@ -1,3 +1,5 @@
+import ResponsiveImage from "../project/ResponsiveImage";
+import { responsiveImageProps } from "../../utils/responsiveImages";
 import React, {
   forwardRef,
   useCallback,
@@ -123,7 +125,10 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
           showFrame(activeIndex + 1);
         }
       };
-      image.src = frames[normalizedIndex(activeIndex + 1, frames.length)].src;
+      const props = responsiveImageProps(frames[normalizedIndex(activeIndex + 1, frames.length)].src, "(max-width: 768px) 94vw, 70vw");
+      image.sizes = props.sizes || "";
+      image.srcset = props.srcSet || "";
+      image.src = props.src;
     }, delay);
     return () => { cancelled = true; image.onload = null; window.clearTimeout(timer); };
   }, [activeIndex, frames, inView, initialDelay, pageVisible, paused, interacting, saveData, reducedMotion, showFrame]);
@@ -132,7 +137,10 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     if (!inView || saveData || reducedMotion || frames.length < 2 || typeof window.Image !== "function") return undefined;
     const nextIndex = normalizedIndex(activeIndex + 1, frames.length);
     const image = new window.Image();
-    image.src = frames[nextIndex].src;
+    const props = responsiveImageProps(frames[nextIndex].src, "(max-width: 768px) 94vw, 70vw");
+    image.sizes = props.sizes || "";
+    image.srcset = props.srcSet || "";
+    image.src = props.src;
     return () => { image.onload = null; };
   }, [activeIndex, frames, inView, reducedMotion, saveData]);
 
@@ -180,7 +188,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
         const frame = frames[index];
         const isActive = index === activeIndex;
         return (
-          <img
+          <ResponsiveImage
             className={`project-preview-frame ${isActive ? "is-active" : "is-previous"}`}
             src={frame.src}
             alt={isActive ? `${project.title}: ${frame.label}` : ""}

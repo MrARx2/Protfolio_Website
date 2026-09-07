@@ -1,3 +1,4 @@
+import ResponsiveImage from "../project/ResponsiveImage";
 import React, { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 
@@ -100,8 +101,9 @@ function MechanicModal({ mechanic, onClose }) {
                 {mechanic.visualFlow.map((item, index) => (
                   <figure className="mechanic-visual-step" key={item.label}>
                     <div className="mechanic-visual-media">
-                      <img
+                      <ResponsiveImage
                         src={item.src}
+                        sizes="(max-width: 768px) 28vw, 26vw"
                         alt={item.alt}
                         loading="lazy"
                         style={{ objectFit: item.fit || "cover", objectPosition: item.position || "center" }}

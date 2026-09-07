@@ -1,3 +1,4 @@
+import ResponsiveImage from "./ResponsiveImage";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PhoneShowcaseGallery from "./PhoneShowcaseGallery";
 
@@ -77,6 +78,7 @@ function StandardProjectGallery({
   };
 
   const handleKeys = (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       previous();
@@ -116,6 +118,7 @@ function StandardProjectGallery({
                 aria-controls={`${sectionId}-panel`}
                 tabIndex={collection.id === activeCollection.id ? 0 : -1}
                 onKeyDown={(event) => {
+                  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
                   const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
                   if (!keys.includes(event.key)) return;
                   event.preventDefault();
@@ -153,7 +156,7 @@ function StandardProjectGallery({
           <span className="gallery-keyboard-hint" aria-hidden="true">
             {portrait ? "↑ ↓ scroll · ← → browse" : "← → to browse"}
           </span>
-          <span>{String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+          <span aria-live="polite" aria-atomic="true">{String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
         </div>
 
         <div className="gallery-stage-media">
@@ -166,7 +169,7 @@ function StandardProjectGallery({
               onClick={() => onImageClick(images, imageIndex, { portrait, onIndexChange: setActiveIndex })}
               aria-label={`Open ${projectTitle} ${activeCollection.label.toLowerCase()} image ${imageIndex + 1} full screen`}
             >
-              <img
+              <ResponsiveImage
                 src={images[imageIndex]}
                 alt={`${projectTitle} ${activeCollection.label.toLowerCase()} ${imageIndex + 1}`}
                 loading={position === 0 ? "eager" : "lazy"}
@@ -200,7 +203,7 @@ function StandardProjectGallery({
             className={index === activeIndex ? "active" : ""}
             onClick={() => setActiveIndex(index)}
           >
-            <img src={image} alt="" loading="lazy" />
+            <ResponsiveImage src={image} sizes="96px" alt="" loading="lazy" />
             <span>{String(index + 1).padStart(2, "0")}</span>
           </button>
         ))}

@@ -1,0 +1,1196 @@
+{
+  "/Images/Path Of Embers/Gameplay1.jpg": {
+    "width": 663,
+    "height": 1371,
+    "variants": [
+      {
+        "src": "/Images/previews/34aefbdb9a32-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/34aefbdb9a32-663.webp",
+        "width": 663
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay2.jpg": {
+    "width": 657,
+    "height": 1381,
+    "variants": [
+      {
+        "src": "/Images/previews/c62860666e6e-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c62860666e6e-657.webp",
+        "width": 657
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay3.jpg": {
+    "width": 657,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/d63ac28bde8e-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/d63ac28bde8e-657.webp",
+        "width": 657
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay4.jpg": {
+    "width": 661,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/23961378212a-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/23961378212a-661.webp",
+        "width": 661
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay5.jpg": {
+    "width": 664,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/3309b053b926-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/3309b053b926-664.webp",
+        "width": 664
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay6.jpg": {
+    "width": 661,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/03b7f9f3a997-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/03b7f9f3a997-661.webp",
+        "width": 661
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay7.jpg": {
+    "width": 658,
+    "height": 1384,
+    "variants": [
+      {
+        "src": "/Images/previews/1184ea7d3e10-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/1184ea7d3e10-658.webp",
+        "width": 658
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay8.jpg": {
+    "width": 664,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/2d95b134997b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/2d95b134997b-664.webp",
+        "width": 664
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Gameplay9.jpg": {
+    "width": 655,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/9724dfd6be2d-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/9724dfd6be2d-655.webp",
+        "width": 655
+      }
+    ]
+  },
+  "/Images/Path Of Embers/InGameMenu.jpg": {
+    "width": 663,
+    "height": 1388,
+    "variants": [
+      {
+        "src": "/Images/previews/00d4c5f68421-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/00d4c5f68421-663.webp",
+        "width": 663
+      }
+    ]
+  },
+  "/Images/Path Of Embers/MainMenu.jpg": {
+    "width": 659,
+    "height": 1385,
+    "variants": [
+      {
+        "src": "/Images/previews/8984c62edad4-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/8984c62edad4-659.webp",
+        "width": 659
+      }
+    ]
+  },
+  "/Images/Path Of Embers/Shop.jpg": {
+    "width": 657,
+    "height": 1383,
+    "variants": [
+      {
+        "src": "/Images/previews/d7a4b4622b2e-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/d7a4b4622b2e-657.webp",
+        "width": 657
+      }
+    ]
+  },
+  "/Images/Path Of Embers/SoundSettings.jpg": {
+    "width": 613,
+    "height": 1280,
+    "variants": [
+      {
+        "src": "/Images/previews/7e55008a22a2-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/7e55008a22a2-613.webp",
+        "width": 613
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentEconomy-CoinThresholds.jpg": {
+    "width": 342,
+    "height": 1280,
+    "variants": [
+      {
+        "src": "/Images/previews/dbc6e2940982-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/dbc6e2940982-342.webp",
+        "width": 342
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentEconomy-ShopApproach.jpg": {
+    "width": 1280,
+    "height": 1222,
+    "variants": [
+      {
+        "src": "/Images/previews/22d0a89f9885-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/22d0a89f9885-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/22d0a89f9885-1280.webp",
+        "width": 1280
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentEconomy-ShopOptions.jpg": {
+    "width": 1180,
+    "height": 1280,
+    "variants": [
+      {
+        "src": "/Images/previews/8253a2a046b7-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/8253a2a046b7-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/8253a2a046b7-1180.webp",
+        "width": 1180
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentSystem-DualWheels.jpg": {
+    "width": 879,
+    "height": 1280,
+    "variants": [
+      {
+        "src": "/Images/previews/2f6e70a42bfd-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/2f6e70a42bfd-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/2f6e70a42bfd-879.webp",
+        "width": 879
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentSystem-RunBuild.jpg": {
+    "width": 1058,
+    "height": 1280,
+    "variants": [
+      {
+        "src": "/Images/previews/1595aad59422-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/1595aad59422-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/1595aad59422-1058.webp",
+        "width": 1058
+      }
+    ]
+  },
+  "/Images/Path Of Embers/TalentWheel.jpg": {
+    "width": 660,
+    "height": 1386,
+    "variants": [
+      {
+        "src": "/Images/previews/31ea4c5d043a-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/31ea4c5d043a-660.webp",
+        "width": 660
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/412ro2-Z5u-GL-AC-SY300-SX300-QL70-ML2.jpg": {
+    "width": 300,
+    "height": 224,
+    "variants": [
+      {
+        "src": "/Images/previews/9b61abcbfb22-300.webp",
+        "width": 300
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE.jpg": {
+    "width": 1210,
+    "height": 855,
+    "variants": [
+      {
+        "src": "/Images/previews/86aeb7617596-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/86aeb7617596-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/86aeb7617596-1210.webp",
+        "width": 1210
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE2.jpg": {
+    "width": 806,
+    "height": 620,
+    "variants": [
+      {
+        "src": "/Images/previews/4237a96410cb-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/4237a96410cb-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/4237a96410cb-806.webp",
+        "width": 806
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/COZMO-ALMOST-DONE3.jpg": {
+    "width": 670,
+    "height": 650,
+    "variants": [
+      {
+        "src": "/Images/previews/d02a80785867-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/d02a80785867-670.webp",
+        "width": 670
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Cozmo-Anki-Side.jpg": {
+    "width": 500,
+    "height": 405,
+    "variants": [
+      {
+        "src": "/Images/previews/afc57f91d7f7-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/afc57f91d7f7-500.webp",
+        "width": 500
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Cozmo-Anki-Top.jpg": {
+    "width": 500,
+    "height": 405,
+    "variants": [
+      {
+        "src": "/Images/previews/7ef8e584ca41-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/7ef8e584ca41-500.webp",
+        "width": 500
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png": {
+    "width": 4084,
+    "height": 2508,
+    "variants": [
+      {
+        "src": "/Images/previews/064e47c4f6df-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/064e47c4f6df-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/064e47c4f6df-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Highres-Screenshot00010.png": {
+    "width": 2042,
+    "height": 1254,
+    "variants": [
+      {
+        "src": "/Images/previews/47b472d6437f-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/47b472d6437f-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/47b472d6437f-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Highres-Screenshot00011.png": {
+    "width": 2042,
+    "height": 1254,
+    "variants": [
+      {
+        "src": "/Images/previews/c006933331ca-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c006933331ca-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/c006933331ca-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Highres-Screenshot00012.png": {
+    "width": 2042,
+    "height": 1254,
+    "variants": [
+      {
+        "src": "/Images/previews/de015c0d6de5-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/de015c0d6de5-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/de015c0d6de5-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Highres-Screenshot00013.png": {
+    "width": 2042,
+    "height": 1254,
+    "variants": [
+      {
+        "src": "/Images/previews/4a6c3b838087-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/4a6c3b838087-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/4a6c3b838087-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Paintwork.jpg": {
+    "width": 2554,
+    "height": 1387,
+    "variants": [
+      {
+        "src": "/Images/previews/a38ef521ac9e-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/a38ef521ac9e-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/a38ef521ac9e-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/Vertex Color ID.jpg": {
+    "width": 2553,
+    "height": 1365,
+    "variants": [
+      {
+        "src": "/Images/previews/01b6d98d42f0-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/01b6d98d42f0-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/01b6d98d42f0-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Cozmo/cozmo-anki-front.jpg": {
+    "width": 500,
+    "height": 600,
+    "variants": [
+      {
+        "src": "/Images/previews/fe0e1c48d0f2-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/fe0e1c48d0f2-500.webp",
+        "width": 500
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/7151ea987de342d95d0c3ed6ff3a4a92.jpg": {
+    "width": 1200,
+    "height": 1200,
+    "variants": [
+      {
+        "src": "/Images/previews/934ddeb9374b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/934ddeb9374b-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/934ddeb9374b-1200.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00006.png": {
+    "width": 4084,
+    "height": 2297,
+    "variants": [
+      {
+        "src": "/Images/previews/3fe7fd925b41-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/3fe7fd925b41-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/3fe7fd925b41-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00007.png": {
+    "width": 4084,
+    "height": 2297,
+    "variants": [
+      {
+        "src": "/Images/previews/36eee6ffe53b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/36eee6ffe53b-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/36eee6ffe53b-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/Highres-Screenshot00008.png": {
+    "width": 4084,
+    "height": 2297,
+    "variants": [
+      {
+        "src": "/Images/previews/a1051a5e77b0-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/a1051a5e77b0-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/a1051a5e77b0-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/LowPoly - HighPoly - prespective view.jpg": {
+    "width": 2236,
+    "height": 1103,
+    "variants": [
+      {
+        "src": "/Images/previews/bc58235c743b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/bc58235c743b-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/bc58235c743b-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/LowPoly - HighPoly.jpg": {
+    "width": 1963,
+    "height": 1099,
+    "variants": [
+      {
+        "src": "/Images/previews/98b57dd94c46-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/98b57dd94c46-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/98b57dd94c46-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/Paintwork-in-adobe-substance.jpg": {
+    "width": 2556,
+    "height": 1389,
+    "variants": [
+      {
+        "src": "/Images/previews/21fbea3c5990-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/21fbea3c5990-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/21fbea3c5990-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Rainbow_Dagger/Roughness.jpg": {
+    "width": 2553,
+    "height": 1367,
+    "variants": [
+      {
+        "src": "/Images/previews/2adbb36f79c2-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/2adbb36f79c2-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/2adbb36f79c2-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Face-View.jpg": {
+    "width": 2560,
+    "height": 1440,
+    "variants": [
+      {
+        "src": "/Images/previews/d4b98cc1ff06-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/d4b98cc1ff06-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/d4b98cc1ff06-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Front-View.jpg": {
+    "width": 2560,
+    "height": 1440,
+    "variants": [
+      {
+        "src": "/Images/previews/93b91c82173c-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/93b91c82173c-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/93b91c82173c-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Prespective-Top.jpg": {
+    "width": 2560,
+    "height": 1440,
+    "variants": [
+      {
+        "src": "/Images/previews/ac40238d6ca8-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/ac40238d6ca8-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/ac40238d6ca8-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Prespective-View.jpg": {
+    "width": 2560,
+    "height": 1440,
+    "variants": [
+      {
+        "src": "/Images/previews/eeb2111c7858-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/eeb2111c7858-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/eeb2111c7858-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Render1.jpg": {
+    "width": 2560,
+    "height": 1440,
+    "variants": [
+      {
+        "src": "/Images/previews/318d11a6aa31-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/318d11a6aa31-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/318d11a6aa31-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Right-Front-Orthographic.png": {
+    "width": 1024,
+    "height": 1024,
+    "variants": [
+      {
+        "src": "/Images/previews/c72204059caa-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c72204059caa-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/c72204059caa-1024.webp",
+        "width": 1024
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Top-Prespective-with-references-on-screen.jpg": {
+    "width": 1173,
+    "height": 875,
+    "variants": [
+      {
+        "src": "/Images/previews/f50a1189fb72-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/f50a1189fb72-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/f50a1189fb72-1173.webp",
+        "width": 1173
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Wings.jpg": {
+    "width": 959,
+    "height": 515,
+    "variants": [
+      {
+        "src": "/Images/previews/91dba9c0968b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/91dba9c0968b-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/91dba9c0968b-959.webp",
+        "width": 959
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-Shaded-Prespective.jpg": {
+    "width": 1946,
+    "height": 1100,
+    "variants": [
+      {
+        "src": "/Images/previews/49f0e4365344-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/49f0e4365344-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/49f0e4365344-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-Shaded-Tail.jpg": {
+    "width": 1952,
+    "height": 1094,
+    "variants": [
+      {
+        "src": "/Images/previews/62be26ea93ba-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/62be26ea93ba-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/62be26ea93ba-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Renders and Modeling/Stormbird_LowPoly/Wireframe-on-shaded-Top.jpg": {
+    "width": 1948,
+    "height": 1053,
+    "variants": [
+      {
+        "src": "/Images/previews/986d3dcc0eef-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/986d3dcc0eef-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/986d3dcc0eef-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/Intro.jpg": {
+    "width": 2557,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/5bdaac525247-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/5bdaac525247-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/5bdaac525247-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/Mid-Match-StartOfRound.jpg": {
+    "width": 2550,
+    "height": 1444,
+    "variants": [
+      {
+        "src": "/Images/previews/b75ea15c59fd-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/b75ea15c59fd-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/b75ea15c59fd-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/Mid-Match.jpg": {
+    "width": 2566,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/172b1e5b7342-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/172b1e5b7342-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/172b1e5b7342-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/PauseMenu.jpg": {
+    "width": 2554,
+    "height": 1438,
+    "variants": [
+      {
+        "src": "/Images/previews/7a85fb2c72e9-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/7a85fb2c72e9-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/7a85fb2c72e9-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/Play Match Settings - Quickplay.jpg": {
+    "width": 2555,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/091f7b22a859-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/091f7b22a859-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/091f7b22a859-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/StartOfMatch.jpg": {
+    "width": 2553,
+    "height": 1435,
+    "variants": [
+      {
+        "src": "/Images/previews/c70889dd5546-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c70889dd5546-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/c70889dd5546-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Ricochet/Winner Screen.jpg": {
+    "width": 2556,
+    "height": 1436,
+    "variants": [
+      {
+        "src": "/Images/previews/c813e1874303-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c813e1874303-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/c813e1874303-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/7b1e24cd3407-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/7b1e24cd3407-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/7b1e24cd3407-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00001.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/6ca7f0a22d87-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/6ca7f0a22d87-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/6ca7f0a22d87-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00002.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/e97ef802dbc3-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/e97ef802dbc3-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/e97ef802dbc3-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00003.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/f26ca52023f9-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/f26ca52023f9-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/f26ca52023f9-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00004.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/10ff06760436-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/10ff06760436-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/10ff06760436-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Scenes/Starwars Scene/Highres-Screenshot00006.png": {
+    "width": 2042,
+    "height": 1252,
+    "variants": [
+      {
+        "src": "/Images/previews/e9599c68d82e-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/e9599c68d82e-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/e9599c68d82e-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/End of round - Menu.jpg": {
+    "width": 2557,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/4eca05f6001d-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/4eca05f6001d-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/4eca05f6001d-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/Menu.jpg": {
+    "width": 2557,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/381124a44e2b-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/381124a44e2b-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/381124a44e2b-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/Slingshot - Intro.jpg": {
+    "width": 2558,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/a3faab3f8be1-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/a3faab3f8be1-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/a3faab3f8be1-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/Slingshot - Launch.jpg": {
+    "width": 2558,
+    "height": 1438,
+    "variants": [
+      {
+        "src": "/Images/previews/c6b6d0e41a97-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/c6b6d0e41a97-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/c6b6d0e41a97-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/Slingshot - checkpoint captured.jpg": {
+    "width": 2556,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/fa040b741eae-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/fa040b741eae-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/fa040b741eae-1440.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/Images/Slingshot/Slingshot -midrace-red-planet.jpg": {
+    "width": 2557,
+    "height": 1439,
+    "variants": [
+      {
+        "src": "/Images/previews/336202f53962-320.webp",
+        "width": 320
+      },
+      {
+        "src": "/Images/previews/336202f53962-768.webp",
+        "width": 768
+      },
+      {
+        "src": "/Images/previews/336202f53962-1440.webp",
+        "width": 1440
+      }
+    ]
+  }
+}

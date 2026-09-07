@@ -1,3 +1,4 @@
+import { decodeRoutePart } from "../../utils/routeHelpers";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
 import { isYouTubeShortUrl } from "../../utils/youtubeHelpers";
@@ -63,9 +64,9 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
     const handlePopState = (event) => {
       const hashParts = window.location.hash.replace(/^#/, "").split("/");
       const hashMechanic = hashParts[0] === "project"
-        && decodeURIComponent(hashParts[1] || "") === String(project.id)
+        && decodeRoutePart(hashParts[1] || "") === String(project.id)
         && hashParts[2] === "mechanic"
-        ? decodeURIComponent(hashParts.slice(3).join("/"))
+        ? decodeRoutePart(hashParts.slice(3).join("/"))
         : null;
       const mechanicLabel = event.state?.project === project.id && event.state?.kind === "mechanic"
         ? event.state?.mechanic || hashMechanic
@@ -85,7 +86,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
   useEffect(() => {
     const hashParts = window.location.hash.replace(/^#/, "").split("/");
     if (hashParts[0] !== "project" || hashParts[2] !== "mechanic") return;
-    const mechanicLabel = decodeURIComponent(hashParts.slice(3).join("/"));
+    const mechanicLabel = decodeRoutePart(hashParts.slice(3).join("/"));
     const mechanic = mechanics.find((item) => item.label === mechanicLabel);
     if (mechanic) setSelectedMechanic(mechanic);
   }, [mechanics, project.id]);

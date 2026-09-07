@@ -1,3 +1,4 @@
+import ResponsiveImage from "./ResponsiveImage";
 import React from "react";
 
 function ProjectEntryCover({ project, previewFrame }) {
@@ -19,8 +20,9 @@ function ProjectEntryCover({ project, previewFrame }) {
       className={`project-entry-cover project-entry-cover-${project.cardPreview?.presentation || "game"}`}
       aria-hidden="true"
     >
-      <img
+      <ResponsiveImage
         src={image}
+        sizes="94vw"
         alt=""
         style={{ objectPosition: curatedHero?.position || "center" }}
       />

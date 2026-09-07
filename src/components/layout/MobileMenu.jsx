@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { createPortal, flushSync } from "react-dom";
+import { createPortal } from "react-dom";
 import useDialog from "../../hooks/useDialog";
 import { personalInfo } from "../../data/personalInfo";
 import { themes } from "../../data/themes";
@@ -15,8 +15,7 @@ export default function MobileMenu({ onClose, returnFocusRef, categories, onSele
     return () => query.removeEventListener("change", resize);
   }, [onClose]);
   const navigate = (action) => {
-    flushSync(onClose);
-    action();
+    onClose(action);
   };
   return createPortal(
     <div className="mobile-menu-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
@@ -32,7 +31,7 @@ export default function MobileMenu({ onClose, returnFocusRef, categories, onSele
           <button type="button" onClick={() => navigate(() => document.getElementById("contact")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }))}>Contact <span aria-hidden="true">↗</span></button>
         </nav>
         <div className="mobile-menu-links">
-          <button className="button button-primary" type="button" onClick={() => navigate(onResume)}>View resume</button>
+          <button className="button button-primary" type="button" onClick={onResume}>View resume</button>
           <a href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
           <a href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
           <a href={personalInfo.social.x.url} target="_blank" rel="noopener noreferrer">X ↗</a>
