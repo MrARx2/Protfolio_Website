@@ -1,214 +1,125 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import useDialog from "../../hooks/useDialog";
+import { fitImageSize, isGallerySwipe } from "../../utils/galleryGeometry";
 
-function ImageModal({ images, initialIndex = 0, portrait = false, onClose }) {
+export default function ImageModal({ images = [], initialIndex = 0, onClose, onIndexChange }) {
   const [index, setIndex] = useState(initialIndex);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [naturalSize, setNaturalSize] = useState(null);
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const [failed, setFailed] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [retry, setRetry] = useState(0);
   const closeButtonRef = useRef(null);
   const modalShellRef = useRef(null);
   const imageContainerRef = useRef(null);
-  const touchStartX = useRef(null);
-  const total = images?.length || 0;
-
-  const previous = useCallback(() => {
-    if (total < 2) return;
-    setIndex((current) => (current - 1 + total) % total);
+  const gestureRef = useRef(null);
+  const suppressClickUntil = useRef(0);
+  const total = images.length;
+  useDialog({ panelRef: modalShellRef, initialFocusRef: closeButtonRef, onClose });
+  const changeImage = useCallback((step) => {
+    if (total > 1) setIndex((current) => (current + step + total) % total);
   }, [total]);
-
-  const next = useCallback(() => {
-    if (total < 2) return;
-    setIndex((current) => (current + 1) % total);
-  }, [total]);
-
-  const scrollPortraitImage = useCallback((direction) => {
-    const imageViewport = imageContainerRef.current;
-    if (!imageViewport) return;
-
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    imageViewport.scrollBy({
-      top: direction * Math.max(180, imageViewport.clientHeight * 0.55),
-      behavior: reduceMotion ? "auto" : "smooth"
-    });
-  }, []);
-
+  useEffect(() => { setIndex(initialIndex); }, [images, initialIndex]);
   useEffect(() => {
-    setIndex(initialIndex);
-  }, [initialIndex, images]);
-
-  useEffect(() => {
-    setImageLoaded(false);
+    setNaturalSize(null);
+    setFailed(false);
     setIsZoomed(false);
-    if (imageContainerRef.current) imageContainerRef.current.scrollTop = 0;
-  }, [index]);
-
+    imageContainerRef.current?.scrollTo({ left: 0, top: 0, behavior: "instant" });
+    onIndexChange?.(index);
+  }, [index, onIndexChange]);
+  useLayoutEffect(() => {
+    const viewport = imageContainerRef.current;
+    if (!viewport) return undefined;
+    const measure = () => setViewportSize({ width: viewport.clientWidth, height: viewport.clientHeight });
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
-    const previouslyFocused = document.activeElement;
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
+    const handleKey = (event) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
         event.preventDefault();
-        onClose();
+        changeImage(event.key === "ArrowLeft" ? -1 : 1);
       }
-      if (event.key === "ArrowRight") {
+      if (event.key === "Home" || event.key === "End") {
         event.preventDefault();
-        next();
+        setIndex(event.key === "Home" ? 0 : total - 1);
       }
-      if (event.key === "ArrowLeft") {
+      if (isZoomed && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
         event.preventDefault();
-        previous();
-      }
-      if (portrait && event.key === "ArrowUp") {
-        event.preventDefault();
-        scrollPortraitImage(-1);
-      }
-      if (portrait && event.key === "ArrowDown") {
-        event.preventDefault();
-        scrollPortraitImage(1);
-      }
-      if (event.key === "Home") {
-        event.preventDefault();
-        setIndex(0);
-      }
-      if (event.key === "End") {
-        event.preventDefault();
-        setIndex(total - 1);
-      }
-      if (event.key === "Tab") {
-        const focusable = Array.from(modalShellRef.current?.querySelectorAll(
-          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
-        ) || []);
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
-        }
+        imageContainerRef.current?.scrollBy({ top: (event.key === "ArrowUp" ? -1 : 1) * 160, behavior: "instant" });
       }
     };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-    closeButtonRef.current?.focus({ preventScroll: true });
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-      window.requestAnimationFrame(() => {
-        if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
-      });
-    };
-  }, [next, onClose, portrait, previous, scrollPortraitImage, total]);
-
-  if (!images || total === 0) return null;
-
-  const handleTouchStart = (event) => {
-    touchStartX.current = event.touches[0]?.clientX ?? null;
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [changeImage, isZoomed, total]);
+  const toggleZoom = () => {
+    if (!naturalSize) return;
+    const zoom = !isZoomed;
+    setIsZoomed(zoom);
+    requestAnimationFrame(() => {
+      const viewport = imageContainerRef.current;
+      viewport?.scrollTo({ left: zoom ? (viewport.scrollWidth - viewport.clientWidth) / 2 : 0,
+        top: zoom ? (viewport.scrollHeight - viewport.clientHeight) / 2 : 0, behavior: "instant" });
+    });
   };
-
-  const handleTouchEnd = (event) => {
-    if (touchStartX.current === null) return;
-    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
-    const distance = endX - touchStartX.current;
-    if (distance > 55) previous();
-    if (distance < -55) next();
-    touchStartX.current = null;
-  };
-
+  if (!total) return null;
+  const fitted = fitImageSize(naturalSize, viewportSize);
+  const size = { width: fitted.width * (isZoomed ? 2 : 1), height: fitted.height * (isZoomed ? 2 : 1) };
   return (
-    <div
-      className="image-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Full-screen project gallery.${portrait ? " Use up and down to scroll the image, and left and right to change images." : " Use left and right to change images."}`}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
+    <div className="image-modal" role="dialog" aria-modal="true" aria-label="Full-screen project gallery" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="modal-shell" ref={modalShellRef}>
         <header className="modal-topbar">
-          <div>
-            <span className="modal-eyebrow">Full-resolution view</span>
-            <span className="modal-counter" aria-live="polite">
-              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
-          </div>
-          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close gallery" type="button">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
+          <div><span className="modal-eyebrow">Image gallery</span><span className="modal-counter" aria-live="polite">{index + 1} / {total}</span></div>
+          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close gallery" type="button">×</button>
         </header>
-
-        <div
-          ref={imageContainerRef}
-          className={`modal-image-container ${isZoomed ? "zoomed" : ""} ${portrait ? "portrait-navigation" : ""}`}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {total > 1 && (
-            <>
-              <button
-                type="button"
-                className="modal-side-control modal-side-control-previous"
-                onClick={previous}
-                aria-label={`Previous image, ${index === 0 ? `wrap to image ${total}` : `image ${index}`}`}
-              >
-                <span aria-hidden="true">←</span>
+        <div ref={imageContainerRef} className={`modal-image-container fitted-image-viewport${isZoomed ? " zoomed" : ""}`}
+          onTouchStart={(event) => {
+            const touch = !isZoomed && event.touches.length === 1 ? event.touches[0] : null;
+            gestureRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+          }}
+          onTouchEnd={(event) => {
+            const touch = event.changedTouches[0];
+            const start = gestureRef.current;
+            gestureRef.current = null;
+            if (!start || !touch || isZoomed) return;
+            const dx = touch.clientX - start.x;
+            const dy = touch.clientY - start.y;
+            if (Math.abs(dx) + Math.abs(dy) > 12) suppressClickUntil.current = Date.now() + 500;
+            if (isGallerySwipe(dx, dy)) changeImage(dx > 0 ? -1 : 1);
+          }}
+          onTouchCancel={() => { gestureRef.current = null; }}
+          onPointerDown={(event) => {
+            if (event.pointerType !== "mouse" || !isZoomed) return;
+            gestureRef.current = { x: event.clientX, y: event.clientY, left: event.currentTarget.scrollLeft, top: event.currentTarget.scrollTop };
+          }}
+          onPointerMove={(event) => {
+            if (event.pointerType !== "mouse" || !event.buttons || !isZoomed || !gestureRef.current) return;
+            const start = gestureRef.current;
+            const dx = event.clientX - start.x, dy = event.clientY - start.y;
+            if (Math.abs(dx) + Math.abs(dy) < 5) return;
+            event.currentTarget.scrollLeft = start.left - dx;
+            event.currentTarget.scrollTop = start.top - dy;
+            suppressClickUntil.current = Date.now() + 500;
+          }}>
+          {!naturalSize && !failed && <div className="modal-image-loader" role="status" aria-label="Loading image"><div className="spinner" /></div>}
+          {failed ? <div className="gallery-image-error"><p>This image couldn’t load.</p><button type="button" onClick={() => { setFailed(false); setRetry((value) => value + 1); }}>Try again</button><a href={images[index]} target="_blank" rel="noopener noreferrer">Open original ↗</a></div> :
+            <div className="modal-image-canvas" style={{ width: Math.max(viewportSize.width, size.width), height: Math.max(viewportSize.height, size.height) }}>
+              <button type="button" className="modal-image-button" style={{ ...size, visibility: naturalSize ? "visible" : "hidden" }}
+                onClick={() => { if (Date.now() > suppressClickUntil.current) toggleZoom(); }} aria-label={isZoomed ? "Fit image to screen" : "Zoom image in"}>
+                <img key={`${images[index]}-${retry}`} src={images[index]} alt={`Project image ${index + 1} of ${total}`} className="modal-image" draggable="false"
+                  onLoad={(event) => setNaturalSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })} onError={() => setFailed(true)} />
               </button>
-              <button
-                type="button"
-                className="modal-side-control modal-side-control-next"
-                onClick={next}
-                aria-label={`Next image, ${index === total - 1 ? "wrap to image 1" : `image ${index + 2}`}`}
-              >
-                <span aria-hidden="true">→</span>
-              </button>
-            </>
-          )}
-          {!imageLoaded && (
-            <div className="modal-image-loader" aria-label="Loading full-resolution image">
-              <div className="spinner" />
-            </div>
-          )}
-          <button
-            type="button"
-            className="modal-image-button"
-            onClick={() => setIsZoomed((current) => !current)}
-            aria-label={isZoomed ? "Zoom image out" : "Zoom image in"}
-          >
-            <img
-              key={images[index]}
-              src={images[index]}
-              alt={`Project screenshot ${index + 1} of ${total}`}
-              className={`modal-image ${isZoomed ? "zoomed" : ""}`}
-              onLoad={() => setImageLoaded(true)}
-              style={{ opacity: imageLoaded ? 1 : 0 }}
-            />
-          </button>
+            </div>}
         </div>
-
-        <footer className="modal-controls">
-          <button type="button" onClick={previous} disabled={total < 2} aria-label="Previous image">
-            <span aria-hidden="true">←</span> Previous
-          </button>
-          <span>
-            {isZoomed
-              ? "Click image to fit"
-              : total > 1
-                ? portrait ? "↑ ↓ scroll image · ← → browse" : "Use ← → keys to browse"
-                : "Click image to inspect"}
-          </span>
-          <button type="button" onClick={next} disabled={total < 2} aria-label="Next image">
-            Next <span aria-hidden="true">→</span>
-          </button>
+        <footer className="modal-controls fitted-image-controls">
+          <button type="button" onClick={() => changeImage(-1)} disabled={total < 2} aria-label="Previous image">← <span>Previous</span></button>
+          <button type="button" onClick={toggleZoom} disabled={!naturalSize || failed} aria-pressed={isZoomed}>{isZoomed ? "Fit image" : "Zoom in"}</button>
+          <button type="button" onClick={() => changeImage(1)} disabled={total < 2} aria-label="Next image"><span>Next</span> →</button>
         </footer>
       </div>
     </div>
   );
 }
-
-export default ImageModal;

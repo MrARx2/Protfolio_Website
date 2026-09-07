@@ -11,12 +11,12 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
     },
     {
       id: "paintwork",
-      label: "Paintwork",
+      label: "Materials",
       images: project.paintwork || []
     },
     {
       id: "progression",
-      label: "Progression",
+      label: "Work in progress",
       images: project.progression || []
     },
     {
@@ -71,7 +71,7 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
       <ProjectGallery
         sectionId="case-study-gallery"
         title="Modeling process"
-        description="Move between final renders, material work, development stages, and references without losing your place in the case study."
+        description="Explore the final renders and how they were made. Select an image to enlarge it."
         projectTitle={project.title}
         collections={collections}
         onImageClick={onImageClick}

@@ -108,7 +108,7 @@ function AboutSection({ onExplore, paused = false }) {
                 Explore my work <span aria-hidden="true">↓</span>
               </button>
               <a className="button button-secondary" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
-                View resume <span aria-hidden="true">↗</span>
+                Open resume PDF <span aria-hidden="true">↗</span>
               </a>
             </div>
           </div>

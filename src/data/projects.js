@@ -21,7 +21,7 @@ export const gameProjects = [
         { src: "/Images/Path Of Embers/TalentWheel.jpg", label: "Talent progression" }
       ]
     },
-    summary: "Path of Embers is a fast-paced mobile roguelike built around stackable talents, tactical combat, and a performance-aware 16-segment map. Build powerful synergies, manage encounter pacing, and fight through handcrafted progression at a responsive 60 FPS.",
+    summary: "A mobile roguelike where stackable talents change the way you fight. Build powerful combinations and battle through 16 handcrafted map segments.",
     images: [
       "/Images/Path Of Embers/MainMenu.jpg",
       "/Images/Path Of Embers/Gameplay1.jpg",
@@ -54,16 +54,16 @@ export const gameProjects = [
     time: "4 months",
     engine: "Unity 6",
     teamCredits: {
-      intro: "This project was developed in collaboration with my talented teammates Tamir Goldman and Ido Korliker, each contributing key elements that shaped the final experience.",
+      intro: "Built by a team of three. Alongside my programming and technical art work, my teammates contributed:",
       members: [
         {
           name: "Tamir Goldman",
-          description: "Tamir Goldman played a central role across multiple disciplines, leading both the creative and implementation aspects of the game. He was responsible for 3D modeling, including key characters and assets, as well as the full UI/UX design, ensuring a cohesive and intuitive player experience. Tamir also designed and implemented the boss encounter, handling both its visual creation and combat behavior. In addition, he contributed extensively to map design and asset creation, while producing the game's complete audio layer—covering sound effects, background music, and overall sound design—resulting in a polished and immersive experience.",
+          description: "Designed and implemented the UI/UX and boss encounter, created 3D characters and assets, and contributed to map design. Also produced the music, sound effects, and audio design.",
           linkedin: "https://www.linkedin.com/in/tamir-goldman-4a3b25313/"
         },
         {
           name: "Ido Korliker",
-          description: "Ido Korliker focused on visual effects and 3D asset creation. He developed the VFX that enhance gameplay clarity and impact, and was responsible for modeling the main character, miniboss, and various map assets, contributing significantly to the game's visual depth and overall presentation."
+          description: "Created gameplay VFX and modeled the main character, miniboss, and map assets."
         }
       ]
     }
@@ -89,7 +89,7 @@ export const gameProjects = [
         { src: "/Images/Ricochet/Winner Screen.jpg", label: "Victory" }
       ]
     },
-    summary: "Ricochet blends the chaos of pinball with the precision of air hockey and the quick reflexes of Pong. Play alternating rounds as a striker or goalie, using physics, bouncers, and neon-lit action to outscore your opponent.",
+    summary: "A neon sports game combining pinball, air hockey, and Pong. Alternate between striker and goalie, using ricochets and quick reactions to outscore your opponent.",
     images: [
       "/Images/Ricochet/Intro.jpg", // Logo/Title screen first
       "/Images/Ricochet/StartOfMatch.jpg", // Gameplay
@@ -133,7 +133,7 @@ export const gameProjects = [
         { src: "/Images/Slingshot/Slingshot - checkpoint captured.jpg", label: "Navigate" }
       ]
     },
-    summary: "Slingshot is a fast-paced space racer where you harness planetary gravity to speed through unique, procedurally generated tracks. Master 6-axis controls, hit checkpoints in order, and use close flybys for high-speed, precision racing.",
+    summary: "A space racer where planetary gravity is your accelerator. Fly through procedurally generated tracks, using close flybys to gain speed and reach each checkpoint.",
     images: [
       "/Images/Slingshot/Slingshot - Intro.jpg", // Logo/Title screen first
       "/Images/Slingshot/Slingshot - checkpoint captured.jpg", // Gameplay
@@ -202,7 +202,7 @@ export const modelingProjects = [
         { src: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00013.png', label: 'Top details', position: 'center 58%' }
       ]
     },
-    summary: 'Portfolio project: stylized Cozmo robot modeled, textured and rendered.',
+    summary: 'A stylized Cozmo robot, from modeling in Maya to materials and final renders in Unreal Engine.',
     renders: [
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00011.png',
@@ -322,7 +322,7 @@ export const sceneProjects = [
         { src: '/Images/Scenes/Starwars Scene/Highres-Screenshot00006.png', label: 'Composition' }
       ]
     },
-    summary: 'Cinematic environment recreation featuring advanced Unreal Engine 5 technologies including Nanite virtualized geometry.',
+    summary: 'A Star Wars environment study focused on composition, lighting, and detailed geometry using Unreal Engine 5 and Nanite.',
     images: [
       '/Images/Scenes/Starwars Scene/Highres-Screenshot00000.png',
       '/Images/Scenes/Starwars Scene/Highres-Screenshot00001.png',
@@ -333,7 +333,7 @@ export const sceneProjects = [
     coolFeatures: [
       {
         title: 'Nanite Virtualized Geometry',
-        description: 'This scene leverages Unreal Engine 5\'s revolutionary Nanite technology, enabling film-quality assets with millions of polygons to be rendered in real-time. The visualization below shows the Nanite mesh complexity, demonstrating how the engine dynamically streams and renders only the geometry detail you can see.',
+        description: 'Nanite renders detailed geometry while adjusting the visible detail to the camera. The visualization below shows the meshes used in this scene.',
         image: '/Images/Scenes/Starwars Scene/Highres-Screenshot00002.png',
         icon: '🔷'
       }
@@ -343,7 +343,7 @@ export const sceneProjects = [
     engine: 'Unreal Engine 5',
     type: 'scene',
     videoUrl: 'https://www.youtube.com/watch?v=PMFyZR_8rm8',
-    details: 'Immersive Star Wars-inspired environment built in Unreal Engine 5, showcasing cutting-edge real-time rendering techniques and next-generation graphics technology.'
+    details: 'A Star Wars-inspired scene assembled in Unreal Engine 5, with a focus on composition, lighting, and Nanite geometry.'
   }
 ];
 

@@ -112,6 +112,8 @@ function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showCategoryNav, setShowCategoryNav] = useState(false);
   const [categoryNavHandedOff, setCategoryNavHandedOff] = useState(false);
+  const categoryScrollFrame = useRef(null);
+  const galleryIndexCallback = useRef(null);
   const savedScrollPosition = useRef(0);
   const openedProjectId = useRef(initialProject?.id || null);
   const portfolioPageRef = useRef(null);
@@ -179,7 +181,7 @@ function App() {
         if (card && stickyNav) {
           const safeTop = stickyNav.getBoundingClientRect().bottom + 14;
           const cardTop = card.getBoundingClientRect().top;
-          if (cardTop < safeTop) window.scrollBy({ top: cardTop - safeTop, behavior: "auto" });
+          if (card.getBoundingClientRect().bottom < safeTop || cardTop > window.innerHeight) window.scrollBy({ top: cardTop - safeTop, behavior: "instant" });
         }
         card?.focus({ preventScroll: true });
       });
@@ -191,14 +193,43 @@ function App() {
     const target = destination ? document.getElementById(destination.target) : null;
     if (!target) return;
 
+    if (categoryScrollFrame.current) cancelAnimationFrame(categoryScrollFrame.current);
+    setActiveCategory(category);
+    flushSync(() => setShowCategoryNav(category !== "all"));
+    const header = document.querySelector(".navbar");
+    const anchor = target.querySelector(".work-section-heading") || target;
+    const offset = (header?.getBoundingClientRect().height || 72) + 20;
+    const destinationY = Math.max(0, Math.min(window.scrollY + anchor.getBoundingClientRect().top - offset,
+      document.documentElement.scrollHeight - window.innerHeight));
+    window.history.replaceState({ kind: "portfolio", category, scrollY: destinationY }, "", category === "all" ? "#projects" : `#${category}`);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-    window.history.replaceState(
-      { kind: "portfolio", category, scrollY: window.scrollY },
-      "",
-      category === "all" ? "#projects" : `#${category}`
-    );
+    const startY = window.scrollY;
+    const startTime = performance.now();
+    const duration = reduceMotion ? 0 : Math.min(520, Math.max(280, Math.abs(destinationY - startY) * .12));
+    const animate = (now) => {
+      const progress = duration ? Math.min(1, (now - startTime) / duration) : 1;
+      window.scrollTo({ top: startY + (destinationY - startY) * (1 - Math.pow(1 - progress, 3)), behavior: "instant" });
+      categoryScrollFrame.current = progress < 1 ? requestAnimationFrame(animate) : null;
+    };
+    categoryScrollFrame.current = requestAnimationFrame(animate);
   }, [categories]);
+
+  useEffect(() => {
+    const cancel = (event) => {
+      if (event.type === "keydown" && !["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) return;
+      if (categoryScrollFrame.current) cancelAnimationFrame(categoryScrollFrame.current);
+      categoryScrollFrame.current = null;
+    };
+    window.addEventListener("wheel", cancel, { passive: true });
+    window.addEventListener("touchstart", cancel, { passive: true });
+    window.addEventListener("keydown", cancel);
+    return () => {
+      window.removeEventListener("wheel", cancel);
+      window.removeEventListener("touchstart", cancel);
+      window.removeEventListener("keydown", cancel);
+      if (categoryScrollFrame.current) cancelAnimationFrame(categoryScrollFrame.current);
+    };
+  }, []);
 
   const openProject = useCallback((project, previewFrame = null) => {
     if (projectActionRef.current === "opening" || projectActionRef.current === "open") return;
@@ -206,7 +237,7 @@ function App() {
     savedScrollPosition.current = window.scrollY;
     openedProjectId.current = project.id;
     const projectCategory = getProjectCategory(project);
-    const returnCategory = activeCategory === "all" ? projectCategory : activeCategory;
+    const returnCategory = projectCategory;
     projectActionRef.current = "opening";
 
     window.history.replaceState(
@@ -239,7 +270,7 @@ function App() {
       "",
       `#project/${encodeURIComponent(project.id)}`
     );
-  }, [activeCategory, commitProjectUpdate]);
+  }, [commitProjectUpdate]);
 
   const finishClosingProject = useCallback((returnCategory, projectId, scrollPosition) => {
     projectActionRef.current = "closing";
@@ -282,7 +313,9 @@ function App() {
 
   const openImageModal = useCallback((images, index, options = {}) => {
     if (!selected) return;
-    const gallery = { images, index, ...options };
+    const { onIndexChange, ...galleryOptions } = options;
+    galleryIndexCallback.current = onIndexChange || null;
+    const gallery = { images, index, ...galleryOptions };
     window.history.pushState(
       {
         ...(window.history.state || {}),
@@ -296,6 +329,14 @@ function App() {
     );
     setModal(gallery);
   }, [selected]);
+
+  const syncGalleryIndex = useCallback((index) => {
+    galleryIndexCallback.current?.(index);
+    const state = window.history.state;
+    if (state?.kind === "gallery" && state.gallery) {
+      window.history.replaceState({ ...state, gallery: { ...state.gallery, index } }, "", window.location.hash);
+    }
+  }, []);
 
   const closeImageModal = useCallback(() => {
     const currentState = window.history.state || {};
@@ -332,6 +373,7 @@ function App() {
       return;
     }
 
+    if (window.location.hash === "#resume") return;
     const category = categoryFromHash();
     window.history.replaceState(
       { kind: "portfolio", category, scrollY: window.scrollY },
@@ -339,6 +381,12 @@ function App() {
       window.location.hash || "#about"
     );
   }, [initialProject]);
+
+  useEffect(() => {
+    if (initialProject || !["#games", "#modeling", "#scenes", "#projects"].includes(window.location.hash)) return undefined;
+    const frame = requestAnimationFrame(() => scrollToSection(categoryFromHash()));
+    return () => cancelAnimationFrame(frame);
+  }, [initialProject, scrollToSection]);
 
   useEffect(() => {
     let ticking = false;
@@ -361,8 +409,8 @@ function App() {
         current ? inlineTop <= CATEGORY_NAV_RELEASE_AT : inlineTop <= CATEGORY_NAV_DOCK_AT
       ));
 
-      if (!selected) {
-        const marker = window.scrollY + Math.min(window.innerHeight * 0.32, 300);
+      if (!selected && !categoryScrollFrame.current) {
+        const marker = window.scrollY + (document.querySelector(".navbar")?.getBoundingClientRect().height || 72) + 40;
         const sections = [
           { id: "games-section", category: "games" },
           { id: "modeling-section", category: "modeling" },
@@ -372,7 +420,7 @@ function App() {
         sections.forEach(({ id, category }) => {
           const section = document.getElementById(id);
           const sectionTop = section
-            ? window.scrollY + section.getBoundingClientRect().top
+            ? window.scrollY + (section.querySelector(".work-section-heading") || section).getBoundingClientRect().top
             : Number.POSITIVE_INFINITY;
           if (sectionTop <= marker) nextCategory = category;
         });
@@ -444,29 +492,26 @@ function App() {
   }, [commitProjectUpdate, finishClosingProject, selected]);
 
   useEffect(() => {
-    const portfolioPage = portfolioPageRef.current;
-    if (portfolioPage) {
-      portfolioPage.inert = Boolean(selected);
-      if (selected) portfolioPage.setAttribute("aria-hidden", "true");
-      else portfolioPage.removeAttribute("aria-hidden");
-    }
-
-    const projectBackdrop = document.querySelector(".project-detail-backdrop");
-    if (projectBackdrop) {
-      projectBackdrop.inert = Boolean(modal);
-      if (modal) projectBackdrop.setAttribute("aria-hidden", "true");
-      else projectBackdrop.removeAttribute("aria-hidden");
-    }
-
+    const page = portfolioPageRef.current;
+    if (!selected || !page) return undefined;
+    const wasInert = page.inert;
+    page.inert = true;
+    page.setAttribute("aria-hidden", "true");
     return () => {
-      if (portfolioPage) {
-        portfolioPage.inert = false;
-        portfolioPage.removeAttribute("aria-hidden");
-      }
-      if (projectBackdrop) {
-        projectBackdrop.inert = false;
-        projectBackdrop.removeAttribute("aria-hidden");
-      }
+      page.inert = wasInert;
+      page.removeAttribute("aria-hidden");
+    };
+  }, [selected]);
+
+  useEffect(() => {
+    const backdrop = document.querySelector(".project-detail-backdrop");
+    if (!modal || !backdrop) return undefined;
+    const wasInert = backdrop.inert;
+    backdrop.inert = true;
+    backdrop.setAttribute("aria-hidden", "true");
+    return () => {
+      backdrop.inert = wasInert;
+      backdrop.removeAttribute("aria-hidden");
     };
   }, [modal, selected]);
 
@@ -479,6 +524,11 @@ function App() {
           </div>
 
           <div className={`portfolio-page${selected ? " project-route-open" : ""}`} ref={portfolioPageRef}>
+            <a href="#projects" className="skip-to-content" onClick={(event) => {
+              event.preventDefault();
+              scrollToSection("all");
+              document.getElementById("main-content")?.focus({ preventScroll: true });
+            }}>Skip to main content</a>
             <AnimatedDotsBg />
             <Navbar
               theme={theme}
@@ -490,7 +540,7 @@ function App() {
             />
             <AboutSection onExplore={() => scrollToSection("all")} paused={Boolean(selected)} />
 
-            <main className="work-main" id="main-content">
+            <main className="work-main" id="main-content" tabIndex={-1}>
             <div className="work-nav-shell" id="projects">
               <CategoryNav
                 variant="inline"
@@ -541,7 +591,7 @@ function App() {
             <section className="work-section scenes-section" id="scenes-section" data-category="scenes">
               <SectionHeading
                 title="Scenes & Environments"
-                description="Cinematic spaces that explore atmosphere, composition, and next-generation rendering workflows."
+                description="Environment studies focused on atmosphere, composition, lighting, and real-time rendering."
               />
               <div className="scene-showcase">
                 {sceneProjects.map((project) => (
@@ -567,12 +617,12 @@ function App() {
                 View GitHub <span aria-hidden="true">↗</span>
               </a>
               <a className="button button-quiet" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
-                Resume <span aria-hidden="true">↗</span>
+                Open resume PDF <span aria-hidden="true">↗</span>
               </a>
             </div>
             <div className="footer-meta">
               <span>© {new Date().getFullYear()} Ariel Cohen</span>
-              <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+              <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })}>
                 Back to top <span aria-hidden="true">↑</span>
               </button>
             </div>
@@ -594,6 +644,7 @@ function App() {
             <PhoneImageModal
               images={modal.images}
               initialIndex={modal.index}
+              onIndexChange={syncGalleryIndex}
               onClose={closeImageModal}
             />
           )}
@@ -602,6 +653,7 @@ function App() {
             <ImageModal
               images={modal.images}
               initialIndex={modal.index}
+              onIndexChange={syncGalleryIndex}
               portrait={modal.portrait}
               onClose={closeImageModal}
             />

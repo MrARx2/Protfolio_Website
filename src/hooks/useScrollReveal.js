@@ -10,10 +10,8 @@ const revealSelector = [
   ".contact-section > p",
   ".contact-section > .contact-actions",
   ".contact-section > .footer-meta",
-  ".project-detail .case-study-section",
-  ".project-detail .modeling-section",
-  ".project-detail .scene-section",
-  ".project-detail .scene-details-section"
+  ".project-detail .section-header",
+  ".project-detail .gallery-heading-row"
 ].join(",");
 
 function revealDelay(target) {
@@ -34,7 +32,7 @@ export default function useScrollReveal(refreshKey) {
 
     targets.forEach((target) => {
       target.classList.add("motion-reveal");
-      target.style.setProperty("--reveal-delay", `${revealDelay(target)}ms`);
+      target.style.setProperty("--reveal-delay", `${window.innerWidth > 768 ? revealDelay(target) : 0}ms`);
     });
 
     document.documentElement.classList.add("motion-observer-ready");
@@ -51,8 +49,8 @@ export default function useScrollReveal(refreshKey) {
         observer.unobserve(entry.target);
       });
     }, {
-      threshold: 0.12,
-      rootMargin: "0px 0px -7% 0px"
+      threshold: 0,
+      rootMargin: "0px 0px 40px 0px"
     });
 
     targets.forEach((target) => {
@@ -60,6 +58,9 @@ export default function useScrollReveal(refreshKey) {
       observer.observe(target);
     });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      targets.forEach((target) => target.classList.add("is-revealed"));
+    };
   }, [refreshKey]);
 }

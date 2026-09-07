@@ -19,7 +19,6 @@ function StandardProjectGallery({
   const galleryStageRef = useRef(null);
   const activeImageRef = useRef(null);
   const thumbnailRailRef = useRef(null);
-  const isGalleryInViewRef = useRef(false);
 
   const activeCollection = availableCollections.find(
     (collection) => collection.id === activeCollectionId
@@ -66,51 +65,9 @@ function StandardProjectGallery({
 
     rail.scrollTo({
       left: Math.max(0, centeredLeft),
-      behavior: "smooth"
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
     });
   }, [activeIndex, activeCollectionId]);
-
-  useEffect(() => {
-    const galleryStage = galleryStageRef.current;
-    if (!galleryStage) return undefined;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isGalleryInViewRef.current = entry.isIntersecting && entry.intersectionRatio >= 0.3;
-      },
-      { threshold: [0, 0.3, 0.5] }
-    );
-
-    observer.observe(galleryStage);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const handlePageKeys = (event) => {
-      if (event.defaultPrevented || !isGalleryInViewRef.current || document.querySelector(".image-modal")) return;
-      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        previous();
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        next();
-      }
-      if (portrait && event.key === "ArrowUp") {
-        event.preventDefault();
-        scrollPortraitImage(-1);
-      }
-      if (portrait && event.key === "ArrowDown") {
-        event.preventDefault();
-        scrollPortraitImage(1);
-      }
-    };
-
-    document.addEventListener("keydown", handlePageKeys);
-    return () => document.removeEventListener("keydown", handlePageKeys);
-  }, [next, portrait, previous, scrollPortraitImage]);
 
   if (!activeCollection || total === 0) return null;
 
@@ -155,6 +112,19 @@ function StandardProjectGallery({
               <button
                 type="button"
                 role="tab"
+                id={`${sectionId}-tab-${collection.id}`}
+                aria-controls={`${sectionId}-panel`}
+                tabIndex={collection.id === activeCollection.id ? 0 : -1}
+                onKeyDown={(event) => {
+                  const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+                  if (!keys.includes(event.key)) return;
+                  event.preventDefault();
+                  const current = availableCollections.findIndex((item) => item.id === collection.id);
+                  const index = event.key === "Home" ? 0 : event.key === "End" ? availableCollections.length - 1 : (current + (event.key === "ArrowLeft" ? -1 : 1) + availableCollections.length) % availableCollections.length;
+                  const nextId = availableCollections[index].id;
+                  selectCollection(nextId);
+                  document.getElementById(`${sectionId}-tab-${nextId}`)?.focus({ preventScroll: true });
+                }}
                 aria-selected={collection.id === activeCollection.id}
                 className={collection.id === activeCollection.id ? "active" : ""}
                 key={collection.id}
@@ -171,7 +141,9 @@ function StandardProjectGallery({
       <div
         ref={galleryStageRef}
         className={`gallery-stage ${portrait ? "gallery-stage-portrait" : "gallery-stage-landscape"}`}
-        role="tabpanel"
+        role={availableCollections.length > 1 ? "tabpanel" : "region"}
+        id={`${sectionId}-panel`}
+        aria-labelledby={availableCollections.length > 1 ? `${sectionId}-tab-${activeCollection.id}` : undefined}
         tabIndex={0}
         onKeyDown={handleKeys}
         aria-label={`${activeCollection.label}, image ${activeIndex + 1} of ${total}.${portrait ? " Use up and down to scroll the image, and left and right to change images." : " Use left and right to change images."}`}
@@ -191,7 +163,7 @@ function StandardProjectGallery({
               className={`gallery-stage-image ${position === 1 ? "gallery-stage-image-secondary" : ""}`}
               type="button"
               key={`${activeCollection.id}-${imageIndex}`}
-              onClick={() => onImageClick(images, imageIndex, { portrait })}
+              onClick={() => onImageClick(images, imageIndex, { portrait, onIndexChange: setActiveIndex })}
               aria-label={`Open ${projectTitle} ${activeCollection.label.toLowerCase()} image ${imageIndex + 1} full screen`}
             >
               <img

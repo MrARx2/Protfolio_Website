@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
-import { isYouTubeShortUrl, toEmbedUrl } from "../../utils/youtubeHelpers";
+import { isYouTubeShortUrl } from "../../utils/youtubeHelpers";
 import ModelingDetail from "./ModelingDetail";
 import SceneDetail from "./SceneDetail";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
 import MechanicModal from "../modals/MechanicModal";
+import { usePageScrollLock } from "../../hooks/useDialog";
+import VideoPreview from "./VideoPreview";
 import CaseStudyNav from "./CaseStudyNav";
 
 function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick }) {
+  usePageScrollLock();
   const backdropRef = useRef(null);
   const backButtonRef = useRef(null);
   const mechanicTriggerRef = useRef(null);
@@ -37,7 +40,9 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
   const clearMechanic = useCallback(() => {
     setSelectedMechanic(null);
-    window.requestAnimationFrame(() => mechanicTriggerRef.current?.focus({ preventScroll: true }));
+    const trigger = mechanicTriggerRef.current;
+    mechanicTriggerRef.current = null;
+    window.requestAnimationFrame(() => { if (trigger?.isConnected && !trigger.closest("[inert]")) trigger.focus({ preventScroll: true }); });
   }, []);
 
   const closeMechanic = useCallback(() => {
@@ -62,7 +67,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
         && hashParts[2] === "mechanic"
         ? decodeURIComponent(hashParts.slice(3).join("/"))
         : null;
-      const mechanicLabel = event.state?.project === project.id
+      const mechanicLabel = event.state?.project === project.id && event.state?.kind === "mechanic"
         ? event.state?.mechanic || hashMechanic
         : hashMechanic;
       if (mechanicLabel) {
@@ -95,8 +100,6 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
   }, [project.id]);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     const handleKeyDown = (event) => {
       if (event.key === "Escape" && !isGalleryOpen && !selectedMechanic) onBack();
       if (event.key !== "Tab" || isGalleryOpen || selectedMechanic) return;
@@ -117,7 +120,6 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isGalleryOpen, onBack, selectedMechanic]);
@@ -151,7 +153,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
       { id: "case-study-overview", label: "Overview" },
       ...(project.youtube ? [{ id: "case-study-video", label: isPortraitTrailer ? "Trailer" : "Video" }] : []),
       ...(project.details ? [{ id: "case-study-about", label: "About" }] : []),
-      ...(mechanics.length ? [{ id: "case-study-mechanics", label: "Mechanics" }] : []),
+      ...(mechanics.length ? [{ id: "case-study-mechanics", label: "Systems" }] : []),
       { id: "case-study-gallery", label: "Gallery" },
       ...(project.teamCredits ? [{ id: "case-study-team", label: "Team" }] : [])
     ];
@@ -218,7 +220,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                   <h2 className="section-title">{isPortraitTrailer ? "Mobile gameplay trailer" : "Gameplay preview"}</h2>
                   <p className="section-description">
                     {isPortraitTrailer
-                      ? "A portrait-first look at the combat, progression, and moment-to-moment mobile experience."
+                      ? "Combat, talents, and progression captured on a phone."
                       : "A closer look at the game's pace, systems, and player feedback."}
                   </p>
                   {isPortraitTrailer && (
@@ -231,15 +233,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                     </div>
                   )}
                 </div>
-                <div className={`video-wrapper${isPortraitTrailer ? " video-wrapper-portrait" : ""}`}>
-                  <iframe
-                    title={`${project.title} gameplay preview`}
-                    src={toEmbedUrl(project.youtube)}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
+                <VideoPreview url={project.youtube} title={`${project.title} gameplay preview`} poster={project.thumbnail || project.images?.[0]} portrait={isPortraitTrailer} />
               </section>
             )}
 
@@ -247,7 +241,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
               <section id="case-study-about" className="case-study-section case-study-overview">
                 <div className="section-header">
                   <span className="section-kicker">The project</span>
-                  <h2 className="section-title">Overview</h2>
+                  <h2 className="section-title">About the game</h2>
                 </div>
                 <div className="detail-body">
                   {project.details.split("\n").filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -288,7 +282,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
               title="Selected gallery"
               description={project.galleryPresentation === "phone-showcase"
                 ? "Move through the complete mobile experience—from combat and exploration to progression and interface design."
-                : "Gameplay, interface, and key moments—kept compact here and available in full resolution when you want a closer look."}
+                : "Gameplay and interface screenshots. Select an image to enlarge it."}
               projectTitle={project.title}
               presentation={project.galleryPresentation}
               groups={project.galleryGroups}

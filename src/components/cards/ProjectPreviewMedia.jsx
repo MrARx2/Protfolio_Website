@@ -37,11 +37,13 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   const [loadedFrames, setLoadedFrames] = useState(() => new Set());
   const [inView, setInView] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const [saveData] = useState(() => Boolean(navigator.connection?.saveData));
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
   const initialDelay = useMemo(() => {
     const projectSeed = Array.from(project.id || "preview")
       .reduce((total, character) => total + character.charCodeAt(0), 0);
-    return 1200 + (projectSeed % 900);
+    return 4200 + (projectSeed % 900);
   }, [project.id]);
 
   const showFrame = useCallback((requestedIndex) => {
@@ -108,25 +110,48 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   }, [frames.length, project.id, reducedMotion]);
 
   useEffect(() => {
-    if (!inView || !pageVisible || paused || reducedMotion || frames.length < 2) return undefined;
+    if (!inView || !pageVisible || paused || interacting || saveData || reducedMotion || frames.length < 2) return undefined;
 
-    const delay = hasStartedCyclingRef.current ? 2800 : initialDelay;
+    const delay = hasStartedCyclingRef.current ? 5200 : initialDelay;
+    let cancelled = false;
+    const image = new Image();
     const timer = window.setTimeout(() => {
-      hasStartedCyclingRef.current = true;
-      showFrame(activeIndex + 1);
+      image.onload = async () => {
+        try { await image.decode?.(); } catch { /* A loaded image can still be shown if decoding is unavailable. */ }
+        if (!cancelled) {
+          hasStartedCyclingRef.current = true;
+          showFrame(activeIndex + 1);
+        }
+      };
+      image.src = frames[normalizedIndex(activeIndex + 1, frames.length)].src;
     }, delay);
-
-    return () => window.clearTimeout(timer);
-  }, [activeIndex, frames.length, inView, initialDelay, pageVisible, paused, reducedMotion, showFrame]);
+    return () => { cancelled = true; image.onload = null; window.clearTimeout(timer); };
+  }, [activeIndex, frames, inView, initialDelay, pageVisible, paused, interacting, saveData, reducedMotion, showFrame]);
 
   useEffect(() => {
-    if (!inView || reducedMotion || frames.length < 2 || typeof window.Image !== "function") return undefined;
+    if (!inView || saveData || reducedMotion || frames.length < 2 || typeof window.Image !== "function") return undefined;
     const nextIndex = normalizedIndex(activeIndex + 1, frames.length);
     const image = new window.Image();
     image.src = frames[nextIndex].src;
     return () => { image.onload = null; };
-  }, [activeIndex, frames, inView, reducedMotion]);
+  }, [activeIndex, frames, inView, reducedMotion, saveData]);
 
+  useEffect(() => {
+    const card = rootRef.current?.closest('[role="button"]');
+    if (!card) return undefined;
+    const pause = () => setInteracting(true);
+    const resume = (event) => setInteracting(event.type === 'mouseleave' ? card.contains(document.activeElement) : card.matches(':hover') || card.contains(event.relatedTarget));
+    card.addEventListener("mouseenter", pause);
+    card.addEventListener("mouseleave", resume);
+    card.addEventListener("focusin", pause);
+    card.addEventListener("focusout", resume);
+    return () => {
+      card.removeEventListener("mouseenter", pause);
+      card.removeEventListener("mouseleave", resume);
+      card.removeEventListener("focusin", pause);
+      card.removeEventListener("focusout", resume);
+    };
+  }, []);
   useEffect(() => () => window.clearTimeout(previousFrameTimerRef.current), []);
 
   const markLoaded = (index) => {

@@ -1,0 +1,38 @@
+import React, { act } from "react";
+import { createRoot } from "react-dom/client";
+import MobileMenu from "./MobileMenu";
+
+test("the mobile menu escapes the navbar layer, traps focus and restores its trigger", () => {
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  window.matchMedia = jest.fn(() => ({ matches: false, addEventListener: jest.fn(), removeEventListener: jest.fn() }));
+  const frames = [];
+  jest.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => { frames.push(callback); return frames.length; });
+  jest.spyOn(HTMLElement.prototype, "getClientRects").mockImplementation(() => [{ width: 44, height: 44 }]);
+  const page = document.createElement("div");
+  page.className = "portfolio-page";
+  const trigger = document.createElement("button");
+  const mount = document.createElement("div");
+  page.append(trigger, mount);
+  document.body.append(page);
+  trigger.focus();
+  const root = createRoot(mount);
+  const onClose = jest.fn();
+  act(() => root.render(<MobileMenu onClose={onClose} returnFocusRef={{ current: trigger }} categories={[{ id: "games", label: "Games", count: 3 }]} onSelectCategory={jest.fn()} theme="amber" onThemeChange={jest.fn()} onResume={jest.fn()} />));
+  const dialog = document.querySelector('[role="dialog"]');
+  expect(page.contains(dialog)).toBe(false);
+  expect(dialog.parentElement.parentElement).toBe(document.body);
+  expect(page.inert).toBe(true);
+  const close = dialog.querySelector('[aria-label="Close menu"]');
+  expect(document.activeElement).toBe(close);
+  act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true, bubbles: true, cancelable: true })));
+  expect(dialog.contains(document.activeElement)).toBe(true);
+  expect(document.activeElement).not.toBe(close);
+  act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true })));
+  expect(onClose).toHaveBeenCalledTimes(1);
+  act(() => root.unmount());
+  frames.forEach((callback) => callback());
+  expect(document.activeElement).toBe(trigger);
+  expect(page.inert).toBeFalsy();
+  page.remove();
+  jest.restoreAllMocks();
+});

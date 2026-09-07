@@ -1,5 +1,5 @@
 import React from "react";
-import { toEmbedUrl } from "../../utils/youtubeHelpers";
+import VideoPreview from "./VideoPreview";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
 
@@ -51,15 +51,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
             <h2 className="section-title">Video showcase</h2>
             <p className="section-description">A cinematic pass through the environment, lighting, and final composition.</p>
           </div>
-          <div className="video-wrapper">
-            <iframe
-              src={toEmbedUrl(project.videoUrl)}
-              title={`${project.title} video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              loading="lazy"
-            />
-          </div>
+          <VideoPreview url={project.videoUrl} title={`${project.title} showcase`} poster={project.thumbnail || project.images?.[0]} />
         </section>
       )}
 
@@ -76,7 +68,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       <ProjectGallery
         sectionId="case-study-gallery"
         title="Environment gallery"
-        description="A focused viewer for the finished scene and its technical visualization. Open any frame when you want the full-resolution detail."
+        description="Explore the finished scene and technical views. Select an image to enlarge it."
         projectTitle={project.title}
         collections={collections}
         onImageClick={onImageClick}
@@ -96,6 +88,10 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
                   <h3 className="cool-feature-title">{feature.title}</h3>
                 </div>
                 <p className="cool-feature-description">{feature.description}</p>
+                {feature.image && <button type="button" className="technical-image-button" onClick={() => onImageClick([feature.image], 0)} aria-label={`Enlarge ${feature.title} visualization`}>
+                  <img src={feature.image} alt={`${feature.title} visualization`} loading="lazy" />
+                  <span>View full image ↗</span>
+                </button>}
               </article>
             ))}
           </div>

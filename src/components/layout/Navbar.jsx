@@ -3,6 +3,7 @@ import { personalInfo } from '../../data/personalInfo';
 import { themes } from '../../data/themes';
 import ResumeModal from './ResumeModal';
 import CategoryNav from './CategoryNav';
+import MobileMenu from './MobileMenu';
 
 function Navbar({
   theme,
@@ -18,11 +19,10 @@ function Navbar({
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const themePickerRef = useRef(null);
   const resumeTriggerRef = useRef(null);
-  const mobileMenuRef = useRef(null);
   const mobileToggleRef = useRef(null);
   const currentTheme = themes.find(({ id }) => id === theme) || themes[0];
-  const categoriesVisible = showCategories && !mobileMenuOpen;
-  const wordmarkVisible = isScrolled && !mobileMenuOpen;
+  const categoriesVisible = showCategories;
+  const wordmarkVisible = isScrolled;
 
   const scrollToTop = useCallback(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -39,65 +39,20 @@ function Navbar({
   }, []);
 
   useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    const backgroundRegions = ['#about', '#main-content', '#contact']
-      .map((selector) => document.querySelector(selector))
-      .filter(Boolean);
-    backgroundRegions.forEach((region) => {
-      region.inert = true;
-      region.setAttribute('aria-hidden', 'true');
-    });
-
-    const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setMobileMenuOpen(false);
-      if (event.key !== 'Tab') return;
-      const menuItems = Array.from(mobileMenuRef.current?.querySelectorAll(
-        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
-      ) || []).filter((element) => element.offsetParent !== null);
-      const focusable = [mobileToggleRef.current, ...menuItems].filter(Boolean);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', closeOnEscape);
-    window.requestAnimationFrame(() => {
-      mobileMenuRef.current?.querySelector('button, [href]')?.focus({ preventScroll: true });
-    });
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
-      backgroundRegions.forEach((region) => {
-        region.inert = false;
-        region.removeAttribute('aria-hidden');
-      });
-      window.requestAnimationFrame(() => mobileToggleRef.current?.focus({ preventScroll: true }));
-    };
-  }, [mobileMenuOpen]);
-
-  useEffect(() => {
     if (!themeMenuOpen) return undefined;
 
     const closeOnOutsideClick = (event) => {
       if (!themePickerRef.current?.contains(event.target)) setThemeMenuOpen(false);
     };
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setThemeMenuOpen(false);
+      if (event.key === 'Escape') { setThemeMenuOpen(false); themePickerRef.current?.querySelector('.theme-toggle')?.focus(); }
     };
 
+    const focusFrame = requestAnimationFrame(() => themePickerRef.current?.querySelector('[aria-checked="true"]')?.focus());
     document.addEventListener('pointerdown', closeOnOutsideClick);
     document.addEventListener('keydown', closeOnEscape);
     return () => {
+      cancelAnimationFrame(focusFrame);
       document.removeEventListener('pointerdown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
@@ -145,11 +100,11 @@ function Navbar({
     window.requestAnimationFrame(() => resumeTriggerRef.current?.focus({ preventScroll: true }));
   }, []);
 
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
   const toggleMobileMenu = () => {
-    setMobileMenuOpen((open) => {
-      if (open) setThemeMenuOpen(false);
-      return !open;
-    });
+    setThemeMenuOpen(false);
+    setMobileMenuOpen(true);
   };
 
   return (
@@ -160,11 +115,13 @@ function Navbar({
           ref={mobileToggleRef}
           className="mobile-menu-toggle"
           onClick={toggleMobileMenu}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-label="Open menu"
           aria-expanded={mobileMenuOpen}
+          aria-controls={mobileMenuOpen ? "mobile-navigation" : undefined}
+          aria-haspopup="dialog"
         >
           <span className="hamburger-icon">
-            {mobileMenuOpen ? '✕' : '☰'}
+            ☰
           </span>
         </button>
 
@@ -184,10 +141,7 @@ function Navbar({
         </button>
       </div>
 
-      {/* Docked copy of the category pill, revealed once the in-page one
-          scrolls under the bar. Suppressed while the mobile menu is open: it
-          sits behind that overlay, so leaving it in the tab order would let
-          focus escape the menu. */}
+      {/* Keep the docked bar stable beneath the separate mobile dialog. */}
       <CategoryNav
         variant="docked"
         categories={categories}
@@ -198,7 +152,7 @@ function Navbar({
       />
 
       {/* Navigation links */}
-      <div ref={mobileMenuRef} className={`navbar-right ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+      <div className="navbar-right">
         <div className="theme-picker" ref={themePickerRef}>
           <button
             className="theme-toggle"
@@ -214,7 +168,16 @@ function Navbar({
           </button>
 
           {themeMenuOpen && (
-            <div className="theme-menu" role="menu" aria-label="Choose color theme">
+            <div className="theme-menu" role="menu" aria-label="Choose color theme" onKeyDown={(event) => {
+              const items = Array.from(event.currentTarget.querySelectorAll('[role="menuitemradio"]'));
+              if (["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
+                event.preventDefault();
+                const current = items.indexOf(document.activeElement);
+                const index = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 : (current + (event.key === "ArrowUp" ? -1 : 1) + items.length) % items.length;
+                items[index]?.focus();
+              }
+              if (event.key === "Tab") setThemeMenuOpen(false);
+            }}>
               <span className="theme-menu-title">Color theme</span>
               {themes.map((option) => (
                 <button
@@ -222,10 +185,12 @@ function Navbar({
                   key={option.id}
                   type="button"
                   role="menuitemradio"
+                  tabIndex={option.id === theme ? 0 : -1}
                   aria-checked={option.id === theme}
                   onClick={() => {
                     onThemeChange(option.id);
                     setThemeMenuOpen(false);
+                    themePickerRef.current?.querySelector(".theme-toggle")?.focus();
                   }}
                 >
                   <span className="theme-option-swatch" style={{ backgroundColor: option.swatch }} aria-hidden="true" />
@@ -305,17 +270,21 @@ function Navbar({
         >
           <img 
             src="/Images/Icons/icons8-document-100.png" 
-            alt="Document Icon" 
+            alt=""
             style={{ width: '22px', height: '22px' }} 
           />
           Resume
         </a>
       </div>
       
+      {mobileMenuOpen && <MobileMenu onClose={closeMobileMenu} returnFocusRef={mobileToggleRef}
+        categories={categories} onSelectCategory={onSelectCategory} theme={theme}
+        onThemeChange={onThemeChange} onResume={openResume} />}
       {showResume && (
         <ResumeModal 
           resumeUrl={personalInfo.resume} 
           onClose={closeResume}
+          returnFocusRef={window.matchMedia("(max-width: 768px)").matches ? mobileToggleRef : resumeTriggerRef}
         />
       )}
     </nav>

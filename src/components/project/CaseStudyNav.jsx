@@ -12,7 +12,7 @@ function CaseStudyNav({ sections, scrollRootRef }) {
 
   const updateActiveSection = useCallback(() => {
     const scrollRoot = scrollRootRef.current;
-    if (!scrollRoot || sections.length === 0) return;
+    if (!scrollRoot || sections.length === 0 || scrollAnimationRef.current) return;
 
     const toolbar = scrollRoot.querySelector(".case-study-toolbar");
     const toolbarBottom = toolbar?.getBoundingClientRect().bottom || 0;
@@ -70,11 +70,14 @@ function CaseStudyNav({ sections, scrollRootRef }) {
 
     scrollRoot.addEventListener("wheel", cancelAnimatedScroll, { passive: true });
     scrollRoot.addEventListener("touchstart", cancelAnimatedScroll, { passive: true });
+    const cancelOnKey = (event) => { if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) cancelAnimatedScroll(); };
+    scrollRoot.addEventListener("keydown", cancelOnKey);
 
     return () => {
       cancelAnimatedScroll();
       scrollRoot.removeEventListener("wheel", cancelAnimatedScroll);
       scrollRoot.removeEventListener("touchstart", cancelAnimatedScroll);
+      scrollRoot.removeEventListener("keydown", cancelOnKey);
     };
   }, [scrollRootRef]);
 
@@ -98,8 +101,9 @@ function CaseStudyNav({ sections, scrollRootRef }) {
     const toolbar = scrollRoot.querySelector(".case-study-toolbar");
     const toolbarHeight = toolbar?.getBoundingClientRect().height || 68;
     const rootTop = scrollRoot.getBoundingClientRect().top;
-    const targetTop = target.getBoundingClientRect().top;
-    const destination = scrollRoot.scrollTop + targetTop - rootTop - toolbarHeight - 44;
+    const heading = target.querySelector(".section-header, .gallery-heading-row") || target;
+    const targetTop = Math.min(heading.getBoundingClientRect().top, target.querySelector(".video-preview-block")?.getBoundingClientRect().top ?? Infinity);
+    const destination = sectionId === sections[0]?.id ? 0 : scrollRoot.scrollTop + targetTop - rootTop - toolbarHeight - 24;
 
     const targetScrollTop = Math.max(0, destination);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -108,6 +112,7 @@ function CaseStudyNav({ sections, scrollRootRef }) {
     if (scrollAnimationRef.current) window.cancelAnimationFrame(scrollAnimationRef.current);
 
     if (reduceMotion) {
+      scrollAnimationRef.current = null;
       scrollRoot.scrollTop = targetScrollTop;
       return;
     }

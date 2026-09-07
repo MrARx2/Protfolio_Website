@@ -17,7 +17,6 @@ function PhoneShowcaseGallery({
   const [isTouching, setIsTouching] = useState(false);
   const stageRef = useRef(null);
   const thumbnailPanelRef = useRef(null);
-  const isGalleryInViewRef = useRef(false);
   const touchStartRef = useRef(null);
   const touchHintTimerRef = useRef(null);
   const suppressClickUntilRef = useRef(0);
@@ -47,42 +46,8 @@ function PhoneShowcaseGallery({
   }, [activeIndex]);
 
   const openDetailView = useCallback(() => {
-    onImageClick(images, activeIndex, { presentation: "phone-showcase" });
+    onImageClick(images, activeIndex, { presentation: "phone-showcase", onIndexChange: setActiveIndex });
   }, [activeIndex, images, onImageClick]);
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return undefined;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isGalleryInViewRef.current = entry.isIntersecting && entry.intersectionRatio >= 0.28;
-      },
-      { threshold: [0, 0.28, 0.5] }
-    );
-
-    observer.observe(stage);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const handlePageKeys = (event) => {
-      if (event.defaultPrevented || !isGalleryInViewRef.current || document.querySelector(".image-modal")) return;
-      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        previous();
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        next();
-      }
-    };
-
-    document.addEventListener("keydown", handlePageKeys);
-    return () => document.removeEventListener("keydown", handlePageKeys);
-  }, [next, previous]);
 
   useEffect(() => {
     const panel = thumbnailPanelRef.current;
@@ -129,8 +94,8 @@ function PhoneShowcaseGallery({
   };
 
   const handleTouchStart = (event) => {
-    const touch = event.touches[0];
-    if (!touch) return;
+    const touch = event.touches.length === 1 ? event.touches[0] : null;
+    if (!touch) { touchStartRef.current = null; return; }
 
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
     if (touchHintTimerRef.current) window.clearTimeout(touchHintTimerRef.current);
@@ -146,18 +111,12 @@ function PhoneShowcaseGallery({
     const distanceY = touch.clientY - start.y;
     const isHorizontalSwipe = Math.abs(distanceX) >= 44
       && Math.abs(distanceX) > Math.abs(distanceY) * 1.15;
-    const isTap = Math.abs(distanceX) < 10 && Math.abs(distanceY) < 10;
 
     if (isHorizontalSwipe) {
       if (distanceX < 0) next();
       else previous();
       suppressClickUntilRef.current = Date.now() + 500;
-    } else if (isTap) {
-      const bounds = event.currentTarget.getBoundingClientRect();
-      const position = (touch.clientX - bounds.left) / bounds.width;
-      if (position < 0.3) previous();
-      else if (position > 0.7) next();
-      else openDetailView();
+    } else if (Math.abs(distanceX) + Math.abs(distanceY) > 12) {
       suppressClickUntilRef.current = Date.now() + 500;
     }
 

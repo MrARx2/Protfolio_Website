@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import useDialog from "../../hooks/useDialog";
 import PhoneFrame from "../project/PhoneFrame";
 
-function PhoneImageModal({ images, initialIndex = 0, onClose }) {
+function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
   const [index, setIndex] = useState(initialIndex);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isInspecting, setIsInspecting] = useState(false);
@@ -9,7 +10,10 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
   const modalShellRef = useRef(null);
   const imageViewportRef = useRef(null);
   const touchStartRef = useRef(null);
+  const suppressClickUntil = useRef(0);
+  const pointerStart = useRef(null);
   const total = images?.length || 0;
+  useDialog({ panelRef: modalShellRef, initialFocusRef: closeButtonRef, onClose });
 
   const previous = useCallback(() => {
     if (total < 2) return;
@@ -31,6 +35,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
   }, [isInspecting]);
 
   const toggleInspection = () => {
+    if (Date.now() < suppressClickUntil.current) return;
     setIsInspecting((current) => {
       const nextValue = !current;
       window.requestAnimationFrame(() => {
@@ -50,6 +55,8 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
     setIndex(initialIndex);
   }, [images, initialIndex]);
 
+  useEffect(() => { onIndexChange?.(index); }, [index, onIndexChange]);
+
   useEffect(() => {
     setImageLoaded(false);
     setIsInspecting(false);
@@ -68,12 +75,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
   }, [images, index, total]);
 
   useEffect(() => {
-    const previouslyFocused = document.activeElement;
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-      }
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         previous();
@@ -98,50 +100,25 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
         event.preventDefault();
         setIndex(total - 1);
       }
-      if (event.key === "Tab") {
-        const focusable = Array.from(modalShellRef.current?.querySelectorAll(
-          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
-        ) || []);
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
-        }
-      }
     };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
-    closeButtonRef.current?.focus({ preventScroll: true });
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-      window.requestAnimationFrame(() => {
-        if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
-      });
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isInspecting, next, onClose, previous, scrollImage, total]);
 
   if (!images || total === 0) return null;
 
   const handleTouchStart = (event) => {
-    const touch = event.touches[0];
+    const touch = !isInspecting && event.touches.length === 1 ? event.touches[0] : null;
     touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
   };
 
   const handleTouchEnd = (event) => {
-    if (!touchStartRef.current) return;
+    if (isInspecting || !touchStartRef.current) return;
     const touch = event.changedTouches[0];
     if (!touch) return;
     const distanceX = touch.clientX - touchStartRef.current.x;
     const distanceY = touch.clientY - touchStartRef.current.y;
+    if (Math.abs(distanceX) + Math.abs(distanceY) > 12) suppressClickUntil.current = Date.now() + 500;
     if (Math.abs(distanceX) > 55 && Math.abs(distanceX) > Math.abs(distanceY)) {
       if (distanceX > 0) previous();
       else next();
@@ -180,6 +157,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
           className="phone-modal-stage"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => { touchStartRef.current = null; }}
         >
           <div className="phone-modal-ambient" style={{ backgroundImage: `url("${activeImage}")` }} aria-hidden="true" />
           <div className="phone-modal-scrim" aria-hidden="true" />
@@ -206,6 +184,8 @@ function PhoneImageModal({ images, initialIndex = 0, onClose }) {
                 type="button"
                 className="phone-modal-image-button"
                 onClick={toggleInspection}
+                onPointerDown={(event) => { pointerStart.current = { x: event.clientX, y: event.clientY }; }}
+                onPointerUp={(event) => { const start = pointerStart.current; if (start && Math.abs(event.clientX - start.x) + Math.abs(event.clientY - start.y) > 12) suppressClickUntil.current = Date.now() + 500; }}
                 aria-label={isInspecting ? "Fit the complete mobile screen" : "Inspect mobile screen details"}
               >
                 <img

@@ -38,13 +38,15 @@ function CategoryNav({
       {categories.map((category) => (
         <button
           key={category.id}
+          aria-label={`${category.label}, ${category.count} ${category.count === 1 ? "project" : "projects"}`}
           type="button"
           tabIndex={active ? undefined : -1}
           className={activeCategory === category.id ? 'active' : ''}
           aria-current={activeCategory === category.id ? 'true' : undefined}
           onClick={() => onSelect?.(category.id)}
         >
-          <span>{category.label}</span>
+          <span className="category-label-full">{category.label}</span>
+          <span className="category-label-compact" aria-hidden="true">{({ modeling: "3D", scenes: "Scenes" })[category.id] || category.label}</span>
           <sup>{String(category.count).padStart(2, '0')}</sup>
         </button>
       ))}
