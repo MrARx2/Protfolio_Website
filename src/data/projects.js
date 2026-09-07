@@ -347,299 +347,426 @@ export const sceneProjects = [
   }
 ];
 
-/* ===== GAME MECHANICS DATA ===== 
- * Maps game project IDs to their mechanics/features
- * Each mechanic has: icon, label, and description
+/* ===== GAME MECHANICS DATA =====
+ * Maps game project IDs to the systems shown in their case study.
+ *
+ * Writing guide — these strings are read inside a modal, so keep them scannable:
+ *   desc      One sentence, ~20 words. What the player experiences. Shown on the grid card.
+ *   purpose   Two or three sentences. What the system is, and the one idea that makes it interesting.
+ *   structure Labels are concrete, 2-3 words. Each detail is one active sentence, ~25 words max.
+ *   flow      4-7 steps. Short active fragments, ~8 words each. No step repeats the structure.
+ *   value     One or two plain sentences on why it was built this way. Never restate the structure.
  */
 export const mechanicsData = {
   'path-of-embers': [
     {
       icon: '🎲',
       label: 'Roguelike Talent System',
-      desc: 'Each run is shaped by stackable Common, Rare, and Legendary talents, enabling focused synergies and increasingly powerful builds.',
-      purpose: 'A data-driven reward system built around two synchronized Talent Wheels. Each spin randomly draws 15 talents from a larger database, with five displayed candidates per rarity. The resolved rarity determines which five are eligible, and every acquired talent can be stacked to strengthen the player\'s build throughout the run.',
+      desc: 'Stackable Common, Rare, and Legendary talents let every run grow into a focused, increasingly powerful build.',
+      purpose: 'Every talent reward runs through two wheels that spin together. Each spin pulls 15 candidates out of the talent database — five per rarity — and the rarity that resolves decides which five can actually be won. The player takes one of the two results, and taking the same talent again stacks its effect.',
       visualFlowTitle: 'From reward to build',
       visualFlow: [
         {
           label: 'Trigger the reward',
-          caption: 'Filling the reward bar can begin the standard sequence with a randomly resolved rarity.',
+          caption: 'Filling the reward bar spins the wheels with a randomly resolved rarity.',
           src: '/Images/Path Of Embers/TalentEconomy-CoinThresholds.jpg',
           alt: 'Path of Embers reward bar approaching its full-state talent trigger',
           fit: 'contain'
         },
         {
           label: 'Choose between two',
-          caption: 'The synchronized wheels each resolve one valid talent from the five candidates belonging to the selected rarity.',
+          caption: 'Both wheels land on a talent of that rarity. The player keeps one.',
           src: '/Images/Path Of Embers/TalentSystem-DualWheels.jpg',
           alt: 'Path of Embers dual Talent Wheels presenting two talents for the player to choose from',
           fit: 'contain'
         },
         {
           label: 'Track every stack',
-          caption: 'The pause menu shows the active run build and numerical stack counts for deliberate future choices.',
+          caption: 'The pause menu lists the live build and how many times each talent is stacked.',
           src: '/Images/Path Of Embers/TalentSystem-RunBuild.jpg',
           alt: 'Path of Embers pause menu showing active talents and numerical stack counts',
           fit: 'contain'
         }
       ],
       structure: [
-        { label: 'Talent Database', detail: 'Organizes the complete talent catalog across Common, Rare, and Legendary tiers, including the presentation and gameplay data required by the Player Abilities component.' },
-        { label: 'Random Wheel Population', detail: 'At the start of each spin, five talents are randomly drawn from every rarity tier. These 15 temporary candidates are positioned on the two wheels for the synchronized presentation.' },
-        { label: 'Rarity Eligibility', detail: 'The resolved rarity identifies which five of the 15 displayed talents are valid results for the current spin.' },
-        { label: 'Synchronized Selection', detail: 'Each wheel resolves one talent from the five eligible options, producing the two choices shown to the player.' },
-        { label: 'Player Abilities Middleware', detail: 'After the player chooses one of the two talents from the selected rarity, its data is sent to the Player Abilities component for application.' },
-        { label: 'Run Build & Stacking', detail: 'The pause menu displays every talent currently active in the run together with its numerical stack count. Because each talent can be selected again to strengthen its effect, players can track their build precisely and plan focused stacks and ability synergies.' },
-        { label: 'Shop Rarity Input', detail: 'A shop purchase starts the same dual-wheel sequence with a deterministic rarity based on the tier selected by the player, replacing only the random rarity decision.' }
+        { label: 'Talent database', detail: 'Holds every talent across Common, Rare, and Legendary, along with the presentation and gameplay data the ability system needs.' },
+        { label: 'Wheel population', detail: 'Each spin draws five talents from every rarity — 15 candidates in total — and lays them out across both wheels.' },
+        { label: 'Rarity gate', detail: 'The rarity that resolves for this spin marks which five of the 15 candidates are valid results.' },
+        { label: 'Twin results', detail: 'Both wheels land on an eligible talent, so the player always chooses between two real options.' },
+        { label: 'Ability handoff', detail: 'The chosen talent’s data passes to the Player Abilities component, which applies the effect or strengthens it.' },
+        { label: 'Build and stacking', detail: 'Taking a talent again stacks it. The pause menu shows every active talent with its stack count, so synergies can be planned rather than stumbled into.' },
+        { label: 'Shop override', detail: 'A shop purchase runs the same sequence but supplies the rarity directly instead of rolling for it.' }
       ],
-      flow: ['A new talent reward or shop spin is requested', 'Five talents are randomly drawn from each rarity tier', 'The 15 selected talents are placed into the dual-wheel presentation', 'The rarity is selected randomly for a reward or supplied deterministically by the shop purchase', 'Both wheels spin together while displaying the 15 temporary candidates', 'The selected rarity limits valid results to its five matching talents', 'Each wheel selects one eligible talent, creating two choices', 'The player chooses one of the two talents', 'Player Abilities applies the talent or strengthens its existing stack', 'The pause menu updates the active talent and its numerical stack count'],
-      value: 'The system separates talent data, rarity input, dual-wheel presentation, and gameplay application while keeping the resulting build visible to the player. This supports deliberate stacking, stronger synergies, and more informed choices throughout each run.'
+      flow: [
+        'Reward bar fills, or the player buys a spin',
+        'Five talents drawn from each rarity — 15 candidates',
+        'Rarity resolves: random on reward, chosen at the shop',
+        'Both wheels spin across all 15 candidates',
+        'Each wheel lands on one talent of that rarity',
+        'Player keeps one of the two',
+        'Player Abilities applies it and the stack count updates'
+      ],
+      value: 'Talent data, rarity input, wheel presentation, and gameplay effect stay separate, so the reward bar and the shop can drive the same system from opposite ends. The player always sees the build they are assembling, which makes stacking a decision instead of an accident.'
     },
     {
       icon: '🗺️',
       label: 'Performance-Aware Map System',
-      desc: 'Maintains nearby map segments, despawns abandoned enemies, and balances two-wave rewards against an advancing meteor fireline.',
-      purpose: 'A runtime map and encounter system that maintains only the two or three segments nearest the player across a 16-part authored map. Abandoned enemies despawn while a battle-royale-style meteor fireline prevents stagnation, creating a deliberate balance between forward momentum, tactical clearing, and player power.',
+      desc: 'Only the segments near the player stay loaded, while an advancing fireline decides how long you can afford to keep fighting.',
+      purpose: 'The map is 16 authored segments, with a miniboss on 11 and the final boss on 16. Only the two or three nearest the player stay active — everything else unloads, and enemies left far behind despawn with their coins. A meteor fireline creeps forward whenever the player stalls, so the system that protects mobile performance also sets the pace of the run.',
       structure: [
-        { label: 'Segment Registry', detail: 'An ordered array defines the complete 16-segment map, with the miniboss encounter at segment 11 and final boss at segment 16.' },
-        { label: 'Active Segment Window', detail: 'Only the two or three segments nearest the player remain active as the run progresses.' },
-        { label: 'Player Tracking', detail: 'The system follows the player’s location to determine which segments, encounters, and enemies remain relevant.' },
-        { label: 'Enemy Lifecycle', detail: 'Distant enemy AI is suspended, and enemies left too far behind are despawned. Their remaining coin rewards are permanently forfeited.' },
-        { label: 'Advancing Meteor Fireline', detail: 'A battle-royale-style line of meteor-filled fire advances when the player remains in one area for too long, preventing stagnation and forcing continued movement through the map.' },
-        { label: 'Two-Wave Encounters', detail: 'Fully clearing a segment’s first enemy wave triggers a second wave. Its additional rewards can only be secured when the player clears quickly and tactically before the fireline forces them forward.' },
-        { label: 'Progression Through Pacing', detail: 'Rushing skips coins and talent opportunities, while lingering too long invites the fireline. Efficient tactical clears provide the strongest build without sacrificing forward momentum.' }
+        { label: 'Segment map', detail: 'An ordered list of 16 handcrafted segments, with the miniboss on segment 11 and the final boss on segment 16.' },
+        { label: 'Active window', detail: 'Only the two or three segments closest to the player stay loaded as the run advances.' },
+        { label: 'Player tracking', detail: 'The player’s position decides which segments, encounters, and enemies are still relevant.' },
+        { label: 'Enemy lifecycle', detail: 'Distant enemies have their AI suspended. Ones left far enough behind despawn, and their coins are forfeited for good.' },
+        { label: 'Meteor fireline', detail: 'A battle-royale-style wall of meteor fire advances whenever the player lingers, forcing them to keep moving.' },
+        { label: 'Second wave', detail: 'Clearing a segment’s first wave summons a second one. Its rewards are only reachable if the clear is fast enough to beat the fireline.' },
+        { label: 'Pacing payoff', detail: 'Rushing leaves coins and talents behind; stalling invites the fireline. Fast, tactical clears build the strongest run.' }
       ],
-      flow: ['The player enters or advances into a map segment', 'The required two or three nearby segments are calculated', 'Relevant segments and their enemy encounters remain active', 'The meteor fireline advances if the player stagnates for too long', 'Clearing the first wave quickly enough triggers the segment’s second wave', 'The player fights for its additional rewards or advances before pressure overtakes them', 'Enemies left beyond the supported distance are despawned and can no longer provide coins', 'Distant map segments and unnecessary runtime activity are removed', 'Efficient tactical clearing strengthens the player while maintaining the required pace'],
-      value: 'The system creates a controlled pacing window while preserving stable mobile performance. Rushing forfeits combat rewards and leaves the player weaker, but lingering triggers the advancing fireline. The strongest runs come from clearing segments quickly and tactically, earning second-wave rewards while distant environments and abandoned enemies are removed from active play.'
+      flow: [
+        'Player advances into a new segment',
+        'Nearest two or three segments load, the rest unload',
+        'Fireline advances if the player stalls',
+        'Clearing wave one in time summons wave two',
+        'Fight for the extra rewards, or move on',
+        'Enemies left behind despawn, their coins forfeited'
+      ],
+      value: 'One system covers both performance and pacing. Keeping only a few segments live is what holds 60 FPS on mobile, and the fireline turns that same constraint into the central question of every run — how much of a segment can you afford to clear before it is time to move.'
     },
     {
       icon: '🛒',
       label: 'Strategic Talent Economy',
-      desc: 'Visible coin-bar thresholds unlock targeted shop purchases, while overflowing the bar resets it and triggers a random-rarity Talent Wheel spin.',
-      purpose: 'A threshold-based economy that turns enemy rewards into strategic talent decisions. Visible markers on the coin bar show when each shop rarity becomes available, while filling the bar trades that control for an immediate random-rarity reward.',
+      desc: 'Marked thresholds on the coin bar unlock shop rarities, but filling the bar resets it and spends the progress on a random spin.',
+      purpose: 'Coins from every kill fill a bar with visible rarity markers. Cross a marker and that rarity can be bought at the shop with a guaranteed outcome. Let the bar overflow and it resets into a random-rarity spin instead — which makes knowing when not to take a kill part of the game.',
       visualFlowTitle: 'From progress to purchase',
       visualFlow: [
         {
           label: 'Read the thresholds',
-          caption: 'Colored markers communicate when each rarity becomes eligible for purchase.',
+          caption: 'Coloured markers show what each rarity costs.',
           src: '/Images/Path Of Embers/TalentEconomy-CoinThresholds.jpg',
           alt: 'Path of Embers coin bar showing colored shop-rarity thresholds',
           fit: 'contain'
         },
         {
           label: 'Protect the balance',
-          caption: 'The player can preserve the bar and approach the shop without triggering an overflow.',
+          caption: 'Hold the bar below a fill and reach the shop with the progress intact.',
           src: '/Images/Path Of Embers/TalentEconomy-ShopApproach.jpg',
           alt: 'Path of Embers player approaching the talent shop with stored coin-bar progress',
           fit: 'contain'
         },
         {
           label: 'Choose the outcome',
-          caption: 'An eligible shop purchase supplies the chosen rarity to the normal dual-wheel system.',
+          caption: 'A purchase feeds the chosen rarity straight into the wheels.',
           src: '/Images/Path Of Embers/TalentEconomy-ShopOptions.jpg',
           alt: 'Path of Embers shop popup offering guaranteed talent rarity choices',
           fit: 'contain'
         }
       ],
       structure: [
-        { label: 'Coin Bar', detail: 'Coins earned from defeated enemies accumulate inside a persistent progress bar during the run.' },
-        { label: 'Rarity Thresholds', detail: 'Visible markers identify the amount required to become eligible to purchase each talent rarity.' },
-        { label: 'Deterministic Shop Spin', detail: 'Buying an eligible rarity starts the normal dual-wheel sequence with the player’s purchased rarity supplied as its deterministic input.' },
-        { label: 'Overflow Reward', detail: 'Filling the bar completely resets it and starts the normal Talent Wheel sequence with a randomly selected rarity.' },
-        { label: 'Overflow Control', detail: 'Players can avoid or delay an enemy kill when its reward would fill the bar, preserving their progress for an upcoming shop.' },
-        { label: 'Repeatable Strategy', detail: 'Careful spending and encounter choices can secure multiple guaranteed Legendary talent opportunities during a single run.' }
+        { label: 'Coin bar', detail: 'Coins from defeated enemies fill a single bar that persists for the whole run.' },
+        { label: 'Rarity markers', detail: 'Visible thresholds show exactly how much is needed to unlock each rarity at the shop.' },
+        { label: 'Guaranteed purchase', detail: 'Buying an unlocked rarity runs the normal wheel sequence with that rarity locked in.' },
+        { label: 'Overflow spin', detail: 'Filling the bar completely resets it and spends the progress on a random-rarity spin.' },
+        { label: 'Holding the bar', detail: 'Skipping or delaying a kill that would overflow the bar preserves the progress for the shop.' },
+        { label: 'Planning ahead', detail: 'Careful spending and kill selection can line up several guaranteed Legendary purchases in a single run.' }
       ],
-      flow: ['Defeated enemies add coins to the bar', 'Crossing a marked threshold unlocks its corresponding shop rarity', 'The player continues fighting or preserves the current balance', 'At the shop, an eligible rarity can be purchased', 'The purchased rarity is supplied deterministically to the Talent Wheel', 'If the bar fills first, it resets and triggers a random-rarity spin', 'The cycle continues, allowing skilled players to plan multiple high-rarity purchases'],
-      value: 'The bar makes currency management readable while giving every enemy encounter strategic weight. Players balance immediate random rewards against preserving progress for guaranteed shop outcomes, rewarding planning as much as combat performance.'
+      flow: [
+        'Kills add coins to the bar',
+        'Crossing a marker unlocks that shop rarity',
+        'Keep fighting, or hold the balance for the shop',
+        'Buy a rarity — the wheels spin with it locked in',
+        'Or let the bar overflow into a random spin',
+        'Repeat, planning kills around the next purchase'
+      ],
+      value: 'The bar makes the whole economy legible at a glance, and it adds a second question to every enemy beyond whether you can kill it: do you want the coins right now? Planning ahead ends up worth as much as fighting well.'
     },
     {
       icon: '👾',
       label: 'Distinct Enemy Archetypes',
-      desc: 'Five specialized enemies include the Chaser, Sniper, Bomber, Miniboss, and Final Boss. Each creates different threats and combat priorities throughout the run.',
-      purpose: 'A collection of five enemy archetypes designed around different movement, spacing, and target-priority pressures.',
+      desc: 'Chaser, Sniper, Bomber, Miniboss, and Final Boss — five archetypes, each forcing a different spacing and target priority.',
+      purpose: 'Five enemy types built on one shared combat core. Health, damage, targeting, and activation live in the base, and each archetype overrides only how it moves and attacks — so the Chaser closes distance, the Sniper punishes standing still, and the Bomber takes space away.',
       structure: [
-        { label: 'Shared combat responsibilities', detail: 'Common enemy needs such as health, damage, targeting, and activation form the foundation of each archetype.' },
-        { label: 'Specialized behaviour', detail: 'Chaser, Sniper, and Bomber enemies each own distinct movement and attack rules.' },
-        { label: 'Encounter-specific AI', detail: 'The miniboss and final boss extend the combat structure with dedicated encounter logic.' },
-        { label: 'Distance control', detail: 'The map system determines when enemy AI should remain active or be suspended.' }
+        { label: 'Shared combat core', detail: 'Health, damage, targeting, and activation are handled once and reused by every enemy.' },
+        { label: 'Archetype behaviour', detail: 'Chaser, Sniper, and Bomber each override only their own movement and attack rules.' },
+        { label: 'Boss extensions', detail: 'The miniboss and final boss build on the same core with their own encounter logic.' },
+        { label: 'Distance gating', detail: 'The map system decides when an enemy’s AI runs and when it is suspended.' }
       ],
-      flow: ['Enemy becomes active', 'The player is evaluated as a target', 'Archetype conditions select a response', 'Movement, attack, damage, and feedback are resolved'],
-      value: 'Separating shared combat needs from specialized behaviour keeps enemy logic readable while allowing every archetype to create a different tactical problem.'
+      flow: [
+        'Enemy activates in range',
+        'Player evaluated as a target',
+        'Archetype rules pick a response',
+        'Movement, attack, and feedback resolve'
+      ],
+      value: 'Keeping the shared combat needs in one place means each archetype is a small, readable set of differences — and each one asks the player a different question.'
     },
     {
       icon: '👑',
       label: 'Distinct Boss Encounters',
-      desc: 'The miniboss fires a fireball from its staff when the player is visible and summons meteors when line of sight is blocked. The final boss has three health bars and serves as the run’s ultimate challenge.',
-      purpose: 'Two authored encounters interrupt the regular combat rhythm with stronger enemies and dedicated attack logic.',
+      desc: 'The miniboss changes its attack based on whether it can see you; the final boss runs three health bars.',
+      purpose: 'Two authored encounters break the normal combat rhythm. The miniboss checks line of sight before every attack — a clear view means a staff fireball, a blocked view means summoned meteors — so cover changes what it does rather than whether it connects. The final boss closes the run across three health bars.',
       structure: [
-        { label: 'Encounter placement', detail: 'The map sequence reserves segment 11 for the miniboss and segment 16 for the final boss.' },
-        { label: 'Visibility decision', detail: 'The miniboss checks whether it currently has direct line of sight to the player.' },
-        { label: 'Conditional attacks', detail: 'Clear sight triggers a staff-fired fireball, while blocked sight triggers a meteor summon.' },
-        { label: 'Final encounter state', detail: 'The final boss uses three health bars and its own encounter behaviour to conclude the run.' }
+        { label: 'Fixed placement', detail: 'The map reserves segment 11 for the miniboss and segment 16 for the final boss.' },
+        { label: 'Line-of-sight check', detail: 'The miniboss tests whether it currently has a clear view of the player.' },
+        { label: 'Conditional attack', detail: 'Clear sight fires a staff fireball; blocked sight summons meteors instead.' },
+        { label: 'Final encounter', detail: 'The final boss runs three health bars and its own attack logic as the run’s conclusion.' }
       ],
-      flow: ['Boss encounter begins', 'Player position and visibility are evaluated', 'An appropriate attack is selected', 'Attack, health, and encounter state are updated'],
-      value: 'The miniboss reacts to player positioning instead of repeating one pattern, while the final boss creates a longer and more demanding conclusion.'
+      flow: [
+        'Encounter begins',
+        'Position and line of sight evaluated',
+        'Attack chosen to match',
+        'Damage, health, and encounter state update'
+      ],
+      value: 'The miniboss reads the player’s position instead of looping one pattern, which makes cover a real tactic. The final boss stretches that pressure across three bars.'
     },
     {
       icon: '🎨',
       label: 'Fully Original Art Pipeline',
-      desc: 'Every environment uses original models, textures, and shaders created in Maya and Blender, giving the game a cohesive, handcrafted visual identity.',
-      purpose: 'A complete internal production pipeline for creating the environments, characters, materials, and visual identity of the game.',
+      desc: 'Every model, texture, and shader in the game was built in-house in Maya and Blender.',
+      purpose: 'A complete internal art pipeline with no store assets. Environments, characters, materials, and the game’s whole visual identity were taken from blockout to final Unity prefab, with the mobile performance budget shaping decisions at every stage.',
       structure: [
-        { label: 'Source creation', detail: 'Original models are developed in Maya and Blender from blockout through final geometry.' },
-        { label: 'Surface development', detail: 'Textures, materials, and shaders establish a consistent handcrafted visual language.' },
-        { label: 'Engine integration', detail: 'Finished assets are assembled into reusable Unity prefabs and environment sets.' },
-        { label: 'Mobile presentation', detail: 'Geometry, materials, and scene composition are prepared with the target device performance in mind.' }
+        { label: 'Modeling', detail: 'Original meshes built in Maya and Blender, from blockout through final geometry.' },
+        { label: 'Surfacing', detail: 'Textures, materials, and shaders authored to hold one consistent handcrafted look.' },
+        { label: 'Unity assembly', detail: 'Finished assets become reusable prefabs and environment sets.' },
+        { label: 'Mobile budget', detail: 'Geometry, materials, and scene composition are tuned against the target device.' }
       ],
-      flow: ['Concept and blockout', 'Modeling and surface creation', 'Shader and material setup', 'Unity integration and mobile refinement'],
-      value: 'Developing the visuals internally allowed the artistic direction and technical requirements to evolve together as one cohesive production pipeline.'
+      flow: [
+        'Concept and blockout',
+        'Modeling and surfacing',
+        'Shader and material setup',
+        'Unity assembly and mobile tuning'
+      ],
+      value: 'Owning the whole pipeline let art direction and performance budget move together, instead of colliding late in production.'
     }
   ],
   'slingshot': [
     {
-      icon: '⚡', label: 'Procedural Generation', desc: 'Levels and content are generated uniquely each playthrough.',
-      purpose: 'A generation layer that assembles a fresh race layout from reusable track content and placement rules.',
+      icon: '⚡',
+      label: 'Procedural Generation',
+      desc: 'Every race assembles a new course from reusable parts and placement rules.',
+      purpose: 'Course layout is generated per race rather than authored. Rules define how much content goes down and how it can be spaced, then the generator builds a route and populates it — so no two races run the same line.',
       structure: [
-        { label: 'Generation rules', detail: 'Configuration data defines the amount, spacing, and allowable arrangement of track content.' },
-        { label: 'Path builder', detail: 'The generator creates an ordered route for the current race.' },
-        { label: 'Content placement', detail: 'Planets, checkpoints, and track elements are positioned along the generated path.' },
-        { label: 'Run state', detail: 'The completed layout is stored as the active course until the race ends.' }
+        { label: 'Layout rules', detail: 'Configuration data sets how many elements appear, how far apart, and in what arrangements.' },
+        { label: 'Route builder', detail: 'The generator lays down an ordered path for this race.' },
+        { label: 'Content placement', detail: 'Planets, checkpoints, and track elements are positioned along that path.' },
+        { label: 'Active course', detail: 'The finished layout is held as the live course until the race ends.' }
       ],
-      flow: ['A new race is requested', 'Generation rules build a route', 'Course elements are placed', 'The finished layout becomes playable'],
-      value: 'Separating reusable content from generation rules creates replayable courses without requiring every layout to be authored by hand.'
+      flow: [
+        'Race requested',
+        'Rules build a route',
+        'Planets and checkpoints placed',
+        'Course goes live'
+      ],
+      value: 'Content and layout rules stay separate, so new races come from configuration instead of hand-built scenes.'
     },
     {
-      icon: '🪐', label: 'Planetary Gravity Boosts', desc: 'Gain speed by slingshotting around planets.',
-      purpose: 'A flight-physics interaction that converts close planetary approaches into changes in direction and speed.',
+      icon: '🪐',
+      label: 'Planetary Gravity Boosts',
+      desc: 'Fly close to a planet and its gravity bends your course into free speed.',
+      purpose: 'Planets pull on the ship continuously. A close pass converts that pull into both a turn and an acceleration, so the line taken past a planet is the difference between losing time and gaining it.',
       structure: [
-        { label: 'Gravity source', detail: 'Each planet exposes the position and influence used by the flight calculation.' },
-        { label: 'Ship physics', detail: 'The ship evaluates nearby gravity and applies the resulting force to its movement.' },
-        { label: 'Velocity response', detail: 'Approach angle and distance affect how strongly the ship is redirected or accelerated.' },
-        { label: 'Feedback layer', detail: 'Speed and visual feedback communicate when the maneuver produces a useful boost.' }
+        { label: 'Gravity wells', detail: 'Each planet exposes the position and pull strength the flight model reads.' },
+        { label: 'Ship response', detail: 'The ship samples nearby gravity and folds the resulting force into its velocity.' },
+        { label: 'Angle and distance', detail: 'How close and how sharply you pass decides how much you are redirected and accelerated.' },
+        { label: 'Speed feedback', detail: 'Visual and speed cues tell the player the moment a pass actually paid off.' }
       ],
-      flow: ['Ship enters planetary influence', 'Direction and distance are evaluated', 'Gravity modifies velocity', 'The resulting boost is shown to the player'],
-      value: 'Using the same force for navigation and acceleration turns planets into both obstacles and opportunities for skilled routing.'
+      flow: [
+        'Ship enters a planet’s pull',
+        'Approach angle and distance measured',
+        'Gravity bends velocity',
+        'Boost reads back on the HUD'
+      ],
+      value: 'One force does both jobs, steering and speed, which makes every planet an obstacle and the fastest way past it at the same time.'
     },
     {
-      icon: '🚩', label: 'Checkpoint Progression', desc: 'Pass checkpoints in sequence to advance.',
-      purpose: 'An ordered validation system that ensures players follow the generated course rather than skipping directly to the finish.',
+      icon: '🚩',
+      label: 'Checkpoint Progression',
+      desc: 'Checkpoints have to be taken in order, so the generated route is the only route.',
+      purpose: 'Ten colour-coded planets act as ordered checkpoints. The race controller only accepts the next expected one, which stops a procedurally generated course from being shortcut straight to the finish.',
       structure: [
-        { label: 'Checkpoint registry', detail: 'Every checkpoint is stored in the intended completion order.' },
-        { label: 'Progress state', detail: 'The race controller tracks the next valid checkpoint index.' },
-        { label: 'Trigger validation', detail: 'A checkpoint only advances progress when it matches the expected entry.' },
-        { label: 'UI notification', detail: 'Successful progress updates the HUD and prepares the next objective.' }
+        { label: 'Ordered registry', detail: 'Every checkpoint is stored in the order it has to be taken.' },
+        { label: 'Next-up state', detail: 'The race controller tracks which checkpoint is currently valid.' },
+        { label: 'Entry validation', detail: 'Passing a checkpoint only counts when it is the expected one.' },
+        { label: 'HUD update', detail: 'A valid capture advances progress and marks the next target.' }
       ],
-      flow: ['Ship enters a checkpoint', 'Its order is validated', 'Race progress advances', 'The next checkpoint becomes active'],
-      value: 'Centralized sequence validation keeps procedural courses readable and prevents progress from becoming inconsistent.'
+      flow: [
+        'Ship passes through a checkpoint',
+        'Order checked against the expected index',
+        'Progress advances on a match',
+        'Next checkpoint becomes the target'
+      ],
+      value: 'Validating the sequence in one place keeps procedural courses honest and makes progress impossible to desync.'
     },
     {
-      icon: '🎮', label: '6-Axis Flight Controls', desc: 'Forward/backward thrust, strafing, and rolling.',
-      purpose: 'A full spatial movement controller supporting thrust, strafing, pitch, yaw, and roll.',
+      icon: '🎮',
+      label: '6-Axis Flight Controls',
+      desc: 'Thrust, strafe, pitch, yaw, and roll — full freedom of movement in every direction.',
+      purpose: 'A movement controller that treats translation and rotation as separate problems. Thrust and strafing move the ship, pitch, yaw, and roll aim it, and both resolve through physics so momentum carries the way space flight should.',
       structure: [
-        { label: 'Input mapping', detail: 'Player inputs are separated into translation and rotation commands.' },
-        { label: 'Thrust controller', detail: 'Forward, reverse, and lateral forces control the ship’s position.' },
-        { label: 'Rotation controller', detail: 'Pitch, yaw, and roll inputs control orientation independently.' },
-        { label: 'Physics integration', detail: 'Movement commands are applied through the ship’s runtime physics state.' }
+        { label: 'Input split', detail: 'Player input is separated into movement commands and rotation commands.' },
+        { label: 'Thrust', detail: 'Forward, reverse, and lateral forces move the ship through space.' },
+        { label: 'Rotation', detail: 'Pitch, yaw, and roll aim the ship independently of where it is travelling.' },
+        { label: 'Physics pass', detail: 'Both sets of commands resolve through the ship’s runtime physics state.' }
       ],
-      flow: ['Input is sampled', 'Translation and rotation are separated', 'Forces and torque are calculated', 'The ship physics state is updated'],
-      value: 'Separating movement axes produces precise control while preserving the momentum and freedom expected from space flight.'
+      flow: [
+        'Input sampled',
+        'Movement and rotation split apart',
+        'Forces and torque calculated',
+        'Physics state updated'
+      ],
+      value: 'Separating the axes gives precise aim without killing momentum. Pointing one way while drifting another is exactly what makes a slingshot pass readable.'
     },
     {
-      icon: '📺', label: 'HUD Feedback', desc: 'Real-time speed and checkpoint completion.',
-      purpose: 'A presentation layer that translates live race state into immediate, readable player feedback.',
+      icon: '📺',
+      label: 'HUD Feedback',
+      desc: 'Live speed and checkpoint state, readable without looking away from the flight.',
+      purpose: 'A presentation layer that reads race state and turns it into cues the player can absorb at speed. The HUD listens for changes rather than the flight code pushing updates into it, so neither side depends on the other.',
       structure: [
-        { label: 'Telemetry source', detail: 'The ship and race controller expose speed, checkpoint, and completion data.' },
-        { label: 'HUD presenter', detail: 'Interface components convert runtime values into readable screen elements.' },
-        { label: 'State events', detail: 'Important changes notify the HUD without coupling interface logic to flight behaviour.' },
-        { label: 'Feedback cues', detail: 'Visual changes reinforce acceleration, checkpoint capture, and race completion.' }
+        { label: 'Telemetry', detail: 'The ship and race controller expose speed, current checkpoint, and completion.' },
+        { label: 'HUD presenter', detail: 'Interface components turn those raw values into readable screen elements.' },
+        { label: 'Change events', detail: 'Important state changes notify the HUD without wiring UI into flight logic.' },
+        { label: 'Cues', detail: 'Visual response reinforces acceleration, checkpoint capture, and the finish.' }
       ],
-      flow: ['Gameplay state changes', 'Current values are exposed', 'HUD elements update', 'Player receives immediate confirmation'],
-      value: 'Clear feedback lets players make high-speed decisions without taking attention away from flight.'
+      flow: [
+        'Race state changes',
+        'New values published',
+        'HUD elements react',
+        'Player gets instant confirmation'
+      ],
+      value: 'Decoupling the HUD from flight keeps both sides simple, and gives the player confirmation fast enough to act on at racing speed.'
     },
     {
-      icon: '🛸', label: 'Scalable Track System', desc: 'Designed for unlimited planets and curved track paths.',
-      purpose: 'A reusable track architecture that supports expanding the number of planets, checkpoints, and curved route configurations.',
+      icon: '🛸',
+      label: 'Scalable Track System',
+      desc: 'Built to grow — unlimited planets, more checkpoints, and curved routes.',
+      purpose: 'Planets and checkpoints are configurable building blocks placed against a generated path rather than a fixed scene. Adding more content, or curving the route, never requires touching the race controller.',
       structure: [
-        { label: 'Reusable course elements', detail: 'Planets and checkpoints are treated as configurable building blocks.' },
-        { label: 'Path representation', detail: 'The route stores ordered spatial information for curved course layouts.' },
-        { label: 'Placement layer', detail: 'Track elements are positioned against the generated path rather than a fixed scene.' },
-        { label: 'Expansion rules', detail: 'Additional content can be introduced without rebuilding the race controller.' }
+        { label: 'Reusable elements', detail: 'Planets and checkpoints are configurable pieces, not scene-specific objects.' },
+        { label: 'Path data', detail: 'The route is stored as ordered spatial data, so a curved layout is just different data.' },
+        { label: 'Placement layer', detail: 'Elements are positioned relative to the path instead of hardcoded into a scene.' },
+        { label: 'Room to grow', detail: 'New content slots in without rebuilding race progression.' }
       ],
-      flow: ['Track configuration is selected', 'A path is defined', 'Reusable elements populate the route', 'The course is registered with race progression'],
-      value: 'A modular track foundation allows course scale and variety to grow independently from the core flight and checkpoint systems.'
+      flow: [
+        'Track configuration chosen',
+        'Path defined',
+        'Reusable elements populate the route',
+        'Course registered with race progression'
+      ],
+      value: 'The track foundation scales on its own, so course size and variety can grow without the flight or checkpoint systems changing.'
     }
   ],
   'Ricochet': [
     {
-      icon: '🔄', label: 'Alternating Roles', desc: 'Switch between striker and goalie each round, with the other role controlled by AI.',
-      purpose: 'A round-state system that alternates the player between striker and goalkeeper while assigning the remaining role to AI.',
+      icon: '🔄',
+      label: 'Alternating Roles',
+      desc: 'Each round you swap between striker and goalie, and the AI always takes the other side.',
+      purpose: 'The match controller owns the round and assigns both roles fresh each time. Player input is routed to whichever controller matches the current role and the AI picks up the other, so a single match tests attacking and defending in turn.',
       structure: [
-        { label: 'Match state', detail: 'The match controller owns the current round, score, timer, and active role.' },
-        { label: 'Role assignment', detail: 'Each round maps the player and AI to opposite gameplay responsibilities.' },
-        { label: 'Input routing', detail: 'Player input is directed to the controller belonging to the current role.' },
-        { label: 'Round transition', detail: 'Role ownership is swapped when a round finishes and the next state begins.' }
+        { label: 'Match state', detail: 'The match controller holds the round, score, timer, and who is playing which role.' },
+        { label: 'Role assignment', detail: 'Each round puts the player and the AI on opposite responsibilities.' },
+        { label: 'Input routing', detail: 'Player input goes to the controller for the role they currently hold.' },
+        { label: 'Round swap', detail: 'When a round ends the roles trade and the next one begins.' }
       ],
-      flow: ['Round begins', 'Player and AI roles are assigned', 'Role-specific controllers receive input', 'Round ends and assignments swap'],
-      value: 'One match can test two different skill sets while reusing the same arena, scoring, and round-management foundation.'
+      flow: [
+        'Round starts',
+        'Player and AI take opposite roles',
+        'Input routes to the matching controller',
+        'Round ends, roles swap'
+      ],
+      value: 'One arena, one scoring system, and one round loop cover two completely different skill tests.'
     },
     {
-      icon: '🎯', label: 'Physics-Driven Gameplay', desc: 'Shots bounce unpredictably off bumpers and walls.',
-      purpose: 'A collision-driven ball system where walls, bumpers, and player hits continuously reshape the shot trajectory.',
+      icon: '🎯',
+      label: 'Physics-Driven Gameplay',
+      desc: 'Shots ricochet off bumpers and walls, so no two rallies play out the same way.',
+      purpose: 'Nothing about the ball’s path is authored. A strike sets it moving, and walls, speed bumpers, and the next contact keep reshaping the trajectory until someone saves it or it finds the goal.',
       structure: [
-        { label: 'Ball physics', detail: 'The ball carries the velocity and collision state used throughout a rally.' },
-        { label: 'Collision surfaces', detail: 'Arena walls and bumpers modify direction through their physical response.' },
-        { label: 'Player impact', detail: 'Striker contact adds the force that begins or redirects the shot.' },
-        { label: 'Scoring boundary', detail: 'Goal detection resolves the rally and reports the result to match state.' }
+        { label: 'Ball state', detail: 'The ball carries the velocity and collision state that drives the whole rally.' },
+        { label: 'Surfaces', detail: 'Arena walls and speed bumpers redirect it through their own physical response.' },
+        { label: 'Player contact', detail: 'A striker’s hit is what starts a shot or turns one around.' },
+        { label: 'Goal detection', detail: 'Crossing the goal boundary resolves the rally and reports the result to match state.' }
       ],
-      flow: ['Player strikes the ball', 'Physics advances its trajectory', 'Surfaces redirect momentum', 'A save, return, or goal resolves the exchange'],
-      value: 'Systemic rebounds create expressive shots and unexpected rallies without requiring authored ball paths.'
+      flow: [
+        'Striker hits the ball',
+        'Physics carries the trajectory',
+        'Walls and bumpers redirect it',
+        'Save, return, or goal ends the exchange'
+      ],
+      value: 'Letting physics own the ball produces rallies nobody scripted, including the ones the shooter never intended.'
     },
     {
-      icon: '🎮', label: 'Pong-Style Goalie Movement', desc: 'Defend along a vertical line using quick reflexes.',
-      purpose: 'A constrained goalkeeper controller designed for fast, readable vertical defense.',
+      icon: '🎮',
+      label: 'Pong-Style Goalie Movement',
+      desc: 'The goalie slides along a single line, so defending comes down to reading and reacting.',
+      purpose: 'The goalkeeper is deliberately limited to one axis. Taking positioning out of the equation leaves anticipation and reaction speed as the entire skill, and it keeps the role simple enough for the AI to play convincingly on the rounds the player is not.',
       structure: [
-        { label: 'Role input', detail: 'Goalkeeper input is isolated from the striker control scheme.' },
-        { label: 'Axis constraint', detail: 'Movement is projected onto the permitted vertical defensive line.' },
-        { label: 'Boundary clamp', detail: 'Position limits keep the goalkeeper inside the valid goal area.' },
-        { label: 'AI compatibility', detail: 'The same defensive responsibility can be driven by player or AI decisions.' }
+        { label: 'Separate input', detail: 'Goalkeeper controls are isolated from the striker scheme.' },
+        { label: 'One axis', detail: 'Movement is projected onto the vertical defensive line.' },
+        { label: 'Goal clamp', detail: 'Position limits keep the keeper inside the valid goal area.' },
+        { label: 'Shared with AI', detail: 'The same defensive role runs from player input or AI decisions without changing.' }
       ],
-      flow: ['Defensive input is received', 'Movement is restricted to one axis', 'Position is clamped', 'Goalkeeper intercepts or misses the shot'],
-      value: 'The restricted movement model is immediately understandable and shifts the challenge toward anticipation and reaction speed.'
+      flow: [
+        'Defensive input received',
+        'Movement locked to one axis',
+        'Position clamped to the goal',
+        'Keeper intercepts, or does not'
+      ],
+      value: 'A player understands the role inside one round, and the same constraint is what lets the AI defend believably.'
     },
     {
-      icon: '💥', label: 'Reactive Ball Effects', desc: 'Ball changes color and sparks on impact.',
-      purpose: 'An event-driven feedback layer that changes the ball’s presentation whenever meaningful contact occurs.',
+      icon: '💥',
+      label: 'Reactive Ball Effects',
+      desc: 'The ball recolours and throws sparks on impact, so a rally can be read at a glance.',
+      purpose: 'The ball reports its collisions instead of drawing its own reactions. A presentation layer picks up those events and answers with colour changes and sparks, which keeps movement logic clean and makes a hard hit look different from a soft one.',
       structure: [
-        { label: 'Collision events', detail: 'The ball reports impacts without embedding every visual response inside its movement logic.' },
-        { label: 'Visual state', detail: 'Ball color reflects its current gameplay or ownership state.' },
-        { label: 'Impact effects', detail: 'Contact events trigger sparks and other short-lived reactions.' },
-        { label: 'Feedback scaling', detail: 'Effect intensity can respond to the type or strength of the collision.' }
+        { label: 'Collision events', detail: 'The ball publishes impacts rather than embedding visuals inside its movement code.' },
+        { label: 'Colour state', detail: 'Ball colour reflects who last touched it and what state the rally is in.' },
+        { label: 'Impact bursts', detail: 'Contact events fire sparks and other short-lived reactions.' },
+        { label: 'Intensity scaling', detail: 'Effects respond to the type and strength of the collision.' }
       ],
-      flow: ['Collision occurs', 'Impact data is classified', 'Ball state and effects update', 'The player reads the result immediately'],
-      value: 'Separating physics from presentation keeps movement logic focused while making every rebound easier and more satisfying to read.'
+      flow: [
+        'Collision registers',
+        'Impact classified',
+        'Colour and effects update',
+        'Player reads the result instantly'
+      ],
+      value: 'Splitting presentation from physics keeps movement simple and turns every rebound into information the player can act on.'
     },
     {
-      icon: '🌈', label: 'Arcade Neon Visuals', desc: 'Emissive environments and players for a high-energy feel.',
-      purpose: 'A coordinated visual system using emissive materials, team color, and post-processing to establish the arena’s arcade identity.',
+      icon: '🌈',
+      label: 'Arcade Neon Visuals',
+      desc: 'Emissive materials and bloom give the arena its neon identity and keep it readable at speed.',
+      purpose: 'One shared material language runs across the arena and both players. Team colour comes from gameplay state, lighting and bloom push the bright elements off a dark field, and the whole look doubles as a readability system.',
       structure: [
-        { label: 'Material language', detail: 'Reusable emissive materials provide consistent treatment across the arena and players.' },
-        { label: 'Team color binding', detail: 'Gameplay roles and sides drive the colors used by relevant visual elements.' },
-        { label: 'Lighting response', detail: 'Scene lighting and bloom reinforce bright gameplay elements against a darker field.' },
-        { label: 'Readability rules', detail: 'Visual emphasis distinguishes active objects, boundaries, and scoring moments.' }
+        { label: 'Material language', detail: 'Reusable emissive materials treat the arena and the players consistently.' },
+        { label: 'Colour from state', detail: 'Sides and roles drive the colours the visuals use.' },
+        { label: 'Lighting and bloom', detail: 'Scene lighting lifts emissive elements off a darker field.' },
+        { label: 'Readability first', detail: 'Emphasis separates active objects, boundaries, and scoring moments.' }
       ],
-      flow: ['Gameplay state supplies visual context', 'Materials receive the relevant colors', 'Lighting and bloom reinforce emission', 'The arena remains readable at match speed'],
-      value: 'A shared visual language gives the project a distinctive identity while making teams, objects, and interactions easier to recognize.'
+      flow: [
+        'Gameplay state supplies the context',
+        'Materials take the matching colours',
+        'Lighting and bloom reinforce them',
+        'Arena stays readable at match speed'
+      ],
+      value: 'The look and the readability come out of the same system — the arcade identity is exactly what makes the action easy to follow.'
     },
     {
-      icon: '🔊', label: 'Immersive Feedback', desc: 'Dynamic VFX and SFX for every hit and goal.',
-      purpose: 'A coordinated response system that connects gameplay events to visual effects, sound, and match reactions.',
+      icon: '🔊',
+      label: 'Immersive Feedback',
+      desc: 'Every hit, save, and goal answers back with matched visual effects and sound.',
+      purpose: 'Gameplay events publish what happened, and a feedback layer decides how it looks and sounds. Because both responses come off the same event, visuals and audio can never drift out of sync with the play.',
       structure: [
-        { label: 'Gameplay events', detail: 'Hits, bumper contacts, saves, and goals publish meaningful interaction results.' },
-        { label: 'Feedback routing', detail: 'A presentation layer translates each event into the appropriate response.' },
-        { label: 'Visual response', detail: 'Sparks, flashes, and goal effects reinforce impact and success.' },
-        { label: 'Audio response', detail: 'Sound cues communicate contact type, intensity, and scoring outcomes.' }
+        { label: 'Gameplay events', detail: 'Hits, bumper contacts, saves, and goals publish what just happened.' },
+        { label: 'Feedback routing', detail: 'A presentation layer maps each event to the right response.' },
+        { label: 'Visuals', detail: 'Sparks, flashes, and goal effects sell the impact.' },
+        { label: 'Audio', detail: 'Sound communicates contact type, intensity, and scoring.' }
       ],
-      flow: ['Gameplay event is resolved', 'Feedback request is emitted', 'VFX and SFX are selected', 'Synchronized responses play'],
-      value: 'Driving feedback from gameplay events keeps the systems synchronized and gives every important action a clear sense of weight.'
+      flow: [
+        'Gameplay event resolves',
+        'Feedback request emitted',
+        'VFX and SFX selected',
+        'Both play together'
+      ],
+      value: 'Driving everything from one event keeps visuals and audio locked together, so every important moment lands with weight.'
     }
   ],
   /*

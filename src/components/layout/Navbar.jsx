@@ -2,8 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { personalInfo } from '../../data/personalInfo';
 import { themes } from '../../data/themes';
 import ResumeModal from './ResumeModal';
+import CategoryNav from './CategoryNav';
 
-function Navbar({ theme, onThemeChange }) {
+function Navbar({
+  theme,
+  onThemeChange,
+  categories = [],
+  activeCategory,
+  onSelectCategory,
+  showCategories = false
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(() => window.location.hash === '#resume');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -13,6 +21,13 @@ function Navbar({ theme, onThemeChange }) {
   const mobileMenuRef = useRef(null);
   const mobileToggleRef = useRef(null);
   const currentTheme = themes.find(({ id }) => id === theme) || themes[0];
+  const categoriesVisible = showCategories && !mobileMenuOpen;
+  const wordmarkVisible = isScrolled && !mobileMenuOpen;
+
+  const scrollToTop = useCallback(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -139,18 +154,48 @@ function Navbar({ theme, onThemeChange }) {
 
   return (
     <nav className={`navbar ${isScrolled ? 'navbar-glass' : 'navbar-transparent'}`} role="navigation" aria-label="Main navigation">
-      {/* Mobile menu toggle */}
-      <button
-        ref={mobileToggleRef}
-        className="mobile-menu-toggle"
-        onClick={toggleMobileMenu}
-        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-        aria-expanded={mobileMenuOpen}
-      >
-        <span className="hamburger-icon">
-          {mobileMenuOpen ? '✕' : '☰'}
-        </span>
-      </button>
+      <div className="navbar-left">
+        {/* Mobile menu toggle */}
+        <button
+          ref={mobileToggleRef}
+          className="mobile-menu-toggle"
+          onClick={toggleMobileMenu}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
+        >
+          <span className="hamburger-icon">
+            {mobileMenuOpen ? '✕' : '☰'}
+          </span>
+        </button>
+
+        {/* Identity anchor. Held back until the bar has its glass background,
+            so it never sits low-contrast over the hero video and never
+            competes with the full-size name below it. */}
+        <button
+          type="button"
+          className={`navbar-wordmark${wordmarkVisible ? ' is-visible' : ''}`}
+          onClick={scrollToTop}
+          aria-hidden={wordmarkVisible ? undefined : 'true'}
+          tabIndex={wordmarkVisible ? undefined : -1}
+          aria-label="Ariel Cohen — back to top"
+        >
+          <span className="navbar-wordmark-first">Ariel</span>{' '}
+          <span className="navbar-wordmark-last">Cohen</span>
+        </button>
+      </div>
+
+      {/* Docked copy of the category pill, revealed once the in-page one
+          scrolls under the bar. Suppressed while the mobile menu is open: it
+          sits behind that overlay, so leaving it in the tab order would let
+          focus escape the menu. */}
+      <CategoryNav
+        variant="docked"
+        categories={categories}
+        activeCategory={activeCategory}
+        onSelect={onSelectCategory}
+        active={categoriesVisible}
+        isContextSource={categoriesVisible}
+      />
 
       {/* Navigation links */}
       <div ref={mobileMenuRef} className={`navbar-right ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>

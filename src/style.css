@@ -283,9 +283,9 @@ video {
   inset: 0 0 auto;
   z-index: 1000;
   min-height: var(--nav-height);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: center;
-  justify-content: flex-end;
   padding: 10px max(32px, calc((100vw - 1440px) / 2));
   transition: background 280ms ease, border-color 280ms ease, backdrop-filter 280ms ease;
 }
@@ -307,6 +307,9 @@ video {
 }
 
 .navbar-right {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
   justify-content: flex-end;
   gap: 10px;
 }
@@ -486,6 +489,71 @@ video {
 
 .mobile-menu-toggle {
   display: none;
+}
+
+.navbar-left {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-self: start;
+}
+
+/* Identity mark, set as a scaled-down echo of the hero title: the same weight
+   pairing (800 against 300), the same per-half letter-spacing, and the same
+   accent period. Inline rather than flex so the space and the period sit
+   naturally instead of being spaced by a gap. */
+.navbar-wordmark {
+  display: inline-block;
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-3px);
+  transition: opacity 200ms ease, transform 200ms ease, visibility 0s 200ms;
+}
+
+.navbar-wordmark.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 200ms ease, transform 200ms ease, visibility 0s;
+}
+
+.navbar-wordmark-first {
+  font-kerning: normal;
+  font-variant-ligatures: none;
+}
+
+/* Same weight pairing as the hero title — heavy against light — carried into
+   caps, where the tracking has to open up rather than tighten. */
+.navbar-wordmark-last {
+  color: rgba(243, 241, 236, 0.78);
+  font-weight: 300;
+  transition: color 180ms ease;
+}
+
+.navbar-wordmark:hover .navbar-wordmark-last,
+.navbar-wordmark:focus-visible .navbar-wordmark-last {
+  color: var(--text);
+}
+
+.navbar-wordmark:focus-visible {
+  outline: 2px solid rgba(var(--accent-rgb), 0.7);
+  outline-offset: 3px;
 }
 
 /* Hero */
@@ -720,27 +788,88 @@ video {
   );
 }
 
+/* The category pill's home at the top of the work area. It sits in normal flow
+   and scrolls away; the navbar copy takes over once it tucks under the bar. */
 .work-nav-shell {
-  position: sticky;
-  top: var(--nav-height);
-  z-index: 80;
   scroll-margin-top: var(--nav-height);
   margin: 0 -24px;
   padding: 8px 24px;
-  background: transparent;
 }
 
+/* Shared pill appearance for both the in-page and docked instances. */
 .work-nav {
   width: max-content;
   max-width: 100%;
   display: flex;
   gap: 3px;
-  margin: 0 auto;
   padding: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
   border: 1px solid var(--border-soft);
   border-radius: 999px;
   background: rgba(23, 25, 28, 0.9);
   box-shadow: var(--shadow-sm);
+}
+
+.work-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fades out as the docked copy takes over, so the two never read as one pill
+   smearing through the navbar's blur during the handoff. Opacity only — the
+   pill keeps its box so the shell's height stays put. */
+.work-nav-inline {
+  margin: 0 auto;
+  transition: opacity 140ms ease;
+}
+
+.work-nav-inline:not(.is-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The docked copy occupies a fixed slot in the navbar grid, so revealing it
+   only changes opacity — the swap can never shift the layout. */
+.work-nav-docked {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 0s 140ms;
+}
+
+.work-nav-docked.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 140ms ease, transform 140ms ease, visibility 0s;
+}
+
+/* Arrival cue for the handoff. The pill itself fades in quickly; the outline
+   lingers a little longer and settles back to the resting border, so the swap
+   reads as the same control moving rather than two pills blinking. Picks up
+   the active theme through --accent-rgb. */
+.work-nav.is-arriving {
+  animation: nav-handoff-arrive 420ms var(--ease) both;
+}
+
+@keyframes nav-handoff-arrive {
+  0% {
+    border-color: rgba(var(--accent-rgb), 0.9);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2), var(--shadow-sm);
+  }
+
+  55% {
+    border-color: rgba(var(--accent-rgb), 0.5);
+    box-shadow: 0 0 0 6px rgba(var(--accent-rgb), 0.07), var(--shadow-sm);
+  }
+
+  100% {
+    border-color: var(--border-soft);
+    box-shadow: 0 0 0 7px rgba(var(--accent-rgb), 0), var(--shadow-sm);
+  }
 }
 
 .work-nav button {
@@ -788,7 +917,7 @@ video {
 
 .work-section {
   position: relative;
-  scroll-margin-top: 145px;
+  scroll-margin-top: 100px;
   padding: 60px 0 52px;
 }
 
@@ -1981,6 +2110,14 @@ video {
   scroll-snap-type: x proximity;
   overscroll-behavior-inline: contain;
   touch-action: pan-x;
+  /* Same arrival cue the category pill uses, so the nav announces itself the
+     same way whether the page hands it to the navbar or a case study takes
+     it over. */
+  animation: nav-handoff-arrive 420ms var(--ease) both;
+}
+
+html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open) .work-nav.is-visible {
+  animation: nav-handoff-arrive 420ms var(--ease) both;
 }
 
 .case-study-index-rail::-webkit-scrollbar {
@@ -2563,7 +2700,6 @@ video {
 }
 
 .mechanic-structure-list article {
-  min-height: 150px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 13px;
@@ -4122,6 +4258,56 @@ video {
   will-change: auto;
 }
 
+/* The wordmark now occupies column 1, so the centred pill needs
+   314 + 479 + 314 + 64 = 1171px to sit between the two side clusters. Below
+   that it wraps to a second row of the same bar instead of shrinking into a
+   cramped scroller. */
+@media (max-width: 1200px) {
+  /* Below this width the pill and the right-hand cluster no longer fit on one
+     line, so the pill wraps to a second row of the same bar rather than
+     shrinking into a cramped scroller. Hidden with display:none here so the
+     navbar stays a single row over the hero. */
+  .navbar {
+    grid-template-columns: 1fr auto;
+    row-gap: 8px;
+  }
+
+  .navbar-right {
+    grid-column: 2;
+  }
+
+  /* Taken out of flow entirely when idle so the navbar stays one row over the
+     hero and only grows to two once the pill is handed to it. */
+  .work-nav-docked {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: none;
+    transition: none;
+  }
+
+  .work-nav-docked.is-visible {
+    display: flex;
+    animation: nav-categories-in 140ms ease both;
+  }
+
+  /* Restated because the shorthand above would otherwise drop the arrival
+     outline this instance also needs. */
+  .work-nav-docked.is-visible.is-arriving {
+    animation:
+      nav-categories-in 140ms ease both,
+      nav-handoff-arrive 420ms var(--ease) both;
+  }
+
+  @keyframes nav-categories-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .work-section {
+    scroll-margin-top: 150px;
+  }
+}
+
 @media (max-width: 1100px) {
   :root {
     --page: min(100% - 40px, 980px);
@@ -4139,13 +4325,6 @@ video {
 
   .hero-intro {
     width: min(520px, 100%);
-  }
-
-  .work-nav-shell {
-    margin-right: -20px;
-    margin-left: -20px;
-    padding-right: 20px;
-    padding-left: 20px;
   }
 
   .game-card-featured {
@@ -4433,17 +4612,12 @@ video {
   .work-nav-shell {
     margin: 0 -14px;
     padding: 8px 14px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    background: transparent;
   }
 
-  .work-nav-shell::-webkit-scrollbar {
-    display: none;
-  }
-
-  .work-nav {
-    margin-left: 0;
+  .work-nav-docked {
+    justify-self: stretch;
+    width: auto;
+    max-width: none;
   }
 
   .work-nav button {
@@ -4812,7 +4986,6 @@ video {
   .work-nav-shell {
     margin: 0;
     padding: 8px 0;
-    overflow: visible;
   }
 
   .work-nav {
@@ -4821,8 +4994,20 @@ video {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
-    margin: 0;
+    overflow: visible;
     border-radius: 24px;
+  }
+
+  .work-nav-inline {
+    margin: 0;
+  }
+
+  .work-nav-docked {
+    display: none;
+  }
+
+  .work-nav-docked.is-visible {
+    display: grid;
   }
 
   .work-nav button {
@@ -4837,7 +5022,7 @@ video {
   }
 
   .work-section {
-    scroll-margin-top: 205px;
+    scroll-margin-top: 200px;
   }
 
   .hero-actions,
@@ -5392,7 +5577,7 @@ video {
 
 @media print {
   .navbar,
-  .work-nav-shell,
+  .work-nav,
   .site-progress,
   .ambient-background,
   .hero-video-bg {

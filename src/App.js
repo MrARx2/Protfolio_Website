@@ -1,9 +1,11 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import "./style.css";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import AnimatedDotsBg from "./components/layout/AnimatedDotsBg";
 import Navbar from "./components/layout/Navbar";
+import CategoryNav from "./components/layout/CategoryNav";
 import AboutSection from "./components/sections/AboutSection";
 import FrostedCard from "./components/cards/FrostedCard";
 import ModelingCard from "./components/cards/ModelingCard";
@@ -47,6 +49,15 @@ function getProjectCategory(project) {
 }
 
 const portfolioProjects = [...gameProjects, ...modelingProjects, ...sceneProjects];
+
+// Viewport offsets of the in-page pill's TOP edge at which the navbar takes the
+// category nav over, and at which it hands it back. The bar bottoms out at
+// ~71px, so docking at 72 swaps on contact — the two copies are flush at that
+// instant, which makes the crossfade read as the pill stepping up into the bar.
+// Anything lower would let it slide underneath; the gap up to the release point
+// is hysteresis only.
+const CATEGORY_NAV_DOCK_AT = 72;
+const CATEGORY_NAV_RELEASE_AT = 96;
 
 function categoryFromHash(hash = window.location.hash) {
   const value = hash.replace(/^#/, "");
@@ -99,10 +110,14 @@ function App() {
     initialProjectRoute?.overlay === "gallery" ? fallbackGalleryForProject(initialProject) : null
   ));
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showCategoryNav, setShowCategoryNav] = useState(false);
+  const [categoryNavHandedOff, setCategoryNavHandedOff] = useState(false);
   const savedScrollPosition = useRef(0);
   const openedProjectId = useRef(initialProject?.id || null);
   const portfolioPageRef = useRef(null);
   const projectActionRef = useRef(initialProject ? "open" : "closed");
+  const projectTransitionTokenRef = useRef(0);
+  const projectArrivalTimerRef = useRef(null);
 
   useScrollReveal(selected?.id || "portfolio");
 
@@ -122,9 +137,37 @@ function App() {
     applyTheme(theme);
   }, [theme]);
 
-  const commitProjectUpdate = useCallback((update, onFinished) => {
-    update();
+  // The in-page pill is the resting state, so its arrival cue must not fire on
+  // first paint — only once it has actually been handed back from the navbar.
+  useEffect(() => {
+    if (showCategoryNav) setCategoryNavHandedOff(true);
+  }, [showCategoryNav]);
+
+  // Opening or closing a case study swaps which nav is on screen; it does not
+  // move one. The outgoing nav is simply unmounted and the incoming one plays
+  // the shared arrival cue, the same way the category pill hands off to the
+  // navbar. No view transition and no cloned ghost nodes to animate.
+  const commitProjectUpdate = useCallback((update, onFinished, direction = "open") => {
+    const token = projectTransitionTokenRef.current + 1;
+    projectTransitionTokenRef.current = token;
+    window.clearTimeout(projectArrivalTimerRef.current);
+    delete document.documentElement.dataset.projectRouteArrival;
+
+    flushSync(update);
+
+    document.documentElement.dataset.projectRouteArrival = direction;
+    projectArrivalTimerRef.current = window.setTimeout(() => {
+      if (projectTransitionTokenRef.current === token) {
+        delete document.documentElement.dataset.projectRouteArrival;
+      }
+    }, 520);
+
     onFinished?.();
+  }, []);
+
+  useEffect(() => () => {
+    window.clearTimeout(projectArrivalTimerRef.current);
+    delete document.documentElement.dataset.projectRouteArrival;
   }, []);
 
   const restoreProjectCard = useCallback((projectId, scrollPosition = savedScrollPosition.current) => {
@@ -132,7 +175,7 @@ function App() {
       window.scrollTo({ top: scrollPosition, behavior: "auto" });
       window.requestAnimationFrame(() => {
         const card = document.getElementById(`project-card-${projectId}`);
-        const stickyNav = document.querySelector(".work-nav-shell");
+        const stickyNav = document.querySelector(".navbar");
         if (card && stickyNav) {
           const safeTop = stickyNav.getBoundingClientRect().bottom + 14;
           const cardTop = card.getBoundingClientRect().top;
@@ -158,7 +201,7 @@ function App() {
   }, [categories]);
 
   const openProject = useCallback((project, previewFrame = null) => {
-    if (projectActionRef.current !== "closed") return;
+    if (projectActionRef.current === "opening" || projectActionRef.current === "open") return;
 
     savedScrollPosition.current = window.scrollY;
     openedProjectId.current = project.id;
@@ -184,7 +227,7 @@ function App() {
 
     commitProjectUpdate(update, () => {
       projectActionRef.current = "open";
-    });
+    }, "open");
     window.history.pushState(
       {
         kind: "project",
@@ -214,7 +257,7 @@ function App() {
       if (projectId) restoreProjectCard(projectId, scrollPosition);
     };
 
-    commitProjectUpdate(update, onFinished);
+    commitProjectUpdate(update, onFinished, "close");
   }, [commitProjectUpdate, restoreProjectCard]);
 
   const closeProject = useCallback(() => {
@@ -304,6 +347,20 @@ function App() {
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
 
+      // Hand the category pill over to the navbar as its in-page home nears the
+      // bar, and hand it back on the way down. The two thresholds differ so a
+      // pixel of scroll jitter at the boundary cannot flicker the swap.
+      // Measuring the in-page pill is safe here because it sits in normal flow
+      // while the navbar is fixed, so the navbar growing a second row on narrow
+      // screens cannot move it and feed back on itself.
+      const inlineNav = document.querySelector(".work-nav-shell");
+      const inlineTop = inlineNav
+        ? inlineNav.getBoundingClientRect().top
+        : Number.POSITIVE_INFINITY;
+      setShowCategoryNav((current) => (
+        current ? inlineTop <= CATEGORY_NAV_RELEASE_AT : inlineTop <= CATEGORY_NAV_DOCK_AT
+      ));
+
       if (!selected) {
         const marker = window.scrollY + Math.min(window.innerHeight * 0.32, 300);
         const sections = [
@@ -366,7 +423,7 @@ function App() {
             setSelectedPreview(null);
             setSelected(nextProject);
           };
-          commitProjectUpdate(update, () => { projectActionRef.current = "open"; });
+          commitProjectUpdate(update, () => { projectActionRef.current = "open"; }, "open");
         }
         return;
       }
@@ -421,27 +478,29 @@ function App() {
             <span style={{ transform: `scaleX(${scrollProgress})` }} />
           </div>
 
-          <div className="portfolio-page" ref={portfolioPageRef}>
+          <div className={`portfolio-page${selected ? " project-route-open" : ""}`} ref={portfolioPageRef}>
             <AnimatedDotsBg />
-            <Navbar theme={theme} onThemeChange={setTheme} />
+            <Navbar
+              theme={theme}
+              onThemeChange={setTheme}
+              categories={categories}
+              activeCategory={activeCategory}
+              onSelectCategory={scrollToSection}
+              showCategories={showCategoryNav}
+            />
             <AboutSection onExplore={() => scrollToSection("all")} paused={Boolean(selected)} />
 
             <main className="work-main" id="main-content">
             <div className="work-nav-shell" id="projects">
-              <nav className="work-nav" aria-label="Project categories">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    type="button"
-                    className={activeCategory === category.id ? "active" : ""}
-                    aria-current={activeCategory === category.id ? "true" : undefined}
-                    onClick={() => scrollToSection(category.id)}
-                  >
-                    <span>{category.label}</span>
-                    <sup>{String(category.count).padStart(2, "0")}</sup>
-                  </button>
-                ))}
-              </nav>
+              <CategoryNav
+                variant="inline"
+                categories={categories}
+                activeCategory={activeCategory}
+                onSelect={scrollToSection}
+                active={!showCategoryNav}
+                animateArrival={categoryNavHandedOff}
+                isContextSource={!showCategoryNav}
+              />
             </div>
 
             <section className="work-section games-section" id="games-section" data-category="games">

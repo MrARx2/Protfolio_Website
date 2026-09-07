@@ -124,7 +124,7 @@ function MechanicModal({ mechanic, onClose }) {
             <section className="mechanic-structure" aria-labelledby={`${titleId}-structure`}>
               <div className="mechanic-modal-section-heading">
                 <span>01</span>
-                <h3 id={`${titleId}-structure`}>Structural design</h3>
+                <h3 id={`${titleId}-structure`}>How it&apos;s built</h3>
               </div>
               <div className="mechanic-structure-list">
                 {(mechanic.structure || []).map((part, index) => (
@@ -143,7 +143,7 @@ function MechanicModal({ mechanic, onClose }) {
               <section className="mechanic-flow" aria-labelledby={`${titleId}-flow`}>
                 <div className="mechanic-modal-section-heading">
                   <span>02</span>
-                  <h3 id={`${titleId}-flow`}>Runtime flow</h3>
+                  <h3 id={`${titleId}-flow`}>How it runs</h3>
                 </div>
                 <ol>
                   {(mechanic.flow || []).map((step) => <li key={step}>{step}</li>)}
@@ -151,7 +151,7 @@ function MechanicModal({ mechanic, onClose }) {
               </section>
 
               <aside className="mechanic-value">
-                <span className="mechanic-value-label">Why this design</span>
+                <span className="mechanic-value-label">Why it works this way</span>
                 <p>{mechanic.value || mechanic.desc}</p>
               </aside>
             </div>
