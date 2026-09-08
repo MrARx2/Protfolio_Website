@@ -563,6 +563,13 @@ video {
   animation: hero-video-in 800ms var(--ease) both;
 }
 
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  .hero-poster-bg,
+  .hero-video-bg {
+    transform: scale(1.113);
+  }
+}
+
 @keyframes hero-video-in {
   from { opacity: 0; }
   to { opacity: 1; }

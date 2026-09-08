@@ -26,6 +26,6 @@ Change `-crf 21` to `-crf 20` for mobile. These settings were selected for these
 - This is lossy compression with a small visual tradeoff, not mathematically lossless compression. The original exports on the user's recording drive are untouched.
 - The hero selects one device-appropriate video, retains its loading poster, and pauses when offscreen or covered by a dialog. Reduced-motion and data-saving settings retain the poster without loading the video.
 - Source URLs use `?v=2` to refresh previously cached clips. Increment that version when replacing the assets again.
-- The poster and video share a fixed 1.05 scale for the requested closer framing. There is no continuous zoom animation.
+- The poster and video share a fixed scale: 1.113 on desktop (6% closer than the previous 1.05 framing) and 1.05 on mobile. The desktop rule matches the video-selection media query. There is no continuous zoom animation.
 
 Smaller files reduce download traffic; they do not guarantee proportionally lower decoding cost. Both clips still decode at 60 fps and their original resolutions.
