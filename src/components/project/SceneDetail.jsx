@@ -1,3 +1,4 @@
+import CaseStudyMeta from "./CaseStudyMeta";
 import ResponsiveImage from "./ResponsiveImage";
 import React from "react";
 import VideoPreview from "./VideoPreview";
@@ -27,16 +28,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
         <h1 className="scene-detail-title">{project.title}</h1>
         <p className="scene-detail-summary">{project.summary}</p>
 
-        <div className="scene-meta-info">
-          <div className="scene-meta-item">
-            <span className="meta-label">Duration</span>
-            <span className="meta-value">{project.time}</span>
-          </div>
-          <div className="scene-meta-item">
-            <span className="meta-label">Engine</span>
-            <span className="meta-value">{project.engine}</span>
-          </div>
-        </div>
+        <CaseStudyMeta project={project} />
 
         {project.tags?.length > 0 && (
           <div className="scene-tags-container">

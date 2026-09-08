@@ -1,3 +1,4 @@
+import CaseStudyMeta from "./CaseStudyMeta";
 import React from "react";
 import ProjectGallery from "./ProjectGallery";
 import ProjectEntryCover from "./ProjectEntryCover";
@@ -34,22 +35,7 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
         <h1 className="modeling-detail-title">{project.title}</h1>
         <p className="modeling-detail-summary">{project.summary}</p>
 
-        <div className="modeling-meta-info">
-          <div className="modeling-meta-item">
-            <span className="meta-label">Duration</span>
-            <span className="meta-value">{project.time}</span>
-          </div>
-          <div className="modeling-meta-item">
-            <span className="meta-label">Software</span>
-            <span className="meta-value">{project.software}</span>
-          </div>
-          {project.render && (
-            <div className="modeling-meta-item">
-              <span className="meta-label">Rendered in</span>
-              <span className="meta-value">{project.render}</span>
-            </div>
-          )}
-        </div>
+        <CaseStudyMeta project={project} />
 
         {project.tags?.length > 0 && (
           <div className="modeling-tags-container">

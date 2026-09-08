@@ -20,10 +20,11 @@ function FeaturedProjectCard({ project, onClick, activeProjectId }) {
         <span className="project-preview-badge">Featured · Mobile</span>
         <ProjectPreviewMedia className="featured-project-phone" project={project}
           previewData={project.featuredPreview} paused={Boolean(activeProjectId)} eager ref={previewRef}
-          imageSizes="(max-width: 360px) 153px, (max-width: 768px) 171px, 208px" />
+          imageSizes="(max-width: 360px) 120px, (max-width: 768px) 130px, 185px" />
         <div className="featured-project-caption" aria-hidden="true"><span />In-game capture<span /></div>
       </div>
 
+      <div className="featured-project-content">
       <div className="featured-project-intro">
         <ProjectCardMeta project={project} />
         <h3>{titleWords.join(" ")} <span>{accentWord}</span></h3>
@@ -33,6 +34,7 @@ function FeaturedProjectCard({ project, onClick, activeProjectId }) {
       <div className="featured-project-details">
         <ProjectCardContribution project={project} />
         <ProjectCardFooter project={project} />
+      </div>
       </div>
     </article>
   );

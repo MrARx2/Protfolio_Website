@@ -918,7 +918,7 @@ video {
 .work-section {
   position: relative;
   scroll-margin-top: 100px;
-  padding: 60px 0 52px;
+  padding: 40px 0 0;
 }
 
 .work-section + .work-section {
@@ -1809,7 +1809,7 @@ video {
 /* Shared card-to-case-study entry */
 .project-detail-header-with-cover {
   position: relative;
-  min-height: min(650px, calc(100svh - 118px));
+  min-height: min(560px, calc(100svh - 118px));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -2213,9 +2213,9 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
 .modeling-meta-info,
 .scene-meta-info {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--meta-columns, 4), minmax(0, 1fr));
   gap: 1px;
-  margin: 60px 0 28px;
+  margin: 32px 0 22px;
   overflow: hidden;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
@@ -2265,7 +2265,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
 .modeling-section,
 .scene-section,
 .scene-details-section {
-  padding: 100px 0;
+  padding: 64px 0;
   border-bottom: 1px solid var(--border-soft);
 }
 
@@ -4629,11 +4629,11 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   }
 
   .work-section {
-    padding: 58px 0 48px;
+    padding: 32px 0 0;
   }
 
   .work-section + .work-section {
-    margin-top: 44px;
+    margin-top: 32px;
   }
 
   .work-section-heading {
@@ -4755,7 +4755,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   }
 
   .project-detail-header-with-cover {
-    min-height: min(760px, calc(100svh - 90px));
+    min-height: 0;
     justify-content: flex-end;
     margin-top: 14px;
     padding: 64px 28px 38px !important;
@@ -4815,7 +4815,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   .case-study-hero,
   .modeling-detail-header,
   .scene-detail-header {
-    padding: 80px 0 56px;
+    padding: 40px 0;
   }
 
   .game-detail-title,
@@ -4834,7 +4834,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   .modeling-section,
   .scene-section,
   .scene-details-section {
-    padding: 70px 0;
+    padding: 48px 0;
   }
 
   .case-study-overview {
@@ -5100,15 +5100,17 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   }
 
   .project-detail-header-with-cover {
-    min-height: min(730px, calc(100svh - 82px));
-    padding: 58px 22px 30px !important;
+    min-height: 0;
+    padding: 36px 22px !important;
   }
 
   .case-study-meta,
   .modeling-meta-info,
   .scene-meta-info {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .case-study-meta[data-fields="3"] > div:last-child { grid-column: 1 / -1; }
 
   .case-study-toolbar-label {
     display: none;

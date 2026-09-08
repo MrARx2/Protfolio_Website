@@ -516,7 +516,7 @@ function App() {
               </div>
             </section>
 
-            <section className="work-section modeling-section" id="modeling-section" data-category="modeling">
+            <section className="work-section models-work-section" id="modeling-section" data-category="modeling">
               <SectionHeading
                 title="3D Modeling"
                 description="Hard-surface studies developed from modeling and topology through texturing and final real-time presentation."

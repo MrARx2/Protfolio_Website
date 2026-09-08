@@ -1,3 +1,4 @@
+import CaseStudyMeta from "./CaseStudyMeta";
 import { decodeRoutePart } from "../../utils/routeHelpers";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
@@ -198,12 +199,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                 <p className="game-detail-summary">{project.summary}</p>
               </div>
 
-              <dl className="case-study-meta">
-                <div><dt>Role</dt><dd>{project.role || "Programmer"}</dd></div>
-                <div><dt>Team</dt><dd>{project.team || "—"}</dd></div>
-                <div><dt>Duration</dt><dd>{project.time || "—"}</dd></div>
-                <div><dt>Engine</dt><dd>{project.engine || "—"}</dd></div>
-              </dl>
+        <CaseStudyMeta project={project} />
 
               <div className="case-study-tags">
                 {project.tags?.map((tag) => <span key={tag}>{tag}</span>)}

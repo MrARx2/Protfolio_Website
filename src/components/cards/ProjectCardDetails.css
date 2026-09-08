@@ -93,3 +93,5 @@
 @media (max-width: 360px) {
   .living-project-card:is(.project-card, .modeling-card, .scene-card) .living-card-content { padding-inline: 20px; }
 }
+
+:is(.modeling-card, .scene-card) .project-card-footer-row { margin-top: 8px; }
