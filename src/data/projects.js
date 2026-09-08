@@ -50,7 +50,7 @@ export const gameProjects = [
     videoAspectRatio: "6 / 13",
     videoAspectLabel: "9:19.5",
     videoCaptureLabel: "Galaxy S24+ · 1440 × 3120",
-    details: "Path of Embers is a fast-paced mobile roguelike built around stackable talents, tactical combat, and deliberate encounter pacing. Its 16 handcrafted map segments follow a fixed progression, with the miniboss on segment 11 and the final boss on segment 16. A performance-aware streaming system keeps only the two or three segments nearest the player active, suspends or despawns distant enemies, and preserves stable mobile performance.\n\nChoosing when to fight is part of the run. Clearing a segment can trigger a second wave and more opportunities to strengthen the build, while rushing forward leaves rewards behind and increases the difficulty of later encounters. A moving meteor fireline prevents stagnation and keeps that choice fast-paced. All gameplay systems and the game’s original visual assets were built for a responsive 60 FPS mobile experience.",
+    details: "Each run crosses 16 handcrafted map segments, with a miniboss on segment 11 and a final boss on segment 16. Clear optional enemy waves to strengthen your build, or push ahead while a moving meteor fireline keeps the pressure on.\n\nI built the gameplay systems and original visual assets around a 60 FPS mobile target. Streaming keeps the nearest two or three segments active and suspends or despawns distant enemies. The systems below break down the combat, talents, and progression.",
     role: "Programmer / Technical Artist",
     team: "3",
     time: "4 months",
@@ -86,9 +86,9 @@ export const gameProjects = [
       depth: "7 screens · gameplay video · systems breakdown",
       cta: "Explore gameplay & systems",
       frames: [
-        { src: "/Images/Ricochet/Mid-Match.jpg", label: "Compete" },
-        { src: "/Images/Ricochet/StartOfMatch.jpg", label: "Prepare" },
-        { src: "/Images/Ricochet/Winner Screen.jpg", label: "Victory" }
+        { src: "/Images/Ricochet/Mid-Match.jpg", label: "Live match" },
+        { src: "/Images/Ricochet/StartOfMatch.jpg", label: "Round setup" },
+        { src: "/Images/Ricochet/Winner Screen.jpg", label: "Match results" }
       ]
     },
     summary: "A neon sports game combining pinball, air hockey, and Pong. Alternate between striker and goalie, using ricochets and quick reactions to outscore your opponent.",
@@ -103,7 +103,7 @@ export const gameProjects = [
     ],
     tags: ["Arcade", "Physics-Based", "Sports", "Neon", "Air Hockey", "Pinball"],
     youtube: "https://youtu.be/pj1mnLXYDjI",
-    details: "Ricochet is a high-energy arcade physics game where players take turns as either the striker or the goalie. In striker rounds, you control a puck-like player aiming to score in the rival's goal while bouncing shots off speed-boosting bumpers that add unpredictability and challenge. In goalie rounds, you defend your goal along a vertical line—just like Pong—blocking fast, chaotic rebounds. One role is always controlled by AI, keeping matches dynamic. The game's neon-emissive visuals, colorful ball reactions, and punchy VFX/SFX create a vibrant, arcade-like atmosphere that keeps the action intense and unpredictable.",
+    details: "As the striker, aim for the rival goal and use speed-boosting bumpers to redirect your shots. As the goalie, move along a vertical line to block the rebounds. An AI opponent takes the other role.\n\nNeon materials, reactive ball effects, and punchy sound make the action readable and reinforce each hit. Explore the systems below for the rules, AI, and match flow.",
     role: "Programmer",
     team: "2",
     time: "2 months",
@@ -130,9 +130,9 @@ export const gameProjects = [
       depth: "6 screens · gameplay video · systems breakdown",
       cta: "Explore the racing system",
       frames: [
-        { src: "/Images/Slingshot/Slingshot -midrace-red-planet.jpg", label: "Accelerate" },
-        { src: "/Images/Slingshot/Slingshot - Launch.jpg", label: "Launch" },
-        { src: "/Images/Slingshot/Slingshot - checkpoint captured.jpg", label: "Navigate" }
+        { src: "/Images/Slingshot/Slingshot -midrace-red-planet.jpg", label: "Planetary flyby" },
+        { src: "/Images/Slingshot/Slingshot - Launch.jpg", label: "Race start" },
+        { src: "/Images/Slingshot/Slingshot - checkpoint captured.jpg", label: "Checkpoint reached" }
       ]
     },
     summary: "A space racer where planetary gravity is your accelerator. Fly through procedurally generated tracks, using close flybys to gain speed and reach each checkpoint.",
@@ -146,7 +146,7 @@ export const gameProjects = [
     ],
     tags: ["Space", "Racer", "Procedural Tracks"],
     youtube: "https://www.youtube.com/watch?v=4CMdh4ahHq4",
-    details: "Slingshot is a fast-paced space racing demo where players use planetary gravity to boost around procedurally generated tracks. Each race features 10 planets acting as checkpoints, color-coded to show your progress. With full 6-axis controls, you must hit checkpoints in order and master close flybys to gain momentum. Designed for expansion, the system supports unique curved tracks and an unlimited number of planets, offering huge potential for more complex and varied races.",
+    details: "Each race has 10 planetary checkpoints. Use six-axis flight controls to reach them in order, flying close to planets to gain speed. Checkpoint colors show what you have cleared and where to go next.\n\nTracks are generated procedurally. The system supports curved routes and an expandable planet count, leaving room for longer, more complex races.",
     role: "Programmer",
     team: "2",
     time: "2 weeks",
@@ -204,7 +204,7 @@ export const modelingProjects = [
         { src: '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00013.png', label: 'Top details', position: 'center 58%' }
       ]
     },
-    summary: 'A stylized Cozmo robot, from modeling in Maya to materials and final renders in Unreal Engine.',
+    summary: 'A stylized robot study exploring silhouette, materials, and lighting. Modeled in Maya and rendered in Unreal Engine.',
     renders: [
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00004.png',
       '/Images/Renders and Modeling/Cozmo/Highres-Screenshot00011.png',

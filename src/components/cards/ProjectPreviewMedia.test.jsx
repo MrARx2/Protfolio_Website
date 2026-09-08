@@ -31,6 +31,8 @@ test("touch and narrow screens keep a single preview without timers, decoding, o
   act(() => jest.advanceTimersByTime(60000));
   expect(mount.querySelector("img")).toBe(image);
   expect(image.getAttribute("src")).toBe("/first.jpg");
+  expect(mount.querySelector(".project-preview-count")).toBeNull();
+  expect(mount.querySelector(".project-preview-progress")).toBeNull();
   expect(observe).not.toHaveBeenCalled();
   expect(nextImage).not.toHaveBeenCalled();
 });

@@ -165,6 +165,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
 
   if (!frames.length) return <div className={`${className} project-preview-media project-preview-empty`} />;
 
+  const showPlayback = !staticPreview && !saveData && frames.length > 1;
   const activeFrame = frames[activeIndex] || frames[0];
   const visibleIndexes = previousIndex === null || previousIndex === activeIndex
     ? [activeIndex]
@@ -201,13 +202,13 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
           <span>Project preview</span>
           <strong>{activeFrame.label}</strong>
         </div>
-        <span className="project-preview-count" key={`count-${activeIndex}`}>
+        {showPlayback && <span className="project-preview-count" key={`count-${activeIndex}`}>
           {String(activeIndex + 1).padStart(2, "0")} / {String(frames.length).padStart(2, "0")}
-        </span>
+        </span>}
       </div>
-      <div className="project-preview-progress" aria-hidden="true">
+      {showPlayback && <div className="project-preview-progress" aria-hidden="true">
         <span style={{ transform: `scaleX(${(activeIndex + 1) / frames.length})` }} />
-      </div>
+      </div>}
     </div>
   );
 });
