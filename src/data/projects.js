@@ -15,6 +15,8 @@ export const gameProjects = [
     thumbnail: "/Images/Path Of Embers/Gameplay4.jpg",
     featuredPreview: {
       presentation: "phone",
+      contribution: "Programming, technical art, and mobile optimization",
+      depth: "14 screens · gameplay trailer · systems breakdown",
       frames: [
         { src: "/Images/Path Of Embers/Gameplay4.jpg", label: "Combat" },
         { src: "/Images/Path Of Embers/Gameplay7.jpg", label: "Boss encounter" },

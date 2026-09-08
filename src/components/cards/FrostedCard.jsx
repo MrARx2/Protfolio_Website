@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 import FeaturedProjectCard from "./FeaturedProjectCard";
+import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
 function StandardGameCard({ project, onClick, activeProjectId = null }) {
   const previewRef = useRef(null);
@@ -15,7 +16,6 @@ function StandardGameCard({ project, onClick, activeProjectId = null }) {
       openProject();
     }
   };
-
 
   return (
     <article
@@ -37,28 +37,16 @@ function StandardGameCard({ project, onClick, activeProjectId = null }) {
       />
 
       <div className="project-card-content living-card-content">
-        <div className="project-card-topline">
-          <span>{project.engine}</span>
-          <span>{project.time}</span>
-        </div>
+        <ProjectCardMeta project={project} />
         <h3>{project.title}</h3>
         <p className="project-card-summary">{project.summary}</p>
 
-        <p className="project-contribution">
-          <span>My focus</span>
-          {project.cardPreview?.contribution || project.role || "Gameplay development"}
-        </p>
-
-        <div className="living-card-action-row">
-          <span className="case-study-depth">{project.cardPreview?.depth}</span>
-          <span className="project-card-link project-card-cta">
-            {project.cardPreview?.cta || "View case study"} <span aria-hidden="true">→</span>
-          </span>
-        </div>
+        <ProjectCardContribution project={project} />
+        <ProjectCardFooter project={project} />
       </div>
     </article>
   );
-  }
+}
 const MemoStandardGameCard = React.memo(StandardGameCard);
 
 function FrostedCard({ featured = false, ...props }) {

@@ -1,0 +1,95 @@
+/* One reading and action pattern across games, models, and environments.
+   Each card keeps its own media composition. */
+.project-card-meta-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.project-card-meta-line > span:first-child { min-width: 0; }
+.project-card-meta-line > span:last-child { flex: none; text-align: right; }
+
+.project-card-contribution-block {
+  margin: 24px 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+.project-card-contribution-label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+  color: var(--amber-bright);
+  font-size: 0.59rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.project-card-contribution-label > span + span { color: var(--text-muted); }
+.project-card-contribution-block > p { margin: 0; color: var(--text); font-size: 0.88rem; font-weight: 600; line-height: 1.55; }
+
+.project-card-footer-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+.project-card-preview-note { max-width: 32ch; color: var(--text-muted); font-size: 0.7rem; font-weight: 500; line-height: 1.6; }
+.project-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 17px;
+  border: 1px solid var(--amber-border);
+  border-radius: 999px;
+  color: var(--text);
+  background: var(--amber-wash);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+.project-card-action > span { font-size: 1rem; color: var(--amber-bright); }
+:is(.project-card, .modeling-card, .scene-card):is(:hover, :focus-visible) .project-card-action {
+  color: var(--accent-ink);
+  background: var(--amber-bright);
+  border-color: var(--amber-bright);
+}
+:is(.project-card, .modeling-card, .scene-card):is(:hover, :focus-visible) .project-card-action > span { color: inherit; }
+
+/* Finish each short synopsis instead of cutting its sentence in half. */
+.living-project-card .project-card-summary,
+.living-project-card .modeling-card-summary,
+.living-project-card .scene-card-summary {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  .living-project-card:is(.project-card, .modeling-card, .scene-card) .living-card-content { padding: 26px 24px; }
+  .project-card-footer-row { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .project-card-preview-note { max-width: none; }
+  .project-card-action { justify-self: end; }
+  .project-card-contribution-block { margin-block: 22px; }
+  .project-card-meta-line { font-size: 0.61rem; }
+}
+
+@media (max-width: 360px) {
+  .living-project-card:is(.project-card, .modeling-card, .scene-card) .living-card-content { padding-inline: 20px; }
+}

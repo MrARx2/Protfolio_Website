@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
+import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
 function SceneCard({ project, onClick, activeProjectId = null }) {
   const previewRef = useRef(null);
@@ -29,33 +30,19 @@ function SceneCard({ project, onClick, activeProjectId = null }) {
       <ProjectPreviewMedia
         className="scene-image-wrap"
         project={project}
-        badge="Environment · Unreal Engine"
+        badge="Environment"
         paused={Boolean(activeProjectId)}
         ref={previewRef}
       />
-      <div className="scene-gradient" aria-hidden="true" />
-
       <div className="scene-card-content living-card-content">
-        <div className="card-compact-meta" aria-label="Project details">
-          <span>{project.time}</span>
-          <span>{project.tags?.includes("Nanite") ? "Nanite" : project.engine}</span>
-        </div>
+        <ProjectCardMeta project={project} />
         <h3 className="scene-card-title">
           {project.title}
         </h3>
         <p className="scene-card-summary">{project.summary}</p>
 
-        <p className="project-contribution">
-          <span>My focus</span>
-          {project.cardPreview?.contribution || "Environment and real-time presentation"}
-        </p>
-
-        <div className="living-card-action-row">
-          <span className="case-study-depth">{project.cardPreview?.depth}</span>
-          <span className="project-card-link project-card-cta">
-            {project.cardPreview?.cta || "Explore environment"} <span aria-hidden="true">→</span>
-          </span>
-        </div>
+        <ProjectCardContribution project={project} />
+        <ProjectCardFooter project={project} />
       </div>
     </article>
   );

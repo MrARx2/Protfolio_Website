@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
+import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
 function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
   const previewRef = useRef(null);
@@ -35,31 +36,14 @@ function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
       />
 
       <div className="modeling-card-content living-card-content">
-        <div className="card-compact-meta" aria-label="Project details">
-          <span>{project.software}</span>
-          <span>{project.render || "Real-time render"}</span>
-          <span>{project.time}</span>
-        </div>
+        <ProjectCardMeta project={project} />
         <h3 className="modeling-card-title">
           {project.title}
         </h3>
         <p className="modeling-card-summary">{project.summary}</p>
 
-        <p className="project-contribution">
-          <span>My focus</span>
-          {project.cardPreview?.contribution || "Modeling and presentation"}
-        </p>
-
-        <div className="project-card-tags" aria-label="Project tags">
-          {project.tags?.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}
-        </div>
-
-        <div className="living-card-action-row">
-          <span className="case-study-depth">{project.cardPreview?.depth}</span>
-          <span className="project-card-link project-card-cta">
-            {project.cardPreview?.cta || "Explore the process"} <span aria-hidden="true">→</span>
-          </span>
-        </div>
+        <ProjectCardContribution project={project} />
+        <ProjectCardFooter project={project} />
       </div>
     </article>
   );
