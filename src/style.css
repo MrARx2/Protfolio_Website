@@ -562,6 +562,31 @@ video {
   to { opacity: 1; transform: translate(-48.5%, -50%) scale(1.05); }
 }
 
+.hero-desktop-poster,
+.hero-video-bg--desktop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+  filter: saturate(0.78) contrast(1.04) brightness(0.68);
+  pointer-events: none;
+}
+
+.hero-video-bg--desktop {
+  animation: hero-desktop-video-in 800ms var(--ease) both;
+}
+
+@keyframes hero-desktop-video-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -5534,6 +5559,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   .work-nav,
   .site-progress,
   .ambient-background,
+  .hero-desktop-poster,
   .hero-video-bg {
     display: none !important;
   }

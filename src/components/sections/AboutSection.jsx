@@ -1,11 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import { personalInfo } from "../../data/personalInfo";
 
+const DESKTOP_HERO_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: fine)";
+const DESKTOP_POSTER = process.env.PUBLIC_URL + "/Images/hero-desktop-poster.webp";
+
 function AboutSection({ onExplore, paused = false }) {
   const heroRef = useRef(null);
   const videoRef = useRef(null);
-  const heroVisibleRef = useRef(true);
+  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_HERO_QUERY).matches);
   const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
+  const videoSrc = process.env.PUBLIC_URL + (isDesktop
+    ? "/Videos/hero-desktop.mp4"
+    : "/Videos/herotrailer8_Compressed.mp4");
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(DESKTOP_HERO_QUERY);
+    const updateVariant = () => setIsDesktop(mediaQuery.matches);
+    updateVariant();
+    mediaQuery.addEventListener?.("change", updateVariant);
+    return () => mediaQuery.removeEventListener?.("change", updateVariant);
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -39,16 +53,17 @@ function AboutSection({ onExplore, paused = false }) {
   useEffect(() => {
     if (!shouldRenderVideo || !heroRef.current) return undefined;
     const video = videoRef.current;
+    let heroVisible = false;
     const hasBlockingOverlay = () => Boolean(document.querySelector(
       ".project-detail-backdrop, .resume-modal-backdrop, .image-modal, .mechanic-modal-backdrop"
     ));
     const syncPlayback = () => {
       if (!video) return;
-      if (paused || document.hidden || !heroVisibleRef.current || hasBlockingOverlay()) video.pause();
-      else video.play().catch(() => {});
+      if (paused || document.hidden || !heroVisible || hasBlockingOverlay()) video.pause();
+      else if (video.paused) video.play().catch(() => {});
     };
     const observer = new IntersectionObserver(([entry]) => {
-      heroVisibleRef.current = entry.isIntersecting;
+      heroVisible = entry.isIntersecting && entry.intersectionRatio >= 0.08;
       syncPlayback();
     }, { threshold: 0.08 });
 
@@ -62,26 +77,26 @@ function AboutSection({ onExplore, paused = false }) {
       document.removeEventListener("visibilitychange", syncPlayback);
       video?.pause();
     };
-  }, [paused, shouldRenderVideo]);
+  }, [paused, shouldRenderVideo, videoSrc]);
 
   return (
     <section className="hero-section" id="about" ref={heroRef}>
+      {isDesktop && (
+        <img className="hero-desktop-poster" src={DESKTOP_POSTER} alt="" aria-hidden="true" decoding="async" />
+      )}
       {shouldRenderVideo && (
         <video
+          key={videoSrc}
           ref={videoRef}
-          className="hero-video-bg"
-          autoPlay
+          className={`hero-video-bg${isDesktop ? " hero-video-bg--desktop" : ""}`}
+          src={videoSrc}
+          poster={isDesktop ? DESKTOP_POSTER : undefined}
           loop
           muted
           playsInline
           preload="metadata"
           aria-hidden="true"
-        >
-          <source
-            src={process.env.PUBLIC_URL + "/Videos/herotrailer8_Compressed.mp4"}
-            type="video/mp4"
-          />
-        </video>
+        />
       )}
 
       <div className="hero-overlay" />
