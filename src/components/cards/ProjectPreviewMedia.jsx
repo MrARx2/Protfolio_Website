@@ -21,7 +21,8 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   className = "",
   badge,
   paused = false,
-  eager = false
+  eager = false,
+  imageSizes = "(max-width: 768px) 94vw, 70vw"
 }, ref) {
   const preview = previewData || project.cardPreview || {};
   const frames = useMemo(() => {
@@ -127,13 +128,13 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
           showFrame(activeIndex + 1);
         }
       };
-      const props = responsiveImageProps(frames[normalizedIndex(activeIndex + 1, frames.length)].src, "(max-width: 768px) 94vw, 70vw");
+      const props = responsiveImageProps(frames[normalizedIndex(activeIndex + 1, frames.length)].src, imageSizes);
       image.sizes = props.sizes || "";
       image.srcset = props.srcSet || "";
       image.src = props.src;
     }, delay);
     return () => { cancelled = true; if (image) image.onload = null; window.clearTimeout(timer); };
-  }, [activeIndex, frames, inView, initialDelay, pageVisible, paused, interacting, saveData, staticPreview, showFrame]);
+  }, [activeIndex, frames, imageSizes, inView, initialDelay, pageVisible, paused, interacting, saveData, staticPreview, showFrame]);
 
   useEffect(() => {
     const card = rootRef.current?.closest('[role="button"]');
@@ -182,6 +183,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
           <ResponsiveImage
             className={`project-preview-frame ${isActive ? "is-active" : "is-previous"}`}
             src={frame.src}
+            sizes={imageSizes}
             alt={isActive ? `${project.title}: ${frame.label}` : ""}
             style={{ objectPosition: frame.position || undefined }}
             key={index}

@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
+import FeaturedProjectCard from "./FeaturedProjectCard";
 
-function FrostedCard({ project, onClick, featured = false, activeProjectId = null }) {
+function StandardGameCard({ project, onClick, activeProjectId = null }) {
   const previewRef = useRef(null);
 
   const openProject = () => {
@@ -15,53 +16,6 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
     }
   };
 
-  if (featured) {
-    return (
-      <article
-        className="project-card game-card game-card-featured"
-        id={`project-card-${project.id}`}
-        onClick={openProject}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="button"
-        aria-label={`View case study for ${project.title}`}
-      >
-        <div className="project-card-media">
-          <ProjectPreviewMedia
-            className="featured-phone-preview"
-            project={project}
-            previewData={project.featuredPreview}
-            paused={Boolean(activeProjectId)}
-            eager
-            ref={previewRef}
-          />
-          <span className="project-card-badge">Featured · Mobile</span>
-        </div>
-
-        <div className="project-card-content">
-          <div className="project-card-topline">
-            <span>{project.engine}</span>
-            <span>{project.time}</span>
-          </div>
-          <h3>{project.title}</h3>
-          <p className="project-card-summary">{project.summary}</p>
-
-          <dl className="project-card-meta">
-            <div><dt>Role</dt><dd>{project.role || "Programmer"}</dd></div>
-            <div><dt>Team</dt><dd>{project.team || "—"}</dd></div>
-            <div><dt>Focus</dt><dd>{project.tags?.[0] || "Gameplay"}</dd></div>
-          </dl>
-
-          <div className="project-card-footer">
-            <div className="project-card-tags" aria-label="Project tags">
-              {project.tags?.slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
-            </div>
-            <span className="project-card-link">View case study <span aria-hidden="true">↗</span></span>
-          </div>
-        </div>
-      </article>
-    );
-  }
 
   return (
     <article
@@ -104,6 +58,11 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
       </div>
     </article>
   );
+  }
+const MemoStandardGameCard = React.memo(StandardGameCard);
+
+function FrostedCard({ featured = false, ...props }) {
+  return featured ? <FeaturedProjectCard {...props} /> : <MemoStandardGameCard {...props} />;
 }
 
 export default React.memo(FrostedCard);
