@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { trackScroll } from "../../utils/scrollTracking";
 
 function CaseStudyNav({ sections, scrollRootRef }) {
   const [activeSection, setActiveSection] = useState(sections[0]?.id || "");
   const navRef = useRef(null);
-  const frameRef = useRef(null);
+  const activeSectionRef = useRef(activeSection);
+  activeSectionRef.current = activeSection;
   const scrollAnimationRef = useRef(null);
   const indexRef = useRef(null);
   const [railEdges, setRailEdges] = useState({ overflow: false, start: true, end: true });
@@ -34,53 +36,30 @@ function CaseStudyNav({ sections, scrollRootRef }) {
     setActiveSection(sections[0]?.id || "");
   }, [sections]);
 
-  const updateActiveSection = useCallback(() => {
-    const scrollRoot = scrollRootRef.current;
-    if (!scrollRoot || sections.length === 0 || scrollAnimationRef.current) return;
-
-    const toolbar = scrollRoot.querySelector(".case-study-toolbar");
-    const toolbarBottom = toolbar?.getBoundingClientRect().bottom || 0;
-    const activationLine = Math.max(toolbarBottom + 52, scrollRoot.clientHeight * 0.28);
-    const availableSections = sections
-      .map((section) => ({ ...section, element: document.getElementById(section.id) }))
-      .filter((section) => section.element);
-
-    if (availableSections.length === 0) return;
-
-    const reachedBottom = scrollRoot.scrollTop + scrollRoot.clientHeight >= scrollRoot.scrollHeight - 4;
-    let current = reachedBottom ? availableSections[availableSections.length - 1] : availableSections[0];
-
-    if (!reachedBottom) {
-      availableSections.forEach((section) => {
-        if (section.element.getBoundingClientRect().top <= activationLine) current = section;
-      });
-    }
-
-    setActiveSection((previous) => previous === current.id ? previous : current.id);
-  }, [scrollRootRef, sections]);
-
   useEffect(() => {
     const scrollRoot = scrollRootRef.current;
-    if (!scrollRoot) return undefined;
-
-    const requestUpdate = () => {
-      if (frameRef.current) return;
-      frameRef.current = window.requestAnimationFrame(() => {
-        frameRef.current = null;
-        updateActiveSection();
-      });
-    };
-
-    requestUpdate();
-    scrollRoot.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-
-    return () => {
-      scrollRoot.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
-    };
-  }, [scrollRootRef, updateActiveSection]);
+    if (!scrollRoot || !sections.length) return undefined;
+    const available = sections.map((section) => ({ ...section, element: document.getElementById(section.id) }))
+      .filter(({ element }) => element);
+    if (!available.length) return undefined;
+    return trackScroll({
+      root: scrollRoot,
+      content: scrollRoot.querySelector('.project-detail'),
+      targets: available.map(({ element }) => element),
+      inset: scrollRoot.querySelector('.case-study-toolbar'),
+      onUpdate: ({ position, tops, maxScroll, viewportHeight, insetHeight }) => {
+        if (scrollAnimationRef.current) return;
+        const line = position + Math.max(insetHeight + 52, viewportHeight * 0.28);
+        let current = available[0];
+        if (position >= maxScroll - 4) current = available[available.length - 1];
+        else available.forEach((section, index) => { if (tops[index] <= line) current = section; });
+        if (current.id !== activeSectionRef.current) {
+          activeSectionRef.current = current.id;
+          setActiveSection(current.id);
+        }
+      }
+    });
+  }, [scrollRootRef, sections]);
 
   useEffect(() => {
     const scrollRoot = scrollRootRef.current;
@@ -110,10 +89,12 @@ function CaseStudyNav({ sections, scrollRootRef }) {
     const activeButton = nav?.querySelector(`[data-section-id="${activeSection}"]`);
     if (!nav || !activeButton) return;
 
-    const targetLeft = activeButton.offsetLeft - (nav.clientWidth - activeButton.offsetWidth) / 2;
+    const targetLeft = activeButton.offsetLeft - nav.offsetLeft;
+    if (targetLeft >= nav.scrollLeft && targetLeft + activeButton.offsetWidth <= nav.scrollLeft + nav.clientWidth) return;
     nav.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+      left: Math.max(0, targetLeft - (nav.clientWidth - activeButton.offsetWidth) / 2),
+      // Scroll-spy changes should not start competing horizontal animations.
+      behavior: "instant"
     });
   }, [activeSection]);
 

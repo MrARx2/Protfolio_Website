@@ -2,10 +2,12 @@ import { decodeRoutePart } from "./utils/routeHelpers";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import "./style.css";
+import "./performance.css";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import AnimatedDotsBg from "./components/layout/AnimatedDotsBg";
 import Navbar from "./components/layout/Navbar";
+import ScrollProgress from "./components/layout/ScrollProgress";
 import CategoryNav from "./components/layout/CategoryNav";
 import AboutSection from "./components/sections/AboutSection";
 import FrostedCard from "./components/cards/FrostedCard";
@@ -15,6 +17,7 @@ import ProjectDetail from "./components/project/ProjectDetail";
 import ImageModal from "./components/modals/ImageModal";
 import PhoneImageModal from "./components/modals/PhoneImageModal";
 import useScrollReveal from "./hooks/useScrollReveal";
+import usePortfolioScroll from "./hooks/usePortfolioScroll";
 import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
 import { applyTheme, getInitialTheme } from "./data/themes";
@@ -50,15 +53,6 @@ function getProjectCategory(project) {
 }
 
 const portfolioProjects = [...gameProjects, ...modelingProjects, ...sceneProjects];
-
-// Viewport offsets of the in-page pill's TOP edge at which the navbar takes the
-// category nav over, and at which it hands it back. The bar bottoms out at
-// ~71px, so docking at 72 swaps on contact — the two copies are flush at that
-// instant, which makes the crossfade read as the pill stepping up into the bar.
-// Anything lower would let it slide underneath; the gap up to the release point
-// is hysteresis only.
-const CATEGORY_NAV_DOCK_AT = 72;
-const CATEGORY_NAV_RELEASE_AT = 96;
 
 function categoryFromHash(hash = window.location.hash) {
   const value = hash.replace(/^#/, "");
@@ -110,7 +104,6 @@ function App() {
   const [modal, setModal] = useState(() => (
     initialProjectRoute?.overlay === "gallery" ? fallbackGalleryForProject(initialProject) : null
   ));
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [showCategoryNav, setShowCategoryNav] = useState(false);
   const [categoryNavHandedOff, setCategoryNavHandedOff] = useState(false);
   const categoryScrollFrame = useRef(null);
@@ -123,6 +116,14 @@ function App() {
   const projectArrivalTimerRef = useRef(null);
 
   useScrollReveal(selected?.id || "portfolio");
+  usePortfolioScroll({
+    enabled: !selected,
+    docked: showCategoryNav,
+    activeCategory,
+    animationRef: categoryScrollFrame,
+    onDockChange: setShowCategoryNav,
+    onCategoryChange: setActiveCategory
+  });
 
   const allProjects = useMemo(() => portfolioProjects, []);
 
@@ -394,64 +395,6 @@ function App() {
   }, [initialProject, scrollToSection]);
 
   useEffect(() => {
-    let ticking = false;
-
-    const updateScrollState = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
-
-      // Hand the category pill over to the navbar as its in-page home nears the
-      // bar, and hand it back on the way down. The two thresholds differ so a
-      // pixel of scroll jitter at the boundary cannot flicker the swap.
-      // Measuring the in-page pill is safe here because it sits in normal flow
-      // while the navbar is fixed, so the navbar growing a second row on narrow
-      // screens cannot move it and feed back on itself.
-      const inlineNav = document.querySelector(".work-nav-shell");
-      const inlineTop = inlineNav
-        ? inlineNav.getBoundingClientRect().top
-        : Number.POSITIVE_INFINITY;
-      setShowCategoryNav((current) => (
-        current ? inlineTop <= CATEGORY_NAV_RELEASE_AT : inlineTop <= CATEGORY_NAV_DOCK_AT
-      ));
-
-      if (!selected && !categoryScrollFrame.current) {
-        const marker = window.scrollY + (document.querySelector(".navbar")?.getBoundingClientRect().height || 72) + 40;
-        const sections = [
-          { id: "games-section", category: "games" },
-          { id: "modeling-section", category: "modeling" },
-          { id: "scenes-section", category: "scenes" }
-        ];
-        let nextCategory = "all";
-        sections.forEach(({ id, category }) => {
-          const section = document.getElementById(id);
-          const sectionTop = section
-            ? window.scrollY + (section.querySelector(".work-section-heading") || section).getBoundingClientRect().top
-            : Number.POSITIVE_INFINITY;
-          if (sectionTop <= marker) nextCategory = category;
-        });
-        setActiveCategory((current) => current === nextCategory ? current : nextCategory);
-      }
-
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        window.requestAnimationFrame(updateScrollState);
-      }
-    };
-
-    updateScrollState();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [selected]);
-
-  useEffect(() => {
     const handlePopState = (event) => {
       const state = event.state || {};
       const route = projectRouteFromHash();
@@ -524,9 +467,7 @@ function App() {
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
         <div className="site-shell">
-          <div className="site-progress" aria-hidden="true">
-            <span style={{ transform: `scaleX(${scrollProgress})` }} />
-          </div>
+          <ScrollProgress projectId={selected?.id} />
 
           <div className={`portfolio-page${selected ? " project-route-open" : ""}`} ref={portfolioPageRef}>
             <a href="#projects" className="skip-to-content" onClick={(event) => {

@@ -61,4 +61,4 @@ function SceneCard({ project, onClick, activeProjectId = null }) {
   );
 }
 
-export default SceneCard;
+export default React.memo(SceneCard);

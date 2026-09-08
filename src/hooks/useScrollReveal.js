@@ -28,7 +28,7 @@ function revealDelay(target) {
 export default function useScrollReveal(refreshKey) {
   useLayoutEffect(() => {
     const targets = Array.from(document.querySelectorAll(revealSelector));
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const skipReveal = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse)").matches;
 
     targets.forEach((target) => {
       target.classList.add("motion-reveal");
@@ -37,7 +37,7 @@ export default function useScrollReveal(refreshKey) {
 
     document.documentElement.classList.add("motion-observer-ready");
 
-    if (reducedMotion || !("IntersectionObserver" in window)) {
+    if (skipReveal || !("IntersectionObserver" in window)) {
       targets.forEach((target) => target.classList.add("is-revealed"));
       return undefined;
     }

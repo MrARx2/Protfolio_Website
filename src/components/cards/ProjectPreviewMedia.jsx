@@ -38,7 +38,9 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   const [previousIndex, setPreviousIndex] = useState(null);
   const [loadedFrames, setLoadedFrames] = useState(() => new Set());
   const [inView, setInView] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [staticPreview, setStaticPreview] = useState(() => window.matchMedia(
+    "(prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse)"
+  ).matches);
   const [interacting, setInteracting] = useState(false);
   const [saveData] = useState(() => Boolean(navigator.connection?.saveData));
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
@@ -67,8 +69,8 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
   }), [frames]);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setReducedMotion(mediaQuery.matches);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse)");
+    const updatePreference = () => setStaticPreview(mediaQuery.matches);
     updatePreference();
     mediaQuery.addEventListener?.("change", updatePreference);
     return () => mediaQuery.removeEventListener?.("change", updatePreference);
@@ -82,7 +84,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
 
   useEffect(() => {
     const target = rootRef.current;
-    if (!target || reducedMotion || frames.length < 2) {
+    if (!target || staticPreview || paused || frames.length < 2) {
       setInView(false);
       return undefined;
     }
@@ -98,9 +100,8 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
       } else if (!entry.isIntersecting || entry.intersectionRatio <= 0.08) {
         setInView(false);
         hasStartedCyclingRef.current = false;
-        activeIndexRef.current = 0;
-        setActiveIndex(0);
-        setPreviousIndex(null);
+        // Keep the decoded frame when a card leaves view; fast reversals must
+        // not remount images and replay their entrance animations.
       }
     }, {
       threshold: [0, 0.08, 0.24, 0.6],
@@ -109,15 +110,16 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, [frames.length, project.id, reducedMotion]);
+  }, [frames.length, project.id, staticPreview, paused]);
 
   useEffect(() => {
-    if (!inView || !pageVisible || paused || interacting || saveData || reducedMotion || frames.length < 2) return undefined;
+    if (!inView || !pageVisible || paused || interacting || saveData || staticPreview || frames.length < 2) return undefined;
 
     const delay = hasStartedCyclingRef.current ? 5200 : initialDelay;
     let cancelled = false;
-    const image = new Image();
+    let image;
     const timer = window.setTimeout(() => {
+      image = new Image();
       image.onload = async () => {
         try { await image.decode?.(); } catch { /* A loaded image can still be shown if decoding is unavailable. */ }
         if (!cancelled) {
@@ -130,19 +132,8 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
       image.srcset = props.srcSet || "";
       image.src = props.src;
     }, delay);
-    return () => { cancelled = true; image.onload = null; window.clearTimeout(timer); };
-  }, [activeIndex, frames, inView, initialDelay, pageVisible, paused, interacting, saveData, reducedMotion, showFrame]);
-
-  useEffect(() => {
-    if (!inView || saveData || reducedMotion || frames.length < 2 || typeof window.Image !== "function") return undefined;
-    const nextIndex = normalizedIndex(activeIndex + 1, frames.length);
-    const image = new window.Image();
-    const props = responsiveImageProps(frames[nextIndex].src, "(max-width: 768px) 94vw, 70vw");
-    image.sizes = props.sizes || "";
-    image.srcset = props.srcSet || "";
-    image.src = props.src;
-    return () => { image.onload = null; };
-  }, [activeIndex, frames, inView, reducedMotion, saveData]);
+    return () => { cancelled = true; if (image) image.onload = null; window.clearTimeout(timer); };
+  }, [activeIndex, frames, inView, initialDelay, pageVisible, paused, interacting, saveData, staticPreview, showFrame]);
 
   useEffect(() => {
     const card = rootRef.current?.closest('[role="button"]');
@@ -193,7 +184,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
             src={frame.src}
             alt={isActive ? `${project.title}: ${frame.label}` : ""}
             style={{ objectPosition: frame.position || undefined }}
-            key={`${index}-${isActive ? "active" : "previous"}`}
+            key={index}
             onLoad={() => markLoaded(index)}
             loading={eager ? "eager" : "lazy"}
           />

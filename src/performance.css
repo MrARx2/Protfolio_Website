@@ -1,0 +1,113 @@
+/* Scroll feedback changes only a three-pixel compositor layer. */
+.site-progress span {
+  transition: none;
+  will-change: transform;
+}
+
+/* The backdrop already fades in. Transforming the entire long case study
+   creates an unnecessarily large composited surface, including its toolbar. */
+.project-detail {
+  animation: none;
+}
+
+/* Release entrance-animation layers once their animation finishes. */
+.project-detail-backdrop,
+.project-entry-cover img,
+.project-entry-cover-shade,
+.project-preview-frame.is-active,
+.case-study-index,
+.case-study-index-rail {
+  animation-fill-mode: backwards;
+}
+
+.motion-observer-ready .motion-reveal.is-revealed {
+  translate: none;
+  scale: none;
+}
+
+/* Keep the portfolio's layout/return position without painting it under a
+   full-screen case study. Its image timers are paused by the existing prop. */
+.portfolio-page.project-route-open {
+  visibility: hidden;
+}
+.portfolio-page.project-route-open *,
+.portfolio-page.project-route-open *::before,
+.portfolio-page.project-route-open *::after {
+  animation-play-state: paused !important;
+}
+
+/* Touch scrolling takes priority over decorative effects. Solid surfaces
+   preserve contrast without repeatedly sampling the moving content behind. */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .navbar,
+  .case-study-toolbar,
+  .project-card-badge,
+  .project-preview-badge,
+  .project-detail-header-with-cover .case-study-meta,
+  .project-detail-header-with-cover .modeling-meta-info,
+  .project-detail-header-with-cover .scene-meta-info,
+  .mechanic-modal-backdrop,
+  .gallery-expand-label,
+  .phone-showcase-touch-hint,
+  .phone-showcase-expand,
+  .phone-showcase-index,
+  .phone-modal-arrow,
+  .image-modal,
+  .modal-side-control,
+  .resume-modal-backdrop {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .navbar-glass,
+  .case-study-toolbar,
+  .mechanic-modal-backdrop,
+  .image-modal,
+  .resume-modal-backdrop {
+    background: var(--bg);
+  }
+
+  .navbar { transition: background-color 180ms ease, border-color 180ms ease; }
+  .project-card-badge,
+  .project-preview-badge { background: rgba(7, 8, 10, 0.94); }
+  .phone-showcase-index { background: var(--bg-soft); }
+
+  .ambient-background,
+  .contact-glow,
+  .work-section::before,
+  .phone-showcase-ambient,
+  .phone-modal-ambient { display: none; }
+
+  .motion-observer-ready .motion-reveal {
+    opacity: 1;
+    translate: none;
+    scale: none;
+    transition: none;
+  }
+
+  .project-preview-media .project-preview-frame.is-active,
+  .project-preview-story,
+  .project-preview-count,
+  .project-entry-cover img,
+  .project-entry-cover-shade,
+  .mechanic-modal-shell {
+    animation: none;
+  }
+
+  .project-preview-frame.is-active { transform: none; }
+
+  .project-card,
+  .modeling-card,
+  .scene-card {
+    transition: border-color 180ms ease;
+  }
+  .project-card:hover,
+  .project-card:active,
+  .modeling-card:hover,
+  .modeling-card:active,
+  .scene-card:hover,
+  .scene-card:active {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+}

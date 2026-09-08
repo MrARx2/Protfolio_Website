@@ -106,4 +106,4 @@ function FrostedCard({ project, onClick, featured = false, activeProjectId = nul
   );
 }
 
-export default FrostedCard;
+export default React.memo(FrostedCard);

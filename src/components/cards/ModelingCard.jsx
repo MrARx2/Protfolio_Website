@@ -65,4 +65,4 @@ function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
   );
 }
 
-export default ModelingCard;
+export default React.memo(ModelingCard);
