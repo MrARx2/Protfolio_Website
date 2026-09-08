@@ -1,10 +1,9 @@
 export const themes = [
-  { id: "amber", label: "Amber", swatch: "#ffb454" },
-  { id: "violet", label: "Violet", swatch: "#c39aff" },
-  { id: "ice", label: "Ice", swatch: "#72d8f7" }
+  { id: "ice", label: "Ice", swatch: "#72d8f7" },
+  { id: "amber", label: "Amber", swatch: "#ffb454" }
 ];
 
-export const defaultTheme = "amber";
+export const defaultTheme = "ice";
 export const themeStorageKey = "portfolio-theme";
 
 export function getInitialTheme() {
@@ -23,6 +22,9 @@ export function applyTheme(theme) {
 
   const nextTheme = themes.some(({ id }) => id === theme) ? theme : defaultTheme;
   document.documentElement.dataset.theme = nextTheme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute(
+    "content", nextTheme === "ice" ? "#071015" : "#090a0b"
+  );
 
   try {
     window.localStorage.setItem(themeStorageKey, nextTheme);

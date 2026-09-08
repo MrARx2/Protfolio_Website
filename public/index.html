@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="ice">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +10,19 @@
     <meta name="description" content="Game programmer specializing in Unity and Unreal Engine. View my portfolio of mobile roguelikes, arcade games, space racers, and 3D artwork." />
     <meta name="keywords" content="game developer, unity, unreal engine, game programmer, portfolio, game design, 3D modeling, Maya" />
     <meta name="author" content="Ariel Cohen" />
-    <meta name="theme-color" content="#090a0b" />
+    <meta name="theme-color" content="#071015" />
+    <!-- Restore the saved theme before the page paints. Retired themes use Ice. -->
+    <script>
+      (function () {
+        var theme = "ice";
+        try {
+          var savedTheme = localStorage.getItem("portfolio-theme");
+          if (savedTheme === "ice" || savedTheme === "amber") theme = savedTheme;
+        } catch (error) {}
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === "ice" ? "#071015" : "#090a0b";
+      })();
+    </script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />

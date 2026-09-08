@@ -36,27 +36,6 @@
   --motion-slow: 720ms;
 }
 
-:root[data-theme="violet"] {
-  --bg: #0b0910;
-  --bg-soft: #121018;
-  --surface: #1a1721;
-  --surface-raised: #221d2c;
-  --surface-hover: #2b2438;
-  --border: #393044;
-  --text: #f5f1f7;
-  --text-soft: #b0a7b5;
-  --text-muted: #a59aae;
-  --amber: #a874f5;
-  --amber-bright: #c39aff;
-  --amber-dark: #7045b6;
-  --accent-rgb: 168, 116, 245;
-  --accent-ink: #160b23;
-  --accent-hover: #d2b4ff;
-  --ambient-mid: #110d18;
-  --nav-glass: rgba(11, 9, 16, 0.88);
-  --mobile-nav-bg: rgba(11, 9, 16, 0.985);
-}
-
 :root[data-theme="ice"] {
   --bg: #071015;
   --bg-soft: #0c171d;
