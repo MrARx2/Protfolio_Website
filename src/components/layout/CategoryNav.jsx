@@ -36,19 +36,23 @@ function CategoryNav({
       aria-hidden={active ? undefined : 'true'}
     >
       {categories.map((category) => (
-        <button
+        <a
           key={category.id}
           aria-label={`${category.label}, ${category.count} ${category.count === 1 ? "project" : "projects"}`}
-          type="button"
+          href={category.id === "all" ? "#projects" : `#${category.id}`}
           tabIndex={active ? undefined : -1}
           className={activeCategory === category.id ? 'active' : ''}
           aria-current={activeCategory === category.id ? 'true' : undefined}
-          onClick={() => onSelect?.(category.id)}
+          onClick={(event) => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            onSelect?.(category.id);
+          }}
         >
           <span className="category-label-full">{category.label}</span>
-          <span className="category-label-compact" aria-hidden="true">{({ modeling: "3D", scenes: "Scenes" })[category.id] || category.label}</span>
+          <span className="category-label-compact" aria-hidden="true">{({ modeling: "Models", scenes: "Scenes" })[category.id] || category.label}</span>
           <sup>{String(category.count).padStart(2, '0')}</sup>
-        </button>
+        </a>
       ))}
     </nav>
   );

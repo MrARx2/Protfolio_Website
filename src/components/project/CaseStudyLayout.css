@@ -1,0 +1,79 @@
+/* Layout owned by the case study, separate from homepage sections. */
+.game-overview-featured { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr); align-items: center; gap: clamp(32px, 5vw, 72px); padding: 48px 0 40px; border-bottom: 1px solid var(--border-soft); }
+.game-overview-copy { min-width: 0; }
+.game-overview-featured .game-detail-title { font-size: clamp(3.2rem, 6vw, 6rem); line-height: 1; margin: 22px 0; }
+.game-overview-featured .game-detail-summary { font-size: 1.1rem; }
+.game-overview-featured .case-study-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.game-overview-media { --portrait-video-height: min(60svh, 560px); display: grid; justify-items: center; min-width: 0; }
+.game-overview-caption { margin: 10px 0 0; color: var(--text-muted); font-size: .75rem; }
+.case-study-toolbar-label { text-transform: none; letter-spacing: 0; font-size: .8rem; }
+.case-study-ending { width: var(--page); margin: 0 auto; padding: 0 0 56px; }
+.next-project-link { width: 100%; display: grid; grid-template-columns: 160px minmax(0, 1fr) auto; align-items: center; gap: 28px; padding: 24px; text-align: left; color: var(--text); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); cursor: pointer; transition: border-color 180ms ease, background-color 180ms ease; }
+.next-project-link:hover, .next-project-link:focus-visible { border-color: var(--amber-border); background: var(--surface-raised); }
+.next-project-link img { width: 160px; height: 100px; object-fit: cover; border-radius: 12px; }
+.next-project-link strong { display: block; margin-top: 10px; font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.1; }
+.next-project-arrow { color: var(--amber-bright); font-size: 2rem; }
+.case-study-return { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 18px; padding: 0; color: var(--text-soft); background: transparent; border: 0; font-size: .85rem; cursor: pointer; }
+.case-study-return:hover { color: var(--amber-bright); }
+.case-study-contact { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 40px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); }
+.case-study-contact h2 { margin: 12px 0 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+.gallery-image-count { color: var(--text-muted); font-size: .75rem; white-space: nowrap; letter-spacing: .05em; }
+@media (max-width: 900px) {
+  .game-overview-featured { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 32px 0 40px; }
+  .game-overview-featured .game-detail-title { font-size: clamp(2.7rem, 10vw, 4.6rem); }
+  .game-overview-media { --portrait-video-height: min(58svh, 520px); }
+}
+@media (max-width: 768px), (max-height: 520px) and (max-width: 1024px) {
+  .case-study-section .section-title { font-size: clamp(1.9rem, 5vw, 2.25rem); line-height: 1.1; }
+  .case-study-section .section-header { margin-bottom: 24px; }
+  .case-study-section.case-study-overview { gap: 0; }
+  .mechanics-list-grid .mechanic-item { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px 12px; min-height: 0; padding: 22px; }
+  .mechanic-item .mechanic-icon { margin: 0; font-size: 1.15rem; }
+  .mechanic-item h3 { margin: 0; align-self: center; }
+  .mechanic-item .mechanic-desc { grid-column: 1 / -1; }
+  .mechanic-item .mechanic-open-cue { grid-column: 1 / -1; margin: 0; padding-top: 4px; }
+  .case-study-ending { width: calc(100% - 28px); padding-bottom: 32px; }
+  .next-project-link { grid-template-columns: 88px minmax(0, 1fr) auto; gap: 16px; padding: 18px; border-radius: 22px; }
+  .next-project-link img { width: 88px; height: 82px; }
+  .next-project-link strong { font-size: 1.4rem; margin-top: 7px; }
+  .case-study-contact { padding: 28px; flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 360px) {
+  .next-project-link { gap: 12px; padding: 16px; grid-template-columns: 64px minmax(0, 1fr) auto; }
+  .next-project-link img { width: 64px; height: 72px; }
+  .next-project-link strong { font-size: 1.25rem; }
+}
+/* The gallery uses one counter next to its controls; the image remains the focus. */
+.gallery-stage-landscape .gallery-stage-media { height: clamp(300px, 48vw, 560px); }
+.gallery-stage-controls button, .phone-showcase-controls button { min-height: 44px; }
+.phone-showcase-thumb-grid button.active { color: var(--text); background: rgba(var(--accent-rgb), .09); box-shadow: 0 0 0 1px rgba(var(--accent-rgb), .3); }
+@media (max-width: 1024px) {
+  .phone-showcase-feature { height: auto; gap: 16px; }
+  .phone-showcase-device { width: min(250px, max(120px, calc((100svh - 280px) * .46)), 70vw); }
+  .phone-showcase-index { height: auto; min-height: 0; padding: 18px 20px; }
+  .phone-showcase-index-header { padding-bottom: 10px; }
+  .phone-showcase-index-header h3 { margin: 0; font-size: 1rem; }
+  .phone-showcase-thumb-scroll { margin-top: 10px; padding-bottom: 4px; }
+  .phone-showcase-thumb-grid button { width: 72px; height: 114px; flex-basis: 72px; padding: 4px; }
+}
+@media (max-width: 768px) {
+  .gallery-stage-landscape .gallery-stage-media { height: auto; aspect-ratio: 16 / 10; min-height: 0; padding: 12px; }
+  .gallery-stage-landscape .gallery-stage-image { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border-radius: 10px; }
+  .gallery-expand-label { right: 6px; bottom: 6px; font-size: .6rem; padding: 6px 8px; }
+  .gallery-heading-row { gap: 16px; margin-bottom: 20px; }
+  .gallery-heading-row .section-header { margin-bottom: 0; }
+  .gallery-collection-tabs button { min-height: 44px; }
+  .phone-showcase-feature { padding: 18px 16px; gap: 12px; }
+  .phone-showcase-device { width: min(230px, max(120px, calc((100svh - 280px) * .46)), 70vw); }
+  .phone-showcase-index { padding: 16px; }
+}
+@media (hover: none), (pointer: coarse) {
+  .gallery-stage-image:hover img { transform: none; filter: none; }
+  .phone-showcase-thumb-grid button:hover { transform: none; }
+}
+.project-detail > :is(.game-case-study, .modeling-detail, .scene-detail) { padding-bottom: 0; }
+:is(.game-case-study, .modeling-detail, .scene-detail) > .case-study-section:last-child { padding-bottom: 40px; border-bottom: 0; }
+
+@media (max-height: 520px) and (max-width: 1024px) {
+  .gallery-stage-landscape .gallery-stage-media { height: calc(100svh - 150px); min-height: 140px; }
+}

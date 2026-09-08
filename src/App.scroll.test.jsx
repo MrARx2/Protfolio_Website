@@ -61,3 +61,20 @@ test("a rapid scroll within a section does not redraw project cards or remeasure
   expect(measure).not.toHaveBeenCalled();
   expect(mount.querySelector(".site-progress span").style.transform).not.toBe("scaleX(0)");
 });
+
+test("returning to All work keeps the inline category links visible during the scroll", () => {
+  jest.spyOn(window, "scrollTo").mockImplementation(({ top }) => { window.scrollY = top; });
+  act(() => { window.scrollY = 4000; window.dispatchEvent(new Event("scroll")); });
+  flushFrames();
+  expect(mount.querySelector(".work-nav-inline").getAttribute("aria-hidden")).toBe("true");
+  act(() => mount.querySelector('.work-nav-inline a[href="#projects"]').click());
+  flushFrames();
+  expect(mount.querySelector(".work-nav-inline").hasAttribute("aria-hidden")).toBe(false);
+  act(() => {
+    const queued = [...frames.values()]; frames.clear();
+    queued.forEach(callback => callback(performance.now() + 1000));
+    window.dispatchEvent(new Event("scroll"));
+  });
+  flushFrames();
+  expect(mount.querySelector(".work-nav-inline").hasAttribute("aria-hidden")).toBe(false);
+});

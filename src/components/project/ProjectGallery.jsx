@@ -151,14 +151,6 @@ function StandardProjectGallery({
         onKeyDown={handleKeys}
         aria-label={`${activeCollection.label}, image ${activeIndex + 1} of ${total}.${portrait ? " Use up and down to scroll the image, and left and right to change images." : " Use left and right to change images."}`}
       >
-        <div className="gallery-stage-topbar">
-          <span>{activeCollection.label}</span>
-          <span className="gallery-keyboard-hint" aria-hidden="true">
-            {portrait ? "↑ ↓ scroll · ← → browse" : "← → to browse"}
-          </span>
-          <span aria-live="polite" aria-atomic="true">{String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
-        </div>
-
         <div className="gallery-stage-media">
           {visibleIndexes.map((imageIndex, position) => (
             <button
@@ -174,7 +166,7 @@ function StandardProjectGallery({
                 alt={`${projectTitle} ${activeCollection.label.toLowerCase()} ${imageIndex + 1}`}
                 loading={position === 0 ? "eager" : "lazy"}
               />
-              <span className="gallery-expand-label">View full screen <span aria-hidden="true">↗</span></span>
+              <span className="gallery-expand-label">Expand image <span aria-hidden="true">⤢</span></span>
             </button>
           ))}
         </div>
@@ -183,9 +175,7 @@ function StandardProjectGallery({
           <button type="button" onClick={previous} disabled={total < 2} aria-label="Previous image">
             <span aria-hidden="true">←</span> Previous
           </button>
-          <div className="gallery-stage-progress" aria-hidden="true">
-            <span style={{ width: `${((activeIndex + 1) / total) * 100}%` }} />
-          </div>
+          <span className="gallery-image-count" aria-live="polite" aria-atomic="true">{activeIndex + 1} / {total}</span>
           <button type="button" onClick={next} disabled={total < 2} aria-label="Next image">
             Next <span aria-hidden="true">→</span>
           </button>

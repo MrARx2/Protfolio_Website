@@ -39,20 +39,10 @@ function ModelingDetail({ project, entryPreview, onImageClick }) {
 
         {project.tags?.length > 0 && (
           <div className="modeling-tags-container">
-            {project.tags.map((tag) => <span className="tag modeling-tag" key={tag}>{tag}</span>)}
+            {project.tags.filter(tag => !['Maya', 'Unreal Engine 5'].includes(tag)).map((tag) => <span className="tag modeling-tag" key={tag}>{tag}</span>)}
           </div>
         )}
       </header>
-
-      {project.details && (
-        <section id="case-study-about" className="case-study-section modeling-overview-section">
-          <div className="section-header">
-            <span className="section-kicker">The project</span>
-            <h2 className="section-title">About the work</h2>
-          </div>
-          <p className="modeling-details-text">{project.details}</p>
-        </section>
-      )}
 
       <ProjectGallery
         sectionId="case-study-gallery"

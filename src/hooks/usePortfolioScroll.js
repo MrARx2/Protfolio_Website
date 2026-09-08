@@ -18,13 +18,15 @@ export default function usePortfolioScroll({ enabled, docked, activeCategory, an
       targets: [pill, ...sections.map(({ element }) => element)],
       inset: document.querySelector(".navbar"),
       onUpdate: ({ position, tops, insetHeight }) => {
+        // A section jump owns the destination nav state until it finishes.
+        // Redocking midway through a return to All work hides the inline pill.
+        if (animationRef.current) return;
         // Separate dock/release thresholds prevent flicker at the handoff.
         const nextDocked = tops[0] - position <= (current.current.docked ? 96 : 72);
         if (nextDocked !== current.current.docked) {
           current.current.docked = nextDocked;
           onDockChange(nextDocked);
         }
-        if (animationRef.current) return;
         const marker = position + (insetHeight || 72) + 40;
         let nextCategory = "all";
         sections.forEach(({ category }, index) => {

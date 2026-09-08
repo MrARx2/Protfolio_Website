@@ -26,9 +26,9 @@ export default function MobileMenu({ onClose, returnFocusRef, categories, onSele
         </header>
         <nav className="mobile-menu-sections" aria-label="Portfolio sections">
           {categories.map((category) => <button key={category.id} type="button" onClick={() => navigate(() => onSelectCategory(category.id))}>
-            <span>{category.label}</span><span className="mobile-menu-count">{category.count} {category.count === 1 ? "project" : "projects"} <span aria-hidden="true">↗</span></span>
+            <span>{category.label}</span><span className="mobile-menu-count">{category.count} {category.count === 1 ? "project" : "projects"} <span aria-hidden="true">↓</span></span>
           </button>)}
-          <button type="button" onClick={() => navigate(() => document.getElementById("contact")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }))}>Contact <span aria-hidden="true">↗</span></button>
+          <button type="button" onClick={() => navigate(() => document.getElementById("contact")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }))}>Contact <span aria-hidden="true">↓</span></button>
         </nav>
         <div className="mobile-menu-links">
           <button className="button button-primary" type="button" onClick={onResume}>View resume</button>

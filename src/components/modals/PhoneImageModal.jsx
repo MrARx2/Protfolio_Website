@@ -196,7 +196,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
                 onClick={toggleInspection}
                 onPointerDown={(event) => { pointerStart.current = { x: event.clientX, y: event.clientY }; }}
                 onPointerUp={(event) => { const start = pointerStart.current; if (start && Math.abs(event.clientX - start.x) + Math.abs(event.clientY - start.y) > 12) suppressClickUntil.current = Date.now() + 500; }}
-                aria-label={isInspecting ? "Fit the complete mobile screen" : "Inspect mobile screen details"}
+                aria-label={isInspecting ? "Fit image" : "Zoom in on mobile screen"}
               >
                 <img
                   key={`${activeImage}-${retry}`}
@@ -219,7 +219,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
           <div className="phone-modal-center-controls">
             <span>{isInspecting ? "↑ ↓ scroll details · ← → browse" : "Complete screen · ← → browse"}</span>
             <button type="button" className="phone-modal-inspect-button" onClick={toggleInspection} disabled={!imageLoaded}>
-              {isInspecting ? "Fit screen" : "Inspect details"}
+              {isInspecting ? "Fit image" : "Zoom in"}
             </button>
           </div>
           <button type="button" onClick={next} disabled={total < 2} aria-label="Next mobile screen">

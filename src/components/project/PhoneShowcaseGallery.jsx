@@ -194,7 +194,7 @@ function PhoneShowcaseGallery({
                 />
                 <span className="phone-showcase-touch-hint phone-showcase-touch-hint-left" aria-hidden="true">←</span>
                 <span className="phone-showcase-touch-hint phone-showcase-touch-hint-right" aria-hidden="true">→</span>
-                <span className="phone-showcase-expand">Inspect details <span aria-hidden="true">↗</span></span>
+                <span className="phone-showcase-expand">Expand image <span aria-hidden="true">⤢</span></span>
               </button>
             </PhoneFrame>
 
@@ -214,8 +214,8 @@ function PhoneShowcaseGallery({
           <aside className="phone-showcase-index" aria-label="Path of Embers screen index">
             <div className="phone-showcase-index-header">
               <div>
-                <span className="phone-showcase-index-kicker">Screen index</span>
-                <h3>Explore the game</h3>
+
+                <h3>Choose a screen</h3>
               </div>
               <span className="phone-showcase-key-hint" aria-hidden="true">← → browse</span>
             </div>

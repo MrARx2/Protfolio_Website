@@ -12,11 +12,6 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
       id: "environment",
       label: "Environment",
       images: project.images || []
-    },
-    {
-      id: "technical",
-      label: "Technical views",
-      images: coolFeatures.map((feature) => feature.image).filter(Boolean)
     }
   ];
 
@@ -32,7 +27,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
 
         {project.tags?.length > 0 && (
           <div className="scene-tags-container">
-            {project.tags.map((tag) => <span className="tag scene-tag" key={tag}>{tag}</span>)}
+            {project.tags.filter(tag => !['Maya', 'Unreal Engine 5'].includes(tag)).map((tag) => <span className="tag scene-tag" key={tag}>{tag}</span>)}
           </div>
         )}
       </header>
@@ -48,20 +43,10 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
         </section>
       )}
 
-      {project.details && (
-        <section id="case-study-about" className="case-study-section scene-overview-section">
-          <div className="section-header">
-            <span className="section-kicker">The environment</span>
-            <h2 className="section-title">Overview</h2>
-          </div>
-          <p className="scene-details-text">{project.details}</p>
-        </section>
-      )}
-
       <ProjectGallery
         sectionId="case-study-gallery"
         title="Environment gallery"
-        description="Explore the finished scene and technical views. Select an image to enlarge it."
+        description="Lighting, composition, and details from the finished environment."
         projectTitle={project.title}
         collections={collections}
         onImageClick={onImageClick}
@@ -83,7 +68,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
                 <p className="cool-feature-description">{feature.description}</p>
                 {feature.image && <button type="button" className="technical-image-button" onClick={() => onImageClick([feature.image], 0)} aria-label={`Enlarge ${feature.title} visualization`}>
                   <ResponsiveImage src={feature.image} alt={`${feature.title} visualization`} loading="lazy" />
-                  <span>View full image ↗</span>
+                  <span>Expand image ⤢</span>
                 </button>}
               </article>
             ))}

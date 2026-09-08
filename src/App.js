@@ -110,6 +110,8 @@ function App() {
   const galleryIndexCallback = useRef(null);
   const savedScrollPosition = useRef(0);
   const openedProjectId = useRef(initialProject?.id || null);
+  const portfolioReturnId = useRef(initialProject?.id || null);
+  const pendingPortfolioDestination = useRef(null);
   const portfolioPageRef = useRef(null);
   const projectActionRef = useRef(initialProject ? "open" : "closed");
   const projectTransitionTokenRef = useRef(0);
@@ -242,6 +244,7 @@ function App() {
 
     savedScrollPosition.current = window.scrollY;
     openedProjectId.current = project.id;
+    portfolioReturnId.current = project.id;
     const projectCategory = getProjectCategory(project);
     const returnCategory = projectCategory;
     projectActionRef.current = "opening";
@@ -269,6 +272,8 @@ function App() {
       {
         kind: "project",
         project: project.id,
+        returnProjectId: project.id,
+        projectDepth: 1,
         returnCategory,
         scrollY: savedScrollPosition.current,
         canGoBack: true
@@ -291,13 +296,30 @@ function App() {
 
     const onFinished = () => {
       projectActionRef.current = "closed";
-      if (projectId) restoreProjectCard(projectId, scrollPosition);
+      const destination = pendingPortfolioDestination.current;
+      pendingPortfolioDestination.current = null;
+      if (destination) {
+        window.requestAnimationFrame(() => {
+          if (destination === "all") {
+            scrollToSection("all");
+            document.getElementById("main-content")?.focus({ preventScroll: true });
+          } else {
+            const contact = document.getElementById("contact");
+            const offset = (document.querySelector(".navbar")?.getBoundingClientRect().height || 72) + 20;
+            const top = Math.max(0, window.scrollY + (contact?.getBoundingClientRect().top || 0) - offset);
+            window.scrollTo({ top, behavior: "auto" });
+            window.history.replaceState({ kind: "portfolio", category: "scenes", scrollY: top }, "", "#contact");
+            contact?.focus({ preventScroll: true });
+          }
+        });
+      } else if (projectId) restoreProjectCard(projectId, scrollPosition);
     };
 
     commitProjectUpdate(update, onFinished, "close");
-  }, [commitProjectUpdate, restoreProjectCard]);
+  }, [commitProjectUpdate, restoreProjectCard, scrollToSection]);
 
   const closeProject = useCallback(() => {
+    if (projectActionRef.current === "closing") return;
     const projectId = selected?.id || openedProjectId.current;
     const currentState = window.history.state || {};
     const returnCategory = projectReturnCategory
@@ -305,17 +327,44 @@ function App() {
       || (selected ? getProjectCategory(selected) : activeCategory);
 
     if (currentState.kind === "project" && currentState.project === projectId && currentState.canGoBack) {
-      window.history.back();
+      projectActionRef.current = "closing";
+      window.history.go(-(currentState.projectDepth || 1));
       return;
     }
 
-    finishClosingProject(returnCategory, projectId, currentState.scrollY ?? savedScrollPosition.current);
+    finishClosingProject(returnCategory, portfolioReturnId.current || projectId, currentState.scrollY ?? savedScrollPosition.current);
     window.history.replaceState(
       { kind: "portfolio", category: returnCategory, scrollY: savedScrollPosition.current },
       "",
       returnCategory === "all" ? "#projects" : `#${returnCategory}`
     );
   }, [activeCategory, finishClosingProject, projectReturnCategory, selected]);
+
+  const nextProject = selected ? allProjects[allProjects.findIndex(project => project.id === selected.id) + 1] : null;
+
+  const openNextProject = useCallback(() => {
+    if (!nextProject || modal || projectActionRef.current !== "open") return;
+    const currentState = window.history.state || {};
+    window.history.pushState({
+      kind: "project", project: nextProject.id,
+      returnCategory: projectReturnCategory,
+      returnProjectId: portfolioReturnId.current,
+      scrollY: savedScrollPosition.current,
+      projectDepth: (currentState.projectDepth || 0) + 1,
+      canGoBack: Boolean(currentState.canGoBack)
+    }, "", "#project/" + encodeURIComponent(nextProject.id));
+    openedProjectId.current = nextProject.id;
+    projectActionRef.current = "opening";
+    commitProjectUpdate(() => {
+      setSelectedPreview(null);
+      setSelected(nextProject);
+    }, () => { projectActionRef.current = "open"; });
+  }, [commitProjectUpdate, modal, nextProject, projectReturnCategory]);
+
+  const leaveForPortfolio = useCallback((destination) => {
+    pendingPortfolioDestination.current = destination;
+    closeProject();
+  }, [closeProject]);
 
   const openImageModal = useCallback((images, index, options = {}) => {
     if (!selected) return;
@@ -368,6 +417,8 @@ function App() {
         {
           kind: gallery ? "gallery" : "project",
           project: initialProject.id,
+          returnProjectId: initialProject.id,
+          projectDepth: 0,
           returnCategory: getProjectCategory(initialProject),
           scrollY: 0,
           canGoBack: false,
@@ -411,6 +462,7 @@ function App() {
         setModal(nextGallery);
         setProjectReturnCategory(returnCategory);
         openedProjectId.current = nextProject.id;
+        portfolioReturnId.current = state.returnProjectId || nextProject.id;
         savedScrollPosition.current = state.scrollY ?? savedScrollPosition.current;
 
         if (selected?.id !== nextProject.id) {
@@ -428,7 +480,7 @@ function App() {
       const returnCategory = state.category || categoryFromHash();
       const returnScroll = state.scrollY ?? savedScrollPosition.current;
       if (selected) {
-        finishClosingProject(returnCategory, selected.id, returnScroll);
+        finishClosingProject(returnCategory, portfolioReturnId.current || selected.id, returnScroll);
       } else {
         setActiveCategory(returnCategory);
         // The portfolio stayed mounted beneath the menu/resume; preserve its live position.
@@ -488,6 +540,7 @@ function App() {
 
             <main className="work-main" id="main-content" tabIndex={-1}>
             <div className="work-nav-shell" id="projects">
+              <span className={`work-nav-label${showCategoryNav ? " is-docked" : ""}`} aria-hidden="true">Jump to</span>
               <CategoryNav
                 variant="inline"
                 categories={categories}
@@ -502,7 +555,7 @@ function App() {
             <section className="work-section games-section" id="games-section" data-category="games">
               <SectionHeading
                 title="Games"
-                description="Systems-driven projects built around responsive controls, readable feedback, and a strong core loop."
+                description="From mobile combat to arcade competition and space racing. Explore the gameplay and the systems behind it."
               />
               <div className="games-showcase">
                 {gameProjects[0] && (
@@ -519,7 +572,7 @@ function App() {
             <section className="work-section models-work-section" id="modeling-section" data-category="modeling">
               <SectionHeading
                 title="3D Modeling"
-                description="Hard-surface studies developed from modeling and topology through texturing and final real-time presentation."
+                description="Models, materials, and the process behind each finished piece."
               />
               <div className="modeling-showcase">
                 {modelingProjects.map((project, index) => (
@@ -537,7 +590,7 @@ function App() {
             <section className="work-section scenes-section" id="scenes-section" data-category="scenes">
               <SectionHeading
                 title="Scenes & Environments"
-                description="Environment studies focused on atmosphere, composition, lighting, and real-time rendering."
+                description="Worlds shaped through composition, lighting, and real-time rendering."
               />
               <div className="scene-showcase">
                 {sceneProjects.map((project) => (
@@ -547,23 +600,22 @@ function App() {
             </section>
             </main>
 
-            <footer className="contact-section" id="contact">
+            <footer className="contact-section" id="contact" tabIndex={-1}>
             <div className="contact-glow" aria-hidden="true" />
             <span className="section-kicker">Let&apos;s connect</span>
-            <h2>Let&apos;s build something interactive.</h2>
+            <h2>Let&apos;s build together.</h2>
             <p>
-              I&apos;m always interested in thoughtful game projects, technical challenges,
-              and opportunities to create memorable player experiences.
+              Have a game project or a technical challenge in mind? Let&apos;s talk.
             </p>
             <div className="contact-actions">
               <a className="button button-primary" href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">
                 Connect on LinkedIn <span aria-hidden="true">↗</span>
               </a>
-              <a className="button button-secondary" href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">
-                View GitHub <span aria-hidden="true">↗</span>
+              <a className="contact-secondary-link" href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">
+                GitHub <span aria-hidden="true">↗</span>
               </a>
-              <a className="button button-quiet" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
-                Open resume PDF <span aria-hidden="true">↗</span>
+              <a className="contact-secondary-link" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
+                Resume PDF <span aria-hidden="true">↗</span>
               </a>
             </div>
             <div className="footer-meta">
@@ -577,6 +629,11 @@ function App() {
 
           {selected && (
             <ProjectDetail
+              key={selected.id}
+              nextProject={nextProject}
+              onNextProject={openNextProject}
+              onViewWork={() => leaveForPortfolio("all")}
+              onContact={() => leaveForPortfolio("contact")}
               project={selected}
               backLabel={backLabels[projectReturnCategory || getProjectCategory(selected)]}
               entryPreview={selectedPreview}

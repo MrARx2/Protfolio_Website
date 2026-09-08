@@ -1,4 +1,6 @@
-import CaseStudyMeta from "./CaseStudyMeta";
+import GameOverview from "./GameOverview";
+import CaseStudyEnding from "./CaseStudyEnding";
+import "./CaseStudyLayout.css";
 import { decodeRoutePart } from "../../utils/routeHelpers";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { mechanicsData } from "../../data/projects";
@@ -6,13 +8,11 @@ import { isYouTubeShortUrl } from "../../utils/youtubeHelpers";
 import ModelingDetail from "./ModelingDetail";
 import SceneDetail from "./SceneDetail";
 import ProjectGallery from "./ProjectGallery";
-import ProjectEntryCover from "./ProjectEntryCover";
 import MechanicModal from "../modals/MechanicModal";
 import { usePageScrollLock } from "../../hooks/useDialog";
-import VideoPreview from "./VideoPreview";
 import CaseStudyNav from "./CaseStudyNav";
 
-function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick }) {
+function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false, onBack, onImageClick, nextProject, onNextProject, onViewWork, onContact }) {
   usePageScrollLock();
   const backdropRef = useRef(null);
   const backButtonRef = useRef(null);
@@ -20,9 +20,6 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
   const [selectedMechanic, setSelectedMechanic] = useState(null);
   const mechanics = mechanicsData[project.id] || [];
   const isPortraitTrailer = isYouTubeShortUrl(project.youtube);
-  const portraitVideoStyle = isPortraitTrailer
-    ? { "--video-aspect-ratio": project.videoAspectRatio || "9 / 16" }
-    : undefined;
 
   const openMechanic = useCallback((mechanic, trigger) => {
     mechanicTriggerRef.current = trigger;
@@ -130,13 +127,10 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
     if (event.target === backdropRef.current) onBack();
   };
 
-  const isAcademicProject = project.type !== "scene";
-  const showEntryCover = project.id !== "path-of-embers" && Boolean(project.cardPreview);
   const caseStudySections = useMemo(() => {
     if (project.type === "modeling") {
       return [
         { id: "case-study-overview", label: "Overview" },
-        ...(project.details ? [{ id: "case-study-about", label: "About" }] : []),
         { id: "case-study-gallery", label: "Gallery" }
       ];
     }
@@ -145,7 +139,6 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
       return [
         { id: "case-study-overview", label: "Overview" },
         ...(project.videoUrl ? [{ id: "case-study-video", label: "Video" }] : []),
-        ...(project.details ? [{ id: "case-study-about", label: "Story" }] : []),
         { id: "case-study-gallery", label: "Gallery" },
         ...(project.coolFeatures?.length ? [{ id: "case-study-technical", label: "Technical" }] : [])
       ];
@@ -153,8 +146,8 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
     return [
       { id: "case-study-overview", label: "Overview" },
-      ...(project.youtube ? [{ id: "case-study-video", label: isPortraitTrailer ? "Trailer" : "Video" }] : []),
-      ...(project.details ? [{ id: "case-study-about", label: "About" }] : []),
+      ...(project.youtube && !isPortraitTrailer ? [{ id: "case-study-video", label: "Gameplay" }] : []),
+      ...(project.details ? [{ id: "case-study-about", label: "How it plays" }] : []),
       ...(mechanics.length ? [{ id: "case-study-mechanics", label: "Systems" }] : []),
       { id: "case-study-gallery", label: "Gallery" },
       ...(project.teamCredits ? [{ id: "case-study-team", label: "Team" }] : [])
@@ -180,7 +173,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             <span>{backLabel}</span>
           </button>
           <CaseStudyNav sections={caseStudySections} scrollRootRef={backdropRef} />
-          <span className="case-study-toolbar-label">Case study</span>
+          <span className="case-study-toolbar-label">{project.title}</span>
         </div>
 
         {project.type === "modeling" ? (
@@ -189,56 +182,13 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
           <SceneDetail project={project} entryPreview={entryPreview} onImageClick={onImageClick} />
         ) : (
           <div className="game-case-study">
-            <header id="case-study-overview" className={`case-study-hero${showEntryCover ? " project-detail-header-with-cover" : ""}`}>
-              {showEntryCover && <ProjectEntryCover project={project} previewFrame={entryPreview} />}
-              <div className="case-study-title-block">
-                <span className="project-eyebrow">{isAcademicProject ? "Academic game project" : "Game project"}</span>
-                <h1 className="game-detail-title">
-                  {project.title}
-                </h1>
-                <p className="game-detail-summary">{project.summary}</p>
-              </div>
-
-        <CaseStudyMeta project={project} />
-
-              <div className="case-study-tags">
-                {project.tags?.map((tag) => <span key={tag}>{tag}</span>)}
-              </div>
-            </header>
-
-            {project.youtube && (
-              <section
-                id="case-study-video"
-                className={`case-study-section case-study-video-section${isPortraitTrailer ? " case-study-video-portrait" : ""}`}
-                style={portraitVideoStyle}
-              >
-                <div className="section-header">
-                  <span className="section-kicker">Watch it in motion</span>
-                  <h2 className="section-title">{isPortraitTrailer ? "Mobile gameplay trailer" : "Gameplay preview"}</h2>
-                  <p className="section-description">
-                    {isPortraitTrailer
-                      ? "Combat, talents, and progression captured on a phone."
-                      : "A closer look at the game's pace, systems, and player feedback."}
-                  </p>
-                  {isPortraitTrailer && (
-                    <div
-                      className="video-format-note"
-                      aria-label={`${project.videoAspectLabel || "9:16"} portrait video captured on Galaxy S24+`}
-                    >
-                      <span>{project.videoAspectLabel || "9:16"}</span>
-                      <span>{project.videoCaptureLabel || "Optimized for mobile viewing"}</span>
-                    </div>
-                  )}
-                </div>
-                <VideoPreview url={project.youtube} title={`${project.title} gameplay preview`} poster={project.thumbnail || project.images?.[0]} portrait={isPortraitTrailer} />
-              </section>
-            )}
+            <GameOverview project={project} entryPreview={entryPreview} />
 
             {project.details && (
               <section id="case-study-about" className="case-study-section case-study-overview">
                 <div className="section-header">
                   <span className="section-kicker">The project</span>
-                  <h2 className="section-title">About the game</h2>
+                  <h2 className="section-title">How it plays</h2>
                 </div>
                 <div className="detail-body">
                   {project.details.split("\n").filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -250,8 +200,8 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
               <section id="case-study-mechanics" className="case-study-section mechanics-section">
                 <div className="section-header">
                   <span className="section-kicker">Systems & interaction</span>
-                  <h2 className="section-title">Core mechanics</h2>
-                  <p className="section-description">The features that shape the moment-to-moment experience.</p>
+                  <h2 className="section-title">Gameplay systems</h2>
+                  <p className="section-description">Choose a system to see how it works.</p>
                 </div>
                 <div className="mechanics-list-grid">
                   {mechanics.map((mechanic) => (
@@ -266,7 +216,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                       <h3>{mechanic.label}</h3>
                       <p className="mechanic-desc">{mechanic.desc}</p>
                       <span className="mechanic-open-cue">
-                        Explore system <span aria-hidden="true">↗</span>
+                        Explore system <span aria-hidden="true">→</span>
                       </span>
                     </button>
                   ))}
@@ -276,9 +226,9 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
 
             <ProjectGallery
               sectionId="case-study-gallery"
-              title="Selected gallery"
+              title="In-game gallery"
               description={project.galleryPresentation === "phone-showcase"
-                ? "Move through the complete mobile experience—from combat and exploration to progression and interface design."
+                ? "Combat, progression, and menus. Choose a screen to explore."
                 : "Gameplay and interface screenshots. Select an image to enlarge it."}
               projectTitle={project.title}
               presentation={project.galleryPresentation}
@@ -315,6 +265,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
             )}
           </div>
         )}
+        <CaseStudyEnding nextProject={nextProject} onNextProject={onNextProject} onViewWork={onViewWork} onContact={onContact} />
       </article>
 
       {selectedMechanic && (
