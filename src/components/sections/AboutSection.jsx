@@ -9,8 +9,8 @@ function AboutSection({ onExplore, paused = false }) {
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_HERO_QUERY).matches);
   const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
   const videoSrc = process.env.PUBLIC_URL + (isDesktop
-    ? "/Videos/hero-desktop.mp4"
-    : "/Videos/hero-mobile.mp4");
+    ? "/Videos/hero-desktop.mp4?v=2"
+    : "/Videos/hero-mobile.mp4?v=2");
   const posterSrc = process.env.PUBLIC_URL + (isDesktop
     ? "/Images/hero-desktop-poster.webp"
     : "/Images/hero-mobile-poster.webp");

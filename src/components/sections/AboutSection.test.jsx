@@ -77,7 +77,7 @@ test("desktop uses only the new video with a loading poster and controlled playb
   expect(mount.querySelector("video")).toBeNull();
   act(() => jest.advanceTimersByTime(200));
   const video = mount.querySelector("video");
-  expect(video.getAttribute("src")).toBe("/Videos/hero-desktop.mp4");
+  expect(video.getAttribute("src")).toBe("/Videos/hero-desktop.mp4?v=2");
   expect(video.getAttribute("poster")).toBe("/Images/hero-desktop-poster.webp");
   expect(video.hasAttribute("autoplay")).toBe(false);
   expect(video.muted).toBe(true);
@@ -87,7 +87,7 @@ test("desktop uses only the new video with a loading poster and controlled playb
 test("phones use the new portrait video and its matching poster without desktop assets", () => {
   setMedia(desktopQuery, false);
   const video = renderHero();
-  expect(video.getAttribute("src")).toBe("/Videos/hero-mobile.mp4");
+  expect(video.getAttribute("src")).toBe("/Videos/hero-mobile.mp4?v=2");
   expect(mount.querySelector(".hero-poster-bg").getAttribute("src")).toBe("/Images/hero-mobile-poster.webp");
   expect(video.getAttribute("poster")).toBe("/Images/hero-mobile-poster.webp");
   expect(mount.querySelector('[src*="hero-desktop"]')).toBeNull();
@@ -101,7 +101,7 @@ test("changing the device layout replaces and pauses the previous video", () => 
   expect(mobile).not.toBe(desktop);
   expect(desktop.paused).toBe(true);
   expect(mount.querySelectorAll("video")).toHaveLength(1);
-  expect(mobile.getAttribute("src")).toBe("/Videos/hero-mobile.mp4");
+  expect(mobile.getAttribute("src")).toBe("/Videos/hero-mobile.mp4?v=2");
   expect(mobile.getAttribute("poster")).toBe("/Images/hero-mobile-poster.webp");
   intersect(true);
   expect(mobile.paused).toBe(false);

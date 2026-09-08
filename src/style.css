@@ -554,7 +554,7 @@ video {
   min-height: 0;
   object-fit: cover;
   object-position: center;
-  transform: none;
+  transform: scale(1.05);
   filter: saturate(0.78) contrast(1.04) brightness(0.68);
   pointer-events: none;
 }

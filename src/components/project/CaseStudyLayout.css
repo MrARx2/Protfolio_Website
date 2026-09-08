@@ -1,4 +1,15 @@
 /* Layout owned by the case study, separate from homepage sections. */
+.project-detail .case-study-section { padding-block: 48px; }
+.case-study-section .section-header { max-width: 760px; margin-bottom: 28px; }
+.case-study-section .section-title { margin: 12px 0; font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.08; letter-spacing: -.04em; }
+.case-study-section .section-title:last-child { margin-bottom: 0; }
+.case-study-section .gallery-heading-row { margin-bottom: 28px; }
+.case-study-section .gallery-heading-row .section-header { margin-bottom: 0; }
+/* Read the introduction in the same direction as the sections that follow it. */
+.case-study-section.case-study-overview { display: block; }
+.case-study-overview .detail-body { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 48px; color: var(--text-soft); font-size: 1.125rem; line-height: 1.7; white-space: normal; }
+.case-study-overview .detail-body p { max-width: 65ch; margin: 0; }
+.case-study-overview .detail-body p:only-child { grid-column: 1 / -1; }
 .game-overview-featured { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr); align-items: center; gap: clamp(32px, 5vw, 72px); padding: 48px 0 40px; border-bottom: 1px solid var(--border-soft); }
 .game-overview-copy { min-width: 0; }
 .game-overview-featured .game-detail-title { font-size: clamp(3.2rem, 6vw, 6rem); line-height: 1; margin: 22px 0; }
@@ -24,9 +35,10 @@
   .game-overview-media { --portrait-video-height: min(58svh, 520px); }
 }
 @media (max-width: 768px), (max-height: 520px) and (max-width: 1024px) {
+  .project-detail .case-study-section { padding-block: 36px; }
   .case-study-section .section-title { font-size: clamp(1.9rem, 5vw, 2.25rem); line-height: 1.1; }
   .case-study-section .section-header { margin-bottom: 24px; }
-  .case-study-section.case-study-overview { gap: 0; }
+  .case-study-overview .detail-body { grid-template-columns: minmax(0, 1fr); gap: 18px; font-size: 1rem; }
   .mechanics-list-grid .mechanic-item { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px 12px; min-height: 0; padding: 22px; }
   .mechanic-item .mechanic-icon { margin: 0; font-size: 1.15rem; }
   .mechanic-item h3 { margin: 0; align-self: center; }
@@ -60,7 +72,7 @@
   .gallery-stage-landscape .gallery-stage-media { height: auto; aspect-ratio: 16 / 10; min-height: 0; padding: 12px; }
   .gallery-stage-landscape .gallery-stage-image { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border-radius: 10px; }
   .gallery-expand-label { right: 6px; bottom: 6px; font-size: .6rem; padding: 6px 8px; }
-  .gallery-heading-row { gap: 16px; margin-bottom: 20px; }
+  .case-study-section .gallery-heading-row { gap: 16px; margin-bottom: 20px; }
   .gallery-heading-row .section-header { margin-bottom: 0; }
   .gallery-collection-tabs button { min-height: 44px; }
   .phone-showcase-feature { padding: 18px 16px; gap: 12px; }
