@@ -543,27 +543,8 @@ video {
   background: #08090a;
 }
 
+.hero-poster-bg,
 .hero-video-bg {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  z-index: 0;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translate(-48.5%, -50%) scale(1.05);
-  object-fit: cover;
-  filter: saturate(0.78) contrast(1.04) brightness(0.68);
-  animation: hero-video-in 1.4s var(--ease) both;
-}
-
-@keyframes hero-video-in {
-  from { opacity: 0; transform: translate(-48.5%, -50%) scale(1.09); }
-  to { opacity: 1; transform: translate(-48.5%, -50%) scale(1.05); }
-}
-
-.hero-desktop-poster,
-.hero-video-bg--desktop {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -578,11 +559,11 @@ video {
   pointer-events: none;
 }
 
-.hero-video-bg--desktop {
-  animation: hero-desktop-video-in 800ms var(--ease) both;
+.hero-video-bg {
+  animation: hero-video-in 800ms var(--ease) both;
 }
 
-@keyframes hero-desktop-video-in {
+@keyframes hero-video-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
@@ -5559,7 +5540,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   .work-nav,
   .site-progress,
   .ambient-background,
-  .hero-desktop-poster,
+  .hero-poster-bg,
   .hero-video-bg {
     display: none !important;
   }

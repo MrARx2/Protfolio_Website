@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { personalInfo } from "../../data/personalInfo";
 
 const DESKTOP_HERO_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: fine)";
-const DESKTOP_POSTER = process.env.PUBLIC_URL + "/Images/hero-desktop-poster.webp";
 
 function AboutSection({ onExplore, paused = false }) {
   const heroRef = useRef(null);
@@ -11,7 +10,10 @@ function AboutSection({ onExplore, paused = false }) {
   const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
   const videoSrc = process.env.PUBLIC_URL + (isDesktop
     ? "/Videos/hero-desktop.mp4"
-    : "/Videos/herotrailer8_Compressed.mp4");
+    : "/Videos/hero-mobile.mp4");
+  const posterSrc = process.env.PUBLIC_URL + (isDesktop
+    ? "/Images/hero-desktop-poster.webp"
+    : "/Images/hero-mobile-poster.webp");
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_HERO_QUERY);
@@ -55,7 +57,7 @@ function AboutSection({ onExplore, paused = false }) {
     const video = videoRef.current;
     let heroVisible = false;
     const hasBlockingOverlay = () => Boolean(document.querySelector(
-      ".project-detail-backdrop, .resume-modal-backdrop, .image-modal, .mechanic-modal-backdrop"
+      ".project-detail-backdrop, .resume-modal-backdrop, .image-modal, .mechanic-modal-backdrop, .mobile-menu-backdrop"
     ));
     const syncPlayback = () => {
       if (!video) return;
@@ -81,16 +83,14 @@ function AboutSection({ onExplore, paused = false }) {
 
   return (
     <section className="hero-section" id="about" ref={heroRef}>
-      {isDesktop && (
-        <img className="hero-desktop-poster" src={DESKTOP_POSTER} alt="" aria-hidden="true" decoding="async" />
-      )}
+      <img className="hero-poster-bg" src={posterSrc} alt="" aria-hidden="true" decoding="async" />
       {shouldRenderVideo && (
         <video
           key={videoSrc}
           ref={videoRef}
           className={`hero-video-bg${isDesktop ? " hero-video-bg--desktop" : ""}`}
           src={videoSrc}
-          poster={isDesktop ? DESKTOP_POSTER : undefined}
+          poster={posterSrc}
           loop
           muted
           playsInline

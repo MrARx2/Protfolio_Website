@@ -73,7 +73,7 @@ afterEach(() => {
 
 test("desktop uses only the new video with a loading poster and controlled playback", () => {
   act(() => root.render(<AboutSection />));
-  expect(mount.querySelector(".hero-desktop-poster")).not.toBeNull();
+  expect(mount.querySelector(".hero-poster-bg").getAttribute("src")).toBe("/Images/hero-desktop-poster.webp");
   expect(mount.querySelector("video")).toBeNull();
   act(() => jest.advanceTimersByTime(200));
   const video = mount.querySelector("video");
@@ -84,12 +84,13 @@ test("desktop uses only the new video with a loading poster and controlled playb
   expect(play).not.toHaveBeenCalled();
 });
 
-test("phones retain the portrait video without loading the desktop poster", () => {
+test("phones use the new portrait video and its matching poster without desktop assets", () => {
   setMedia(desktopQuery, false);
   const video = renderHero();
-  expect(video.getAttribute("src")).toBe("/Videos/herotrailer8_Compressed.mp4");
-  expect(mount.querySelector(".hero-desktop-poster")).toBeNull();
-  expect(video.hasAttribute("poster")).toBe(false);
+  expect(video.getAttribute("src")).toBe("/Videos/hero-mobile.mp4");
+  expect(mount.querySelector(".hero-poster-bg").getAttribute("src")).toBe("/Images/hero-mobile-poster.webp");
+  expect(video.getAttribute("poster")).toBe("/Images/hero-mobile-poster.webp");
+  expect(mount.querySelector('[src*="hero-desktop"]')).toBeNull();
 });
 
 test("changing the device layout replaces and pauses the previous video", () => {
@@ -100,22 +101,27 @@ test("changing the device layout replaces and pauses the previous video", () => 
   expect(mobile).not.toBe(desktop);
   expect(desktop.paused).toBe(true);
   expect(mount.querySelectorAll("video")).toHaveLength(1);
-  expect(mobile.getAttribute("src")).toContain("herotrailer8_Compressed.mp4");
+  expect(mobile.getAttribute("src")).toBe("/Videos/hero-mobile.mp4");
+  expect(mobile.getAttribute("poster")).toBe("/Images/hero-mobile-poster.webp");
   intersect(true);
   expect(mobile.paused).toBe(false);
 });
 
-test.each(["reduced motion", "data saving"])("%s displays the desktop poster without creating a video", preference => {
+test.each([
+  ["reduced motion", "desktop"], ["data saving", "desktop"],
+  ["reduced motion", "mobile"], ["data saving", "mobile"],
+])("%s displays the %s poster without creating a video", (preference, device) => {
+  setMedia(desktopQuery, device === "desktop");
   if (preference === "reduced motion") setMedia(motionQuery, true);
   else navigator.connection.saveData = true;
   renderHero();
   act(() => jest.advanceTimersByTime(10000));
   expect(mount.querySelector("video")).toBeNull();
-  expect(mount.querySelector(".hero-desktop-poster")).not.toBeNull();
+  expect(mount.querySelector(".hero-poster-bg").getAttribute("src")).toBe(`/Images/hero-${device}-poster.webp`);
   expect(play).not.toHaveBeenCalled();
 });
 
-test("video stays paused offscreen, in hidden tabs, and behind blocking overlays", async () => {
+test.each(["resume-modal-backdrop", "mobile-menu-backdrop"])("video stays paused offscreen, in hidden tabs, and behind %s", async overlayClass => {
   const video = renderHero();
   intersect(false);
   expect(play).not.toHaveBeenCalled();
@@ -131,7 +137,7 @@ test("video stays paused offscreen, in hidden tabs, and behind blocking overlays
   act(() => document.dispatchEvent(new Event("visibilitychange")));
   expect(video.paused).toBe(false);
   const overlay = document.createElement("div");
-  overlay.className = "resume-modal-backdrop";
+  overlay.className = overlayClass;
   await act(async () => document.body.append(overlay));
   expect(video.paused).toBe(true);
   await act(async () => overlay.remove());
