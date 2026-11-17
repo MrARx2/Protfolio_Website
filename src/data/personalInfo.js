@@ -3,6 +3,8 @@ export const personalInfo = {
   name: "Ariel Cohen",
   role: "Game Developer",
   bio: "Game programmer building clean systems and memorable interactive experiences.",
+  // Verified against the currently published resume on 2026-11-17.
+  email: "MrARx2@gmail.com",
   avatar: "https://i.ibb.co/v67zkd7L/20190419-175428.jpg",
   skills: [
     'Game Dev',

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { personalInfo } from "../../data/personalInfo";
+import InterfaceIcon from "../common/InterfaceIcon";
 
 const DESKTOP_HERO_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: fine)";
 
@@ -8,6 +9,10 @@ function AboutSection({ onExplore, paused = false }) {
   const videoRef = useRef(null);
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_HERO_QUERY).matches);
   const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [userPaused, setUserPaused] = useState(() => {
+    try { return localStorage.getItem("portfolio-hero-paused") === "true"; } catch { return false; }
+  });
   const videoSrc = process.env.PUBLIC_URL + (isDesktop
     ? "/Videos/hero-desktop.mp4?v=2"
     : "/Videos/hero-mobile.mp4?v=2");
@@ -24,6 +29,8 @@ function AboutSection({ onExplore, paused = false }) {
   }, []);
 
   useEffect(() => {
+    // A direct case-study visit should not fetch a hidden hero clip.
+    if (paused) return undefined;
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     let idleId;
@@ -50,7 +57,7 @@ function AboutSection({ onExplore, paused = false }) {
       if (idleId) window.cancelIdleCallback?.(idleId);
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [paused]);
 
   useEffect(() => {
     if (!shouldRenderVideo || !heroRef.current) return undefined;
@@ -61,7 +68,7 @@ function AboutSection({ onExplore, paused = false }) {
     ));
     const syncPlayback = () => {
       if (!video) return;
-      if (paused || document.hidden || !heroVisible || hasBlockingOverlay()) video.pause();
+      if (paused || userPaused || document.hidden || !heroVisible || hasBlockingOverlay()) video.pause();
       else if (video.paused) video.play().catch(() => {});
     };
     const observer = new IntersectionObserver(([entry]) => {
@@ -79,7 +86,17 @@ function AboutSection({ onExplore, paused = false }) {
       document.removeEventListener("visibilitychange", syncPlayback);
       video?.pause();
     };
-  }, [paused, shouldRenderVideo, videoSrc]);
+  }, [paused, userPaused, shouldRenderVideo, videoSrc]);
+
+  const toggleVideo = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const nextPaused = !video.paused;
+    setUserPaused(nextPaused);
+    try { localStorage.setItem("portfolio-hero-paused", String(nextPaused)); } catch { /* Optional preference. */ }
+    if (nextPaused) video.pause();
+    else video.play().catch(() => {});
+  };
 
   return (
     <section className="hero-section" id="about" ref={heroRef}>
@@ -96,6 +113,9 @@ function AboutSection({ onExplore, paused = false }) {
           playsInline
           preload="metadata"
           aria-hidden="true"
+          onPlay={() => setVideoPlaying(true)}
+          onPause={() => setVideoPlaying(false)}
+          onError={() => setShouldRenderVideo(false)}
         />
       )}
 
@@ -123,7 +143,7 @@ function AboutSection({ onExplore, paused = false }) {
                 Explore my work <span aria-hidden="true">↓</span>
               </button>
               <a className="button button-secondary" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
-                Open resume PDF <span aria-hidden="true">↗</span>
+                Open resume PDF <InterfaceIcon name="external" />
               </a>
             </div>
           </div>
@@ -131,6 +151,10 @@ function AboutSection({ onExplore, paused = false }) {
 
         <div className="hero-bottom-bar">
           <span>Unity · Unreal Engine · Maya</span>
+          {shouldRenderVideo && <button type="button" className="hero-playback-toggle" onClick={toggleVideo}
+            aria-label={videoPlaying ? "Pause background video" : "Play background video"}>
+            <InterfaceIcon name={videoPlaying ? "pause" : "play"} />{videoPlaying ? "Pause video" : "Play video"}
+          </button>}
           <button className="hero-scroll-indicator" type="button" onClick={onExplore} aria-label="Scroll to selected work">
             <span>Selected work</span>
             <span className="hero-scroll-line" aria-hidden="true" />

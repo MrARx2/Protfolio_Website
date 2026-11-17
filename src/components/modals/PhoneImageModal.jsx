@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import { imageVariant } from "../../utils/responsiveImages";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useDialog from "../../hooks/useDialog";
@@ -183,7 +184,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
             {imageFailed && <div className="phone-modal-error" role="status">
               <p>This screen couldn’t load.</p>
               <button type="button" onClick={() => { setImageFailed(false); setRetry((value) => value + 1); }}>Try again</button>
-              <a href={activeImage} target="_blank" rel="noopener noreferrer">Open original ↗</a>
+              <a href={activeImage} target="_blank" rel="noopener noreferrer">Open original <InterfaceIcon name="external" /></a>
             </div>}
             <PhoneFrame
               className={`phone-modal-device ${isInspecting ? "is-inspecting" : ""}`}

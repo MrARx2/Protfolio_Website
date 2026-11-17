@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import useDialog from "../../hooks/useDialog";
@@ -32,9 +33,10 @@ export default function MobileMenu({ onClose, returnFocusRef, categories, onSele
         </nav>
         <div className="mobile-menu-links">
           <button className="button button-primary" type="button" onClick={onResume}>View resume</button>
-          <a href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-          <a href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-          <a href={personalInfo.social.x.url} target="_blank" rel="noopener noreferrer">X ↗</a>
+          <a href={`mailto:${personalInfo.email}`}>Email Ariel <InterfaceIcon name="external" /></a>
+          <a href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">LinkedIn <InterfaceIcon name="external" /></a>
+          <a href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">GitHub <InterfaceIcon name="external" /></a>
+          <a href={personalInfo.social.x.url} target="_blank" rel="noopener noreferrer">X <InterfaceIcon name="external" /></a>
         </div>
         <fieldset className="mobile-menu-themes"><legend>Color theme</legend>
           {themes.map((option) => <button key={option.id} type="button" aria-pressed={theme === option.id} onClick={() => onThemeChange(option.id)}><span style={{ background: option.swatch }} aria-hidden="true" />{option.label}{theme === option.id && <span aria-hidden="true">✓</span>}</button>)}

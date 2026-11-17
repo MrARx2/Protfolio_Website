@@ -25,6 +25,10 @@ export function applyTheme(theme) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute(
     "content", nextTheme === "ice" ? "#071015" : "#090a0b"
   );
+  document.querySelectorAll('[data-theme-icon]').forEach((icon) => {
+    const source = icon.getAttribute(`data-icon-${nextTheme}`);
+    if (source) icon.setAttribute('href', source);
+  });
 
   try {
     window.localStorage.setItem(themeStorageKey, nextTheme);

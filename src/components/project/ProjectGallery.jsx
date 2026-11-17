@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import ResponsiveImage from "./ResponsiveImage";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PhoneShowcaseGallery from "./PhoneShowcaseGallery";
@@ -166,7 +167,7 @@ function StandardProjectGallery({
                 alt={`${projectTitle} ${activeCollection.label.toLowerCase()} ${imageIndex + 1}`}
                 loading={position === 0 ? "eager" : "lazy"}
               />
-              <span className="gallery-expand-label">Expand image <span aria-hidden="true">⤢</span></span>
+              <span className="gallery-expand-label">Expand image <InterfaceIcon name="expand" /></span>
             </button>
           ))}
         </div>

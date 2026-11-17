@@ -53,3 +53,24 @@ test("desktop previews do not reset or start preloading when rapidly crossing th
   // No image is allocated until the card has stayed visible for its dwell delay.
   expect(nextImage).not.toHaveBeenCalled();
 });
+
+test("pausing a preview cancels a pending decoded frame and keeps the current image", async () => {
+  let intersection, pendingImage;
+  global.IntersectionObserver = class {
+    constructor(callback) { intersection = callback; }
+    observe() {} disconnect() {}
+  };
+  nextImage.mockImplementation(() => {
+    pendingImage = { decode: () => Promise.resolve() };
+    return pendingImage;
+  });
+  act(() => root.render(<ProjectPreviewMedia project={project} />));
+  act(() => intersection([{ isIntersecting: true, intersectionRatio: 0.5 }]));
+  act(() => jest.advanceTimersByTime(6000));
+  const complete = pendingImage.onload;
+  act(() => root.render(<ProjectPreviewMedia project={project} paused />));
+  await act(async () => complete());
+  act(() => jest.advanceTimersByTime(60000));
+  expect(mount.querySelector("img").getAttribute("src")).toBe("/first.jpg");
+  expect(nextImage).toHaveBeenCalledTimes(1);
+});

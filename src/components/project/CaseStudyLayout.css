@@ -71,7 +71,7 @@
 @media (max-width: 768px) {
   .gallery-stage-landscape .gallery-stage-media { height: auto; aspect-ratio: 16 / 10; min-height: 0; padding: 12px; }
   .gallery-stage-landscape .gallery-stage-image { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border-radius: 10px; }
-  .gallery-expand-label { right: 6px; bottom: 6px; font-size: .6rem; padding: 6px 8px; }
+  .gallery-expand-label { right: 6px; bottom: 6px; font-size: .75rem; padding: 8px 10px; }
   .case-study-section .gallery-heading-row { gap: 16px; margin-bottom: 20px; }
   .gallery-heading-row .section-header { margin-bottom: 0; }
   .gallery-collection-tabs button { min-height: 44px; }

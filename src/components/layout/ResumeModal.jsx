@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import React, { useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import useDialog from '../../hooks/useDialog';
@@ -16,7 +17,7 @@ export default function ResumeModal({ resumeUrl, onClose, returnFocusRef }) {
           <button ref={closeButtonRef} type="button" className="modal-close-btn" onClick={onClose} aria-label="Close resume">×</button>
         </header>
         <div className="resume-modal-actions">
-          <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="button button-primary">Open PDF <span aria-hidden="true">↗</span></a>
+          <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="button button-primary">Open PDF <InterfaceIcon name="external" /></a>
           <a href={resumeUrl} download="Ariel_Cohen_Resume.pdf" className="button button-secondary">Download PDF <span aria-hidden="true">↓</span></a>
         </div>
         <p className="resume-preview-note">For a larger view, open the PDF in a new tab.</p>

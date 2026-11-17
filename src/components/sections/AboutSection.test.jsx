@@ -26,6 +26,7 @@ function intersect(visible) {
 }
 
 beforeEach(() => {
+  localStorage.clear();
   global.IS_REACT_ACT_ENVIRONMENT = true;
   jest.useFakeTimers();
   queries = new Map();
@@ -105,6 +106,42 @@ test("changing the device layout replaces and pauses the previous video", () => 
   expect(mobile.getAttribute("poster")).toBe("/Images/hero-mobile-poster.webp");
   intersect(true);
   expect(mobile.paused).toBe(false);
+});
+
+test("a direct case study entry defers the hidden hero video until returning to the portfolio", () => {
+  expect(renderHero({ paused: true })).toBeNull();
+  act(() => jest.advanceTimersByTime(10000));
+  expect(mount.querySelector("video")).toBeNull();
+  expect(renderHero({ paused: false })).not.toBeNull();
+});
+
+test("manual pause survives viewport changes and a fresh hero mount", () => {
+  const video = renderHero();
+  intersect(true);
+  act(() => video.dispatchEvent(new Event("play")));
+  const button = mount.querySelector(".hero-playback-toggle");
+  expect(button.getAttribute("aria-label")).toBe("Pause background video");
+  act(() => button.click());
+  expect(video.paused).toBe(true);
+  expect(localStorage.getItem("portfolio-hero-paused")).toBe("true");
+  intersect(false);
+  intersect(true);
+  expect(video.paused).toBe(true);
+  act(() => root.render(null));
+  const restored = renderHero();
+  intersect(true);
+  expect(restored.paused).toBe(true);
+  act(() => mount.querySelector(".hero-playback-toggle").click());
+  intersect(true);
+  expect(restored.paused).toBe(false);
+});
+
+test("a failed decorative video leaves its poster and removes the unusable playback control", () => {
+  const video = renderHero();
+  act(() => video.dispatchEvent(new Event("error")));
+  expect(mount.querySelector("video")).toBeNull();
+  expect(mount.querySelector(".hero-playback-toggle")).toBeNull();
+  expect(mount.querySelector(".hero-poster-bg")).not.toBeNull();
 });
 
 test.each([

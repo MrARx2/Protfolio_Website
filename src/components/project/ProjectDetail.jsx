@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import GameOverview from "./GameOverview";
 import CaseStudyEnding from "./CaseStudyEnding";
 import "./CaseStudyLayout.css";
@@ -255,7 +256,7 @@ function ProjectDetail({ project, backLabel, entryPreview, isGalleryOpen = false
                       <p>{member.description}</p>
                       {member.linkedin && (
                         <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                          Connect on LinkedIn <span aria-hidden="true">↗</span>
+                          Connect on LinkedIn <InterfaceIcon name="external" />
                         </a>
                       )}
                     </article>

@@ -3,7 +3,7 @@ import ProjectPreviewMedia from "./ProjectPreviewMedia";
 import "./FeaturedProjectCard.css";
 import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
-function FeaturedProjectCard({ project, onClick, activeProjectId }) {
+function FeaturedProjectCard({ project, onClick, activeProjectId, previewsPaused = false }) {
   const previewRef = useRef(null);
   const titleWords = project.title.split(" ");
   const accentWord = titleWords.pop();
@@ -19,7 +19,7 @@ function FeaturedProjectCard({ project, onClick, activeProjectId }) {
         <div className="featured-project-orbit" aria-hidden="true" />
         <span className="project-preview-badge">Featured · Mobile</span>
         <ProjectPreviewMedia className="featured-project-phone" project={project}
-          previewData={project.featuredPreview} paused={Boolean(activeProjectId)} eager ref={previewRef}
+          previewData={project.featuredPreview} paused={Boolean(activeProjectId) || previewsPaused} eager ref={previewRef}
           imageSizes="(max-width: 360px) 120px, (max-width: 768px) 130px, 185px" />
         <div className="featured-project-caption" aria-hidden="true"><span />In-game capture<span /></div>
       </div>

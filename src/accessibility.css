@@ -1,0 +1,76 @@
+/* Shared interaction and legibility refinements; preserve Ice/Amber tokens. */
+.interface-icon { display: inline-block; width: 1.1em; height: 1.1em; flex: none; vertical-align: -.15em; }
+.work-section-intro { max-width: 560px; justify-self: end; }
+.preview-playback-toggle,
+.hero-playback-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 9px 14px; border: 1px solid var(--border);
+  border-radius: 999px; color: var(--text); background: var(--surface);
+  font: inherit; font-size: .8125rem; font-weight: 600; line-height: 1.4;
+  letter-spacing: 0; text-transform: none; cursor: pointer;
+}
+.preview-playback-toggle { margin-top: 14px; }
+.preview-playback-toggle:hover,
+.hero-playback-toggle:hover { border-color: var(--amber-bright); }
+.hero-bottom-bar { align-items: center; flex-wrap: wrap; gap: 16px 24px; margin-top: 24px; }
+.hero-bottom-bar .hero-playback-toggle { margin-left: auto; background: rgba(7, 16, 21, .9); }
+.project-preview-badge,
+.project-preview-story span,
+.project-preview-count,
+.project-detail .case-study-meta dt,
+.project-detail .tag,
+.project-detail .case-study-tags span,
+.gallery-thumbnail-rail button > span,
+.phone-showcase-thumb-grid button > span,
+.phone-showcase-thumb-group h4,
+.gallery-collection-tabs button sup,
+.phone-showcase-feature-topline,
+.phone-showcase-heading-meta,
+.modal-topbar .modal-eyebrow,
+.modal-topbar .modal-counter,
+.mechanic-modal-heading .section-kicker,
+.mechanic-visual-flow-heading > span,
+.mechanic-modal-section-heading > span,
+.mechanic-structure-list article > span,
+.mechanic-value-label,
+.mechanic-modal-footer { font-size: .75rem; letter-spacing: .06em; }
+.project-preview-story span { color: rgba(255,255,255,.8); }
+.phone-showcase-feature .phone-showcase-controls button,
+.gallery-stage .gallery-stage-controls button,
+.phone-image-modal .phone-modal-controls button,
+.image-modal .fitted-image-controls button { min-height: 44px; font-size: .875rem; }
+.phone-showcase-screen-button .phone-showcase-expand,
+.gallery-stage .gallery-expand-label { font-size: .75rem; }
+.phone-modal-center-controls > span { font-size: .75rem; }
+.mechanic-visual-step strong { font-size: .875rem; }
+.mechanic-visual-step p,
+.mechanic-structure-list p,
+.mechanic-flow li { font-size: .875rem; line-height: 1.6; }
+.mechanic-visual-step figcaption > span,
+.mechanic-flow li::before { font-size: .75rem; }
+.mechanic-modal-backdrop { grid-template-columns: minmax(0, 1fr); }
+.mechanic-modal-shell { min-width: 0; }
+.mechanic-modal-body:focus-visible { outline-offset: -4px; }
+.mobile-menu-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.phone-modal-error a,
+.gallery-image-error a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.footer-meta { font-size: .75rem; }
+.hero-bottom-bar { font-size: .75rem; }
+.work-nav a sup { font-size: .75rem; opacity: .85; }
+@media (max-width: 768px) {
+  .work-nav-docked a { gap: 4px; padding-inline: 8px; }
+  .work-nav-docked a sup { font-size: .6875rem; }
+}
+.contact-email-address { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; color: var(--text-soft); font-size: .875rem; overflow-wrap: anywhere; }
+.contact-email-address:hover { color: var(--amber-bright); }
+@media (max-width: 768px) {
+  .work-section-intro { justify-self: start; }
+  .hero-bottom-bar .hero-playback-toggle { margin-left: 0; }
+  .hero-bottom-bar > span { flex-basis: 100%; }
+  .phone-modal-controls > button { min-width: 0; }
+  .phone-image-modal .phone-modal-controls .phone-modal-inspect-button { min-width: 0; padding-inline: 12px; }
+  .mechanic-visual-step figcaption { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse) {
+  .preview-playback-toggle { display: none; }
+}

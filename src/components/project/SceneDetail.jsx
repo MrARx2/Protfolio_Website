@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import CaseStudyMeta from "./CaseStudyMeta";
 import ResponsiveImage from "./ResponsiveImage";
 import React from "react";
@@ -68,7 +69,7 @@ function SceneDetail({ project, entryPreview, onImageClick }) {
                 <p className="cool-feature-description">{feature.description}</p>
                 {feature.image && <button type="button" className="technical-image-button" onClick={() => onImageClick([feature.image], 0)} aria-label={`Enlarge ${feature.title} visualization`}>
                   <ResponsiveImage src={feature.image} alt={`${feature.title} visualization`} loading="lazy" />
-                  <span>Expand image ⤢</span>
+                  <span>Expand image <InterfaceIcon name="expand" /></span>
                 </button>}
               </article>
             ))}

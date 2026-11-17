@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import ResponsiveImage from "./ResponsiveImage";
 import React, { useState } from "react";
 import { toEmbedUrl } from "../../utils/youtubeHelpers";
@@ -14,6 +15,6 @@ export default function VideoPreview({ url, title, poster, portrait = false }) {
           <span className="video-play-label"><span className="video-play-icon" aria-hidden="true">▶</span>Play video</span>
         </button>}
     </div>
-    <a className="video-external-link" href={url} target="_blank" rel="noopener noreferrer">Watch on YouTube <span aria-hidden="true">↗</span></a>
+    <a className="video-external-link" href={url} target="_blank" rel="noopener noreferrer">Watch on YouTube <InterfaceIcon name="external" /></a>
   </div>;
 }

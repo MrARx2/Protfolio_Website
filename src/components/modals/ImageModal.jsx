@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import useDialog from "../../hooks/useDialog";
 import { fitImageSize, isGallerySwipe } from "../../utils/galleryGeometry";
@@ -105,7 +106,7 @@ export default function ImageModal({ images = [], initialIndex = 0, onClose, onI
             suppressClickUntil.current = Date.now() + 500;
           }}>
           {!naturalSize && !failed && <div className="modal-image-loader" role="status" aria-label="Loading image"><div className="spinner" /></div>}
-          {failed ? <div className="gallery-image-error"><p>This image couldn’t load.</p><button type="button" onClick={() => { setFailed(false); setRetry((value) => value + 1); }}>Try again</button><a href={images[index]} target="_blank" rel="noopener noreferrer">Open original ↗</a></div> :
+          {failed ? <div className="gallery-image-error"><p>This image couldn’t load.</p><button type="button" onClick={() => { setFailed(false); setRetry((value) => value + 1); }}>Try again</button><a href={images[index]} target="_blank" rel="noopener noreferrer">Open original <InterfaceIcon name="external" /></a></div> :
             <div className="modal-image-canvas" style={{ width: Math.max(viewportSize.width, size.width), height: Math.max(viewportSize.height, size.height) }}>
               <button type="button" className="modal-image-button" style={{ ...size, visibility: naturalSize ? "visible" : "hidden" }}
                 onClick={() => { if (Date.now() > suppressClickUntil.current) toggleZoom(); }} aria-label={isZoomed ? "Fit image to screen" : "Zoom image in"}>

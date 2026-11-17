@@ -1,3 +1,4 @@
+import InterfaceIcon from "../common/InterfaceIcon";
 import { imageVariant } from "../../utils/responsiveImages";
 import ResponsiveImage from "./ResponsiveImage";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -194,7 +195,7 @@ function PhoneShowcaseGallery({
                 />
                 <span className="phone-showcase-touch-hint phone-showcase-touch-hint-left" aria-hidden="true">←</span>
                 <span className="phone-showcase-touch-hint phone-showcase-touch-hint-right" aria-hidden="true">→</span>
-                <span className="phone-showcase-expand">Expand image <span aria-hidden="true">⤢</span></span>
+                <span className="phone-showcase-expand">Expand image <InterfaceIcon name="expand" /></span>
               </button>
             </PhoneFrame>
 

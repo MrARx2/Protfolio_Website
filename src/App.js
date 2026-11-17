@@ -3,6 +3,8 @@ import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } fr
 import { flushSync } from "react-dom";
 import "./style.css";
 import "./performance.css";
+import "./accessibility.css";
+import "./visual-polish.css";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import AnimatedDotsBg from "./components/layout/AnimatedDotsBg";
@@ -21,6 +23,8 @@ import usePortfolioScroll from "./hooks/usePortfolioScroll";
 import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
 import { applyTheme, getInitialTheme } from "./data/themes";
+import InterfaceIcon from "./components/common/InterfaceIcon";
+import usePreviewPlayback from "./hooks/usePreviewPlayback";
 
 function LoadingSpinner() {
   return (
@@ -34,7 +38,9 @@ function SectionHeading({ title, description }) {
   return (
     <header className="work-section-heading">
       <h2>{title}</h2>
-      <p>{description}</p>
+      <div className="work-section-intro">
+        <p>{description}</p>
+      </div>
     </header>
   );
 }
@@ -87,6 +93,7 @@ function fallbackGalleryForProject(project) {
 }
 
 function App() {
+  const previewPlayback = usePreviewPlayback();
   const initialProjectRoute = useMemo(() => projectRouteFromHash(), []);
   const initialProject = useMemo(
     () => projectById(initialProjectRoute?.projectId),
@@ -206,8 +213,11 @@ function App() {
     flushSync(() => setShowCategoryNav(category !== "all"));
     const header = document.querySelector(".navbar");
     const anchor = target.querySelector(".work-section-heading") || target;
-    const offset = (header?.getBoundingClientRect().height || 72) + 20;
-    const destinationY = Math.max(0, Math.min(window.scrollY + anchor.getBoundingClientRect().top - offset,
+    const offset = (header?.getBoundingClientRect().height || 72) + 32;
+    // Measure the heading's layout position, not its temporary reveal translate.
+    // Each work section is its heading's positioned offset parent.
+    const anchorTop = target.getBoundingClientRect().top + (anchor === target ? 0 : target.clientTop + anchor.offsetTop);
+    const destinationY = Math.max(0, Math.min(window.scrollY + anchorTop - offset,
       document.documentElement.scrollHeight - window.innerHeight));
     window.history.replaceState({ kind: "portfolio", category, scrollY: destinationY }, "", category === "all" ? "#projects" : `#${category}`);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -550,6 +560,11 @@ function App() {
                 animateArrival={categoryNavHandedOff}
                 isContextSource={!showCategoryNav}
               />
+              {previewPlayback.available && <button type="button" className="preview-playback-toggle" onClick={previewPlayback.toggle}
+                aria-label={previewPlayback.paused ? "Play all project previews" : "Pause all project previews"}>
+                <InterfaceIcon name={previewPlayback.paused ? "play" : "pause"} />
+                {previewPlayback.paused ? "Play previews" : "Pause previews"}
+              </button>}
             </div>
 
             <section className="work-section games-section" id="games-section" data-category="games">
@@ -559,11 +574,11 @@ function App() {
               />
               <div className="games-showcase">
                 {gameProjects[0] && (
-                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured activeProjectId={selected?.id} />
+                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
                 )}
                 <div className="games-secondary-grid">
                   {gameProjects.slice(1).map((project) => (
-                    <FrostedCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
+                    <FrostedCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
                   ))}
                 </div>
               </div>
@@ -582,6 +597,7 @@ function App() {
                     index={index}
                     onClick={openProject}
                     activeProjectId={selected?.id}
+                    previewsPaused={previewPlayback.paused}
                   />
                 ))}
               </div>
@@ -594,7 +610,7 @@ function App() {
               />
               <div className="scene-showcase">
                 {sceneProjects.map((project) => (
-                  <SceneCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
+                  <SceneCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
                 ))}
               </div>
             </section>
@@ -608,16 +624,20 @@ function App() {
               Have a game project or a technical challenge in mind? Let&apos;s talk.
             </p>
             <div className="contact-actions">
-              <a className="button button-primary" href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">
-                Connect on LinkedIn <span aria-hidden="true">↗</span>
+              <a className="button button-primary" href={`mailto:${personalInfo.email}`}>
+                Email Ariel <InterfaceIcon name="external" />
+              </a>
+              <a className="button button-secondary" href={personalInfo.social.linkedin.url} target="_blank" rel="noopener noreferrer">
+                Connect on LinkedIn <InterfaceIcon name="external" />
               </a>
               <a className="contact-secondary-link" href={personalInfo.social.github.url} target="_blank" rel="noopener noreferrer">
-                GitHub <span aria-hidden="true">↗</span>
+                GitHub <InterfaceIcon name="external" />
               </a>
               <a className="contact-secondary-link" href={personalInfo.resume} target="_blank" rel="noopener noreferrer">
-                Resume PDF <span aria-hidden="true">↗</span>
+                Resume PDF <InterfaceIcon name="external" />
               </a>
             </div>
+            <a className="contact-email-address" href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>
             <div className="footer-meta">
               <span>© {new Date().getFullYear()} Ariel Cohen</span>
               <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })}>

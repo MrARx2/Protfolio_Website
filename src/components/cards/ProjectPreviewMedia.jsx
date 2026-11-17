@@ -43,7 +43,7 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     "(prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse)"
   ).matches);
   const [interacting, setInteracting] = useState(false);
-  const [saveData] = useState(() => Boolean(navigator.connection?.saveData));
+  const [saveData, setSaveData] = useState(() => Boolean(navigator.connection?.saveData));
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
   const initialDelay = useMemo(() => {
     const projectSeed = Array.from(project.id || "preview")
@@ -81,6 +81,13 @@ const ProjectPreviewMedia = forwardRef(function ProjectPreviewMedia({
     const updateVisibility = () => setPageVisible(!document.hidden);
     document.addEventListener("visibilitychange", updateVisibility);
     return () => document.removeEventListener("visibilitychange", updateVisibility);
+  }, []);
+
+  useEffect(() => {
+    const connection = navigator.connection;
+    const update = () => setSaveData(Boolean(connection?.saveData));
+    connection?.addEventListener?.("change", update);
+    return () => connection?.removeEventListener?.("change", update);
   }, []);
 
   useEffect(() => {

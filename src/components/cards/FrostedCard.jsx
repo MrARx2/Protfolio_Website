@@ -3,7 +3,7 @@ import ProjectPreviewMedia from "./ProjectPreviewMedia";
 import FeaturedProjectCard from "./FeaturedProjectCard";
 import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
-function StandardGameCard({ project, onClick, activeProjectId = null }) {
+function StandardGameCard({ project, onClick, activeProjectId = null, previewsPaused = false }) {
   const previewRef = useRef(null);
 
   const openProject = () => {
@@ -32,7 +32,7 @@ function StandardGameCard({ project, onClick, activeProjectId = null }) {
         className="project-card-media"
         project={project}
         badge="Game"
-        paused={Boolean(activeProjectId)}
+        paused={Boolean(activeProjectId) || previewsPaused}
         ref={previewRef}
       />
 

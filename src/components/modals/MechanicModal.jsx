@@ -88,7 +88,7 @@ function MechanicModal({ mechanic, onClose }) {
           </button>
         </header>
 
-        <div className="mechanic-modal-body">
+        <div className="mechanic-modal-body" tabIndex={0} role="region" aria-label={`${mechanic.label} details`}>
           <p className="mechanic-modal-purpose" id={descriptionId}>{mechanic.purpose || mechanic.desc}</p>
 
           {mechanic.visualFlow?.length > 0 && (

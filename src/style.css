@@ -2,8 +2,11 @@
 :root {
   color-scheme: dark;
   --bg: #090a0b;
+  --bg-rgb: 9, 10, 11;
   --bg-soft: #101113;
   --surface: #17191c;
+  --surface-rgb: 23, 25, 28;
+  --surface-raised-rgb: 30, 33, 37;
   --surface-raised: #1e2125;
   --surface-hover: #24272c;
   --border: #30343a;
@@ -27,7 +30,7 @@
   --radius-sm: 12px;
   --radius-md: 20px;
   --radius-lg: 30px;
-  --page: min(1280px, calc(100vw - 64px));
+  --page: min(1440px, calc(100vw - 80px));
   --nav-height: 68px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -38,8 +41,11 @@
 
 :root[data-theme="ice"] {
   --bg: #071015;
+  --bg-rgb: 7, 16, 21;
   --bg-soft: #0c171d;
   --surface: #132028;
+  --surface-rgb: 19, 32, 40;
+  --surface-raised-rgb: 25, 42, 52;
   --surface-raised: #192a34;
   --surface-hover: #203641;
   --border: #2a4653;
@@ -540,7 +546,7 @@ video {
   position: relative;
   min-height: max(780px, 92svh);
   overflow: hidden;
-  background: #08090a;
+  background: var(--bg);
 }
 
 .hero-poster-bg,
@@ -576,19 +582,24 @@ video {
 }
 
 .hero-overlay {
+  --hero-vignette: radial-gradient(ellipse 78% 125% at -10% 52%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.93) 32%, rgba(7, 8, 9, 0.72) 48%, rgba(7, 8, 9, 0.35) 64%, rgba(7, 8, 9, 0.08) 78%, transparent 90%);
   position: absolute;
   inset: 0;
   z-index: 1;
+  pointer-events: none;
+  /* The final fade sits above every vignette and finishes in the actual theme
+     background. Reversing those layers leaves a dark horizontal seam in Ice. */
   background:
-    radial-gradient(ellipse 78% 125% at -10% 52%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.93) 32%, rgba(7, 8, 9, 0.72) 48%, rgba(7, 8, 9, 0.35) 64%, rgba(7, 8, 9, 0.08) 78%, transparent 90%),
-    linear-gradient(180deg, rgba(7, 8, 9, 0.22) 0%, transparent 50%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(var(--bg-rgb), 0) 40%, rgba(var(--bg-rgb), 0.08) 55%, rgba(var(--bg-rgb), 0.3) 68%, rgba(var(--bg-rgb), 0.62) 80%, rgba(var(--bg-rgb), 0.88) 90%, var(--bg) 100%),
+    var(--hero-vignette),
+    linear-gradient(180deg, rgba(7, 8, 9, 0.22), transparent 50%),
     radial-gradient(circle at 68% 42%, rgba(var(--accent-rgb), 0.08), transparent 34%);
 }
 
 .hero-grain {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   opacity: 0.12;
   pointer-events: none;
   background-image: repeating-linear-gradient(115deg, transparent 0 3px, rgba(255, 255, 255, 0.025) 4px);
@@ -762,21 +773,20 @@ video {
 .work-main::before {
   content: "";
   position: absolute;
-  top: -72px;
+  top: 0;
   left: 50%;
   z-index: -1;
   width: 100vw;
-  height: 220px;
+  height: clamp(240px, 28vw, 420px);
   transform: translateX(-50%);
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(9, 10, 11, 0) 0%,
-    rgba(9, 10, 11, 0.7) 28%,
-    rgba(9, 10, 11, 0.98) 52%,
-    rgba(9, 10, 11, 0.88) 70%,
-    rgba(9, 10, 11, 0.22) 88%,
-    rgba(9, 10, 11, 0) 100%
+    var(--bg) 0%,
+    rgba(var(--bg-rgb), 0.94) 18%,
+    rgba(var(--bg-rgb), 0.65) 45%,
+    rgba(var(--bg-rgb), 0.22) 75%,
+    rgba(var(--bg-rgb), 0) 100%
   );
 }
 
@@ -4287,9 +4297,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   }
 
   .hero-overlay {
-    background:
-      radial-gradient(ellipse 96% 125% at -14% 50%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.92) 34%, rgba(7, 8, 9, 0.68) 54%, rgba(7, 8, 9, 0.28) 74%, transparent 94%),
-      linear-gradient(180deg, rgba(7, 8, 9, 0.3), transparent 48%, var(--bg) 100%);
+    --hero-vignette: radial-gradient(ellipse 96% 125% at -14% 50%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.92) 34%, rgba(7, 8, 9, 0.68) 54%, rgba(7, 8, 9, 0.28) 74%, transparent 94%);
   }
 
   .hero-copy {
@@ -4546,9 +4554,7 @@ html[data-project-route-arrival="close"] .portfolio-page:not(.project-route-open
   }
 
   .hero-overlay {
-    background:
-      radial-gradient(ellipse 135% 92% at -42% 34%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.91) 40%, rgba(7, 8, 9, 0.58) 66%, rgba(7, 8, 9, 0.14) 88%, transparent 100%),
-      linear-gradient(180deg, rgba(7, 8, 9, 0.08) 0%, rgba(7, 8, 9, 0.14) 35%, rgba(7, 8, 9, 0.72) 58%, rgba(7, 8, 9, 0.96) 80%, var(--bg) 100%);
+    --hero-vignette: radial-gradient(ellipse 135% 92% at -42% 34%, rgba(7, 8, 9, 0.98) 0%, rgba(7, 8, 9, 0.91) 40%, rgba(7, 8, 9, 0.58) 66%, rgba(7, 8, 9, 0.14) 88%, transparent 100%);
   }
 
   .hero-content {
