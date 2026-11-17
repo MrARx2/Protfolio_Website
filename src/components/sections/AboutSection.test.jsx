@@ -115,32 +115,22 @@ test("a direct case study entry defers the hidden hero video until returning to 
   expect(renderHero({ paused: false })).not.toBeNull();
 });
 
-test("manual pause survives viewport changes and a fresh hero mount", () => {
+test("retired pause preferences do not leave returning visitors with a frozen hero", () => {
+  localStorage.setItem("portfolio-hero-paused", "true");
   const video = renderHero();
   intersect(true);
-  act(() => video.dispatchEvent(new Event("play")));
-  const button = mount.querySelector(".hero-playback-toggle");
-  expect(button.getAttribute("aria-label")).toBe("Pause background video");
-  act(() => button.click());
-  expect(video.paused).toBe(true);
-  expect(localStorage.getItem("portfolio-hero-paused")).toBe("true");
+  expect(video.paused).toBe(false);
+  expect(mount.querySelector(".hero-playback-toggle")).toBeNull();
   intersect(false);
-  intersect(true);
   expect(video.paused).toBe(true);
-  act(() => root.render(null));
-  const restored = renderHero();
   intersect(true);
-  expect(restored.paused).toBe(true);
-  act(() => mount.querySelector(".hero-playback-toggle").click());
-  intersect(true);
-  expect(restored.paused).toBe(false);
+  expect(video.paused).toBe(false);
 });
 
-test("a failed decorative video leaves its poster and removes the unusable playback control", () => {
+test("a failed decorative video leaves its poster", () => {
   const video = renderHero();
   act(() => video.dispatchEvent(new Event("error")));
   expect(mount.querySelector("video")).toBeNull();
-  expect(mount.querySelector(".hero-playback-toggle")).toBeNull();
   expect(mount.querySelector(".hero-poster-bg")).not.toBeNull();
 });
 

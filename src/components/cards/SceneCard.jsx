@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
-function SceneCard({ project, onClick, activeProjectId = null, previewsPaused = false }) {
+function SceneCard({ project, onClick, activeProjectId = null }) {
   const previewRef = useRef(null);
 
   const openProject = () => {
@@ -31,7 +31,7 @@ function SceneCard({ project, onClick, activeProjectId = null, previewsPaused = 
         className="scene-image-wrap"
         project={project}
         badge="Environment"
-        paused={Boolean(activeProjectId) || previewsPaused}
+        paused={Boolean(activeProjectId)}
         ref={previewRef}
       />
       <div className="scene-card-content living-card-content">

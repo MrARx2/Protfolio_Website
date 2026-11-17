@@ -24,7 +24,6 @@ import { personalInfo } from "./data/personalInfo";
 import { gameProjects, modelingProjects, sceneProjects } from "./data/projects";
 import { applyTheme, getInitialTheme } from "./data/themes";
 import InterfaceIcon from "./components/common/InterfaceIcon";
-import usePreviewPlayback from "./hooks/usePreviewPlayback";
 
 function LoadingSpinner() {
   return (
@@ -93,7 +92,6 @@ function fallbackGalleryForProject(project) {
 }
 
 function App() {
-  const previewPlayback = usePreviewPlayback();
   const initialProjectRoute = useMemo(() => projectRouteFromHash(), []);
   const initialProject = useMemo(
     () => projectById(initialProjectRoute?.projectId),
@@ -546,7 +544,10 @@ function App() {
               onSelectCategory={scrollToSection}
               showCategories={showCategoryNav}
             />
-            <AboutSection onExplore={() => scrollToSection("all")} paused={Boolean(selected)} />
+            <AboutSection onExplore={() => {
+              scrollToSection("all");
+              document.getElementById("main-content")?.focus({ preventScroll: true });
+            }} paused={Boolean(selected)} />
 
             <main className="work-main" id="main-content" tabIndex={-1}>
             <div className="work-nav-shell" id="projects">
@@ -560,11 +561,6 @@ function App() {
                 animateArrival={categoryNavHandedOff}
                 isContextSource={!showCategoryNav}
               />
-              {previewPlayback.available && <button type="button" className="preview-playback-toggle" onClick={previewPlayback.toggle}
-                aria-label={previewPlayback.paused ? "Play all project previews" : "Pause all project previews"}>
-                <InterfaceIcon name={previewPlayback.paused ? "play" : "pause"} />
-                {previewPlayback.paused ? "Play previews" : "Pause previews"}
-              </button>}
             </div>
 
             <section className="work-section games-section" id="games-section" data-category="games">
@@ -574,11 +570,11 @@ function App() {
               />
               <div className="games-showcase">
                 {gameProjects[0] && (
-                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
+                  <FrostedCard project={gameProjects[0]} onClick={openProject} featured activeProjectId={selected?.id} />
                 )}
                 <div className="games-secondary-grid">
                   {gameProjects.slice(1).map((project) => (
-                    <FrostedCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
+                    <FrostedCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
                   ))}
                 </div>
               </div>
@@ -597,7 +593,6 @@ function App() {
                     index={index}
                     onClick={openProject}
                     activeProjectId={selected?.id}
-                    previewsPaused={previewPlayback.paused}
                   />
                 ))}
               </div>
@@ -610,7 +605,7 @@ function App() {
               />
               <div className="scene-showcase">
                 {sceneProjects.map((project) => (
-                  <SceneCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} previewsPaused={previewPlayback.paused} />
+                  <SceneCard project={project} key={project.id} onClick={openProject} activeProjectId={selected?.id} />
                 ))}
               </div>
             </section>

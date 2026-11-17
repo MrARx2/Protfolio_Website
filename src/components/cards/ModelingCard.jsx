@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import ProjectPreviewMedia from "./ProjectPreviewMedia";
 import { ProjectCardMeta, ProjectCardContribution, ProjectCardFooter } from "./ProjectCardDetails";
 
-function ModelingCard({ project, onClick, index = 0, activeProjectId = null, previewsPaused = false }) {
+function ModelingCard({ project, onClick, index = 0, activeProjectId = null }) {
   const previewRef = useRef(null);
 
   const openProject = () => {
@@ -31,7 +31,7 @@ function ModelingCard({ project, onClick, index = 0, activeProjectId = null, pre
         className="modeling-image-wrap"
         project={project}
         badge={`3D study · ${String(index + 1).padStart(2, "0")}`}
-        paused={Boolean(activeProjectId) || previewsPaused}
+        paused={Boolean(activeProjectId)}
         ref={previewRef}
       />
 

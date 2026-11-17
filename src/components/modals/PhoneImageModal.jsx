@@ -152,7 +152,7 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
               {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>
           </div>
-          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close gallery" type="button">
+          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close viewer" type="button">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
@@ -167,17 +167,6 @@ function PhoneImageModal({ images, initialIndex = 0, onClose, onIndexChange }) {
         >
           <div className="phone-modal-ambient" style={{ backgroundImage: `url("${imageVariant(activeImage, 320)}")` }} aria-hidden="true" />
           <div className="phone-modal-scrim" aria-hidden="true" />
-
-          {total > 1 && (
-            <>
-              <button type="button" className="phone-modal-arrow phone-modal-arrow-previous" onClick={previous} aria-label="Previous mobile screen">
-                <span aria-hidden="true">←</span>
-              </button>
-              <button type="button" className="phone-modal-arrow phone-modal-arrow-next" onClick={next} aria-label="Next mobile screen">
-                <span aria-hidden="true">→</span>
-              </button>
-            </>
-          )}
 
           <div className="phone-modal-device-wrap">
             {!imageLoaded && !imageFailed && <div className="phone-modal-loader" role="status" aria-label="Loading mobile screen"><div className="spinner" /></div>}

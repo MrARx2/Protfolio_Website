@@ -306,7 +306,7 @@ function Navbar({
       </div>
       
       {mobileMenuOpen && <MobileMenu onClose={closeMobileMenu} returnFocusRef={mobileToggleRef}
-        categories={categories} onSelectCategory={onSelectCategory} theme={theme}
+        categories={categories} activeCategory={activeCategory} onSelectCategory={onSelectCategory} theme={theme}
         onThemeChange={onThemeChange} onResume={openResume} />}
       {showResume && (
         <ResumeModal 

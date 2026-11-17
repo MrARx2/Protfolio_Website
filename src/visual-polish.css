@@ -1,8 +1,16 @@
 /* The work navigation shares the content edges; the compact docked variant
    keeps its existing dimensions and handoff behavior. */
+/* Keep the full-bleed decorative gradient inside the usable viewport,
+   including Windows layouts with a classic scrollbar. Clip does not create
+   a scroll container or change the sticky navigation's containing block. */
+.portfolio-page { overflow-x: clip; }
+.mobile-menu-sections button[aria-current="location"] {
+  color: var(--amber-bright);
+  border-bottom-color: var(--amber-border);
+}
 .work-nav-shell {
   display: grid;
-  grid-template-columns: auto minmax(0, 660px) minmax(max-content, 1fr);
+  grid-template-columns: auto minmax(0, 660px);
   align-items: center;
   justify-content: start;
   gap: 24px;
@@ -25,7 +33,6 @@
 }
 .work-nav-inline a { flex: 1 0 auto; min-height: 44px; justify-content: center; padding-inline: 18px; font-size: .875rem; }
 .work-nav-inline a.active { box-shadow: 0 2px 10px rgba(var(--accent-rgb),.12); }
-.work-nav-shell > .preview-playback-toggle { margin-top: 0; justify-self: end; }
 .work-section-heading { align-items: start; }
 .work-main :is(.work-section-heading p, .featured-project-summary, .project-card-summary, .modeling-card-summary, .scene-card-summary) {
   font-size: clamp(1rem, .8vw + .35rem, 1.125rem);

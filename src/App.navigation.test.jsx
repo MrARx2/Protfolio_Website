@@ -6,7 +6,7 @@ jest.mock("./components/cards/FrostedCard", () => ({ project, onClick }) => <but
 jest.mock("./components/cards/ModelingCard", () => () => null);
 jest.mock("./components/cards/SceneCard", () => () => null);
 jest.mock("./components/layout/Navbar", () => () => <div className="navbar" />);
-jest.mock("./components/sections/AboutSection", () => () => <section id="about" />);
+jest.mock("./components/sections/AboutSection", () => ({ onExplore }) => <section id="about"><button data-action="explore" onClick={onExplore}>Explore my work</button></section>);
 jest.mock("./hooks/useScrollReveal", () => () => {});
 jest.mock("./hooks/usePortfolioScroll", () => () => {});
 jest.mock("./components/layout/ScrollProgress", () => () => null);
@@ -86,4 +86,13 @@ test("the explicit all-work action returns to the start of the portfolio", () =>
   flushFrames(); flushFrames();
   expect(window.location.hash).toBe("#projects");
   expect(document.activeElement.id).toBe("main-content");
+});
+
+test("Explore moves keyboard focus into the work so Tab cannot jump back into the hero", () => {
+  render();
+  mount.querySelector('[data-action="explore"]').focus();
+  click('[data-action="explore"]');
+  flushFrames();
+  expect(document.activeElement.id).toBe("main-content");
+  expect(window.location.hash).toBe("#projects");
 });

@@ -74,7 +74,7 @@ export default function ImageModal({ images = [], initialIndex = 0, onClose, onI
       <div className="modal-shell" ref={modalShellRef}>
         <header className="modal-topbar">
           <div><span className="modal-eyebrow">Image gallery</span><span className="modal-counter" aria-live="polite">{index + 1} / {total}</span></div>
-          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close gallery" type="button">×</button>
+          <button ref={closeButtonRef} className="modal-close-btn" onClick={onClose} aria-label="Close viewer" type="button">×</button>
         </header>
         <div ref={imageContainerRef} className={`modal-image-container fitted-image-viewport${isZoomed ? " zoomed" : ""}`}
           onTouchStart={(event) => {

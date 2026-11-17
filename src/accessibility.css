@@ -1,19 +1,7 @@
 /* Shared interaction and legibility refinements; preserve Ice/Amber tokens. */
 .interface-icon { display: inline-block; width: 1.1em; height: 1.1em; flex: none; vertical-align: -.15em; }
 .work-section-intro { max-width: 560px; justify-self: end; }
-.preview-playback-toggle,
-.hero-playback-toggle {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 44px; padding: 9px 14px; border: 1px solid var(--border);
-  border-radius: 999px; color: var(--text); background: var(--surface);
-  font: inherit; font-size: .8125rem; font-weight: 600; line-height: 1.4;
-  letter-spacing: 0; text-transform: none; cursor: pointer;
-}
-.preview-playback-toggle { margin-top: 14px; }
-.preview-playback-toggle:hover,
-.hero-playback-toggle:hover { border-color: var(--amber-bright); }
 .hero-bottom-bar { align-items: center; flex-wrap: wrap; gap: 16px 24px; margin-top: 24px; }
-.hero-bottom-bar .hero-playback-toggle { margin-left: auto; background: rgba(7, 16, 21, .9); }
 .project-preview-badge,
 .project-preview-story span,
 .project-preview-count,
@@ -65,12 +53,7 @@
 .contact-email-address:hover { color: var(--amber-bright); }
 @media (max-width: 768px) {
   .work-section-intro { justify-self: start; }
-  .hero-bottom-bar .hero-playback-toggle { margin-left: 0; }
-  .hero-bottom-bar > span { flex-basis: 100%; }
   .phone-modal-controls > button { min-width: 0; }
   .phone-image-modal .phone-modal-controls .phone-modal-inspect-button { min-width: 0; padding-inline: 12px; }
   .mechanic-visual-step figcaption { grid-template-columns: 1fr; gap: 6px; }
-}
-@media (prefers-reduced-motion: reduce), (max-width: 900px), (hover: none), (pointer: coarse) {
-  .preview-playback-toggle { display: none; }
 }
